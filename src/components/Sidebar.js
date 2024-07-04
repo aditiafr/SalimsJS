@@ -128,6 +128,9 @@ const MySidebar = ({ children }) => {
         }}
       >
         <div className="demo-logo-vertical" />
+        <div className="w-full px-4 py-2">
+          <img src="/assets/image/salims.png" alt="..." />
+        </div>
         <Menu
           theme="light"
           mode="inline"

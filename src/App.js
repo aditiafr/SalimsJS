@@ -7,12 +7,17 @@ import Login from "./pages/Login";
 const App = () => {
   return (
     <div>
-      <MySidebar>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/*" element={<RoutesDashboard />} />
-        </Routes>
-      </MySidebar>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route
+          path="/*"
+          element={
+            <MySidebar>
+              <RoutesDashboard />
+            </MySidebar>
+          }
+        />
+      </Routes>
     </div>
   );
 };
