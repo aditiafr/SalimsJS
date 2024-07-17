@@ -99,6 +99,12 @@ const MySidebar = ({ children }) => {
       <CalculatorOutlined />,
       "/master/formulatableref"
     ),
+    getItem("Taking Sample", "23", <CalculatorOutlined />, "/master/takingsample"),
+    getItem("Sample Registration", "24", <CalculatorOutlined />, "/master/sampleregistration"),
+    getItem("Sample Handling", "25", <CalculatorOutlined />, "/master/samplehandling"),
+    getItem("Testing Result", "26", <CalculatorOutlined />, "/master/testingresult"),
+    getItem("Maintenance Request", "27", <CalculatorOutlined />, "/master/maintenancerequest"),
+    getItem("Maintenance Process", "28", <CalculatorOutlined />, "/master/maintenanceprocess"),
     // getItem("User", "sub1", <UserOutlined />, null, [
     //   getItem("Tom", "3", null, "/user/tom"),
     //   getItem("Bill", "4", null, "/user/bill"),
