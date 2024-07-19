@@ -9,7 +9,7 @@ const TestingProcess = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TESTING PROCESS" subtitle="All data testing process" />
         <div>
-          <Link to="/master/testing-process/form">
+          <Link to="/transaction/testing-process/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

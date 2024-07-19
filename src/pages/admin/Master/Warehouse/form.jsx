@@ -1,8 +1,8 @@
+import { Col, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { Col, DatePicker, Form, Input, Row } from "antd";
 
-const FormTakingSample = () => {
+const FormWarehouse = () => {
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -19,7 +19,7 @@ const FormTakingSample = () => {
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle title="TAKING SAMPLE" subtitle="form data a taking sample" />
+        <HeaderTitle title="WAREHOUSE" subtitle="form data a warehouse" />
       </div>
       <div className="w-full bg-white rounded-lg">
         <Form
@@ -33,102 +33,27 @@ const FormTakingSample = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="TS Number"
-                name="TSNumber"
+                label="Code"
+                name="Code"
                 rules={[
                   {
                     required: true,
-                    message: "Please input TS Number!",
+                    message: "Please input your Code!",
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={20} />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Periode"
-                name="Periode"
+                label="Name"
+                name="Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Periode!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="TS Date"
-                name="Date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input TS Date!",
-                  },
-                ]}
-              >
-                <DatePicker className="w-full" />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Sample Code"
-                name="SampleCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Sample Code!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="PTS Number"
-                name="PTSNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input PTS Number!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Sample No"
-                name="SampleNo"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Sample No!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Map Code"
-                name="MapCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Map Code!",
+                    message: "Please input your Name!",
                   },
                 ]}
               >
@@ -143,7 +68,7 @@ const FormTakingSample = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input Address!",
+                    message: "Please input your Address!",
                   },
                 ]}
               >
@@ -153,12 +78,12 @@ const FormTakingSample = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Weather"
-                name="Weather"
+                label="ZipCode"
+                name="ZipCode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Weather!",
+                    message: "Please input your ZipCode!",
                   },
                 ]}
               >
@@ -168,12 +93,12 @@ const FormTakingSample = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Wind Direction"
-                name="WindDirection"
+                label="City"
+                name="City"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Wind Direction!",
+                    message: "Please input your City!",
                   },
                 ]}
               >
@@ -183,12 +108,57 @@ const FormTakingSample = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Temperature"
-                name="Temperature"
+                label="Country"
+                name="Country"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Temperature!",
+                    message: "Please input your Country!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Phone"
+                name="Phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Phone!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Contact"
+                name="Contact"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Contact!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Fax"
+                name="Fax"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Fax!",
                   },
                 ]}
               >
@@ -209,4 +179,4 @@ const FormTakingSample = () => {
   );
 };
 
-export default FormTakingSample;
+export default FormWarehouse;

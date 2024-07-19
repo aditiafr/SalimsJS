@@ -9,7 +9,7 @@ const TestingOrder = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TESTING ORDER" subtitle="All data testing order" />
         <div>
-          <Link to="/master/testing-order/form">
+          <Link to="/transaction/testing-order/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

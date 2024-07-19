@@ -5,20 +5,34 @@ import Dashboard from "../pages/admin/Dashboard";
 // MASTER
 import Building from "../pages/admin/Master/Building";
 import FormBuilding from "../pages/admin/Master/Building/form";
-import FormTakingSample from "../pages/admin/Master/TakingSample/form";
-import FormSampleRegistration from "../pages/admin/Master/SampleRegistration/form";
-import FormSampleHandling from "../pages/admin/Master/SampleHandling/form";
-import FormTestingResult from "../pages/admin/Master/TestingResult/form";
-import FormMaintenanceRequest from "../pages/admin/Master/MaintenanceRequest/form";
-import FormMaintenanceProcess from "../pages/admin/Master/MaintenanceProcess/form";
-import FormTestingOrder from "../pages/admin/Transaction/TestingOrder/form";
-import FormPlanningTakingSample from "../pages/admin/Transaction/PlanningTakingSample/form";
-import FormTestingProcess from "../pages/admin/Transaction/TestingProcess/form";
-import FormAdjusment from "../pages/admin/Transaction/Adjustment/form";
+
+// TRANSACTION
+import TakingSample from "../pages/admin/Transaction/TakingSample"
+import FormTakingSample from "../pages/admin/Transaction/TakingSample/form"
+import SampleRegistration from "../pages/admin/Transaction/SampleRegistration"
+import FormSampleRegistration from "../pages/admin/Transaction/SampleRegistration/form"
+import SampleHandling from "../pages/admin/Transaction/SampleHandling"
+import FormSampleHandling from "../pages/admin/Transaction/SampleHandling/form"
+import TestingResult from "../pages/admin/Transaction/TestingResult"
+import FormTestingResult from "../pages/admin/Transaction/TestingResult/form"
+import MaintenanceRequest from "../pages/admin/Transaction/MaintenanceRequest"
+import FormMaintenanceRequest from "../pages/admin/Transaction/MaintenanceRequest/form"
+import MaintenanceProcess from "../pages/admin/Transaction/MaintenanceProcess"
+import FormMaintenanceProcess from "../pages/admin/Transaction/MaintenanceProcess/form"
 import TestingOrder from "../pages/admin/Transaction/TestingOrder";
+import FormTestingOrder from "../pages/admin/Transaction/TestingOrder/form";
 import PlanningTakingSample from "../pages/admin/Transaction/PlanningTakingSample";
+import FormPlanningTakingSample from "../pages/admin/Transaction/PlanningTakingSample/form";
 import TestingProcess from "../pages/admin/Transaction/TestingProcess";
+import FormTestingProcess from "../pages/admin/Transaction/TestingProcess/form";
 import Adjustment from "../pages/admin/Transaction/Adjustment";
+import FormAdjusment from "../pages/admin/Transaction/Adjustment/form";
+import Warehouse from "../pages/admin/Master/Warehouse";
+import FormWarehouse from "../pages/admin/Master/Warehouse/form";
+import SampleStorageLocation from "../pages/admin/Master/SampleStorageLocation";
+import FormSampleStorageLocation from "../pages/admin/Master/SampleStorageLocation/form";
+import StorageLocation from "../pages/admin/Master/StorageLocation";
+import FormStorageLocation from "../pages/admin/Master/StorageLocation/form";
 
 const RoutesDashboard = () => {
   const mainRoutes = [
@@ -36,90 +50,124 @@ const RoutesDashboard = () => {
       path: "/master/building/form",
       element: <FormBuilding />,
     },
-    // {
-    //   path: "/master/taking-sample",
-    //   element: <Building />,
-    // },
+    
     {
-      path: "/master/taking-sample/form",
-      element: <FormTakingSample />,
+      path: "/master/warehouse",
+      element: <Warehouse />,
     },
-    // {
-    //   path: "/master/sample-registration",
-    //   element: <Building />,
-    // },
     {
-      path: "/master/sample-registration/form",
-      element: <FormSampleRegistration />,
+      path: "/master/warehouse/form",
+      element: <FormWarehouse />,
     },
-    // {
-    //   path: "/master/sample-handling",
-    //   element: <Building />,
-    // },
+    
     {
-      path: "/master/sample-handling/form",
-      element: <FormSampleHandling />,
+      path: "/master/sample-storage-location",
+      element: <SampleStorageLocation />,
     },
-    // {
-    //   path: "/master/testing-result",
-    //   element: <Building />,
-    // },
     {
-      path: "/master/testing-result/form",
-      element: <FormTestingResult />,
+      path: "/master/sample-storage-location/form",
+      element: <FormSampleStorageLocation />,
     },
-    // {
-    //   path: "/master/maintenance-request",
-    //   element: <Building />,
-    // },
+    
     {
-      path: "/master/maintenance-request/form",
-      element: <FormMaintenanceRequest />,
+      path: "/master/storage-location",
+      element: <StorageLocation />,
     },
-    // {
-    //   path: "/master/maintenance-process",
-    //   element: <Building />,
-    // },
     {
-      path: "/master/maintenance-process/form",
-      element: <FormMaintenanceProcess />,
+      path: "/master/storage-location/form",
+      element: <FormStorageLocation />,
     },
+
 
     // TRANSACTION
 
     {
-      path: "/master/testing-order",
+      path: "/transaction/taking-sample",
+      element: <TakingSample />,
+    },
+    {
+      path: "/transaction/taking-sample/form",
+      element: <FormTakingSample />,
+    },
+
+    {
+      path: "/transaction/sample-registration",
+      element: <SampleRegistration />,
+    },
+    {
+      path: "/transaction/sample-registration/form",
+      element: <FormSampleRegistration />,
+    },
+
+    {
+      path: "/transaction/sample-handling",
+      element: <SampleHandling />,
+    },
+    {
+      path: "/transaction/sample-handling/form",
+      element: <FormSampleHandling />,
+    },
+
+    {
+      path: "/transaction/testing-result",
+      element: <TestingResult />,
+    },
+    {
+      path: "/transaction/testing-result/form",
+      element: <FormTestingResult />,
+    },
+
+    {
+      path: "/transaction/maintenance-request",
+      element: <MaintenanceRequest />,
+    },
+    {
+      path: "/transaction/maintenance-request/form",
+      element: <FormMaintenanceRequest />,
+    },
+
+    {
+      path: "/transaction/maintenance-process",
+      element: <MaintenanceProcess />,
+    },
+    {
+      path: "/transaction/maintenance-process/form",
+      element: <FormMaintenanceProcess />,
+    },
+
+    {
+      path: "/transaction/testing-order",
       element: <TestingOrder />,
     },
     {
-      path: "/master/testing-order/form",
+      path: "/transaction/testing-order/form",
       element: <FormTestingOrder />,
     },
 
     {
-      path: "/master/planning-taking-sample",
+      path: "/transaction/planning-taking-sample",
       element: <PlanningTakingSample />,
     },
     {
-      path: "/master/planning-taking-sample/form",
+      path: "/transaction/planning-taking-sample/form",
       element: <FormPlanningTakingSample />,
     },
 
     {
-      path: "/master/testing-process",
+      path: "/transaction/testing-process",
       element: <TestingProcess />,
     },
     {
-      path: "/master/testing-process/form",
+      path: "/transaction/testing-process/form",
       element: <FormTestingProcess />,
     },
 
     {
-      path: "/master/adjustment",
+      path: "/transaction/adjustment",
       element: <Adjustment />,
     },
     {
-      path: "/master/adjustment/form",
+      path: "/transaction/adjustment/form",
       element: <FormAdjusment />,
     },
   ];

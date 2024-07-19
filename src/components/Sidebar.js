@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  FileOutlined,
   HomeOutlined,
   LayoutOutlined,
   MenuFoldOutlined,
@@ -25,6 +24,8 @@ import {
   FieldTimeOutlined,
   DropboxOutlined,
   CalculatorOutlined,
+  DatabaseOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Link } from "react-router-dom";
@@ -47,73 +48,43 @@ const MySidebar = ({ children }) => {
 
   const items = [
     getItem("dashboard", "1", <PieChartOutlined />, "/dashboard"),
-    getItem("Building", "2", <LayoutOutlined />, "/master/building"),
-    getItem("Warehouse", "3", <HomeOutlined />, "/master/warehouse"),
-    getItem(
-      "Sample Storage Location",
-      "4",
-      <GroupOutlined />,
-      "/master/samplestoragelocation"
-    ),
-    getItem(
-      "Storage Location",
-      "5",
-      <HddOutlined />,
-      "/master/storagelocation"
-    ),
-    getItem("Vendor", "6", <ShopOutlined />, "/master/vendor"),
-    getItem(
-      "Test Methode",
-      "7",
-      <ReconciliationOutlined />,
-      "/master/testmethode"
-    ),
-    getItem("Time Point", "8", <FieldTimeOutlined />, "/master/timepoint"),
-    getItem("Customer", "9", <TeamOutlined />, "/master/customer"),
-    getItem("Product", "10", <DropboxOutlined />, "/master/product"),
 
-    getItem("Department", "11", <ApartmentOutlined />, "/master/department"),
-    getItem("Equipment Type", "12", <ToolOutlined />, "/master/equipmenttype"),
-    getItem("Packing Type", "13", <InboxOutlined />, "/master/packingtype"),
-    getItem(
-      "Product Category",
-      "14",
-      <ShoppingOutlined />,
-      "/master/productcategory"
-    ),
-    getItem("Product Type", "15", <ProductOutlined />, "/master/producttype"),
-    getItem("Other Expense", "16", <ArrowUpOutlined />, "/master/otherexpense"),
-    getItem(
-      "Parameter Category",
-      "17",
-      <SlidersOutlined />,
-      "/master/parametercategory"
-    ),
-    getItem("Parameter", "18", <ControlOutlined />, "/master/parameter"),
-    getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
-    getItem("Labour", "20", <UserOutlined />, "/master/labour"),
-    getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
-    getItem(
-      "Formula Table Reference",
-      "22",
-      <CalculatorOutlined />,
-      "/master/formulatableref"
-    ),
-    getItem("Taking Sample", "23", <CalculatorOutlined />, "/master/taking-sample"),
-    getItem("Sample Registration", "24", <CalculatorOutlined />, "/master/sample-registration"),
-    getItem("Sample Handling", "25", <CalculatorOutlined />, "/master/sample-handling"),
-    getItem("Testing Result", "26", <CalculatorOutlined />, "/master/testing-result"),
-    getItem("Maintenance Request", "27", <CalculatorOutlined />, "/master/maintenance-request"),
-    getItem("Maintenance Process", "28", <CalculatorOutlined />, "/master/maintenance-process"),
-    getItem("Testing Order", "29", <CalculatorOutlined />, "/master/testing-order"),
-    getItem("Planning Taking Sample", "30", <CalculatorOutlined />, "/master/planning-taking-sample"),
-    getItem("Testing process", "31", <CalculatorOutlined />, "/master/testing-process"),
-    getItem("Adjustment", "32", <CalculatorOutlined />, "/master/adjustment"),
-    // getItem("User", "sub1", <UserOutlined />, null, [
-    //   getItem("Tom", "3", null, "/user/tom"),
-    //   getItem("Bill", "4", null, "/user/bill"),
-    //   getItem("Alex", "5", null, "/user/alex"),
-    // ]),
+    getItem("Master", "Master", <DatabaseOutlined />, null, [
+      getItem("Building", "2", <LayoutOutlined />, "/master/building"),
+      getItem("Warehouse", "3", <HomeOutlined />, "/master/warehouse"),
+      getItem("Sample Storage Location", "4", <GroupOutlined />, "/master/sample-storage-location"),
+      getItem("Storage Location", "5", <HddOutlined />, "/master/storage-location"),
+      getItem("Vendor", "6", <ShopOutlined />, "/master/vendor"),
+      getItem("Test Methode", "7", <ReconciliationOutlined />, "/master/test-methode"),
+      getItem("Time Point", "8", <FieldTimeOutlined />, "/master/time-point"),
+      getItem("Customer", "9", <TeamOutlined />, "/master/customer"),
+      getItem("Product", "10", <DropboxOutlined />, "/master/product"),
+      getItem("Department", "11", <ApartmentOutlined />, "/master/department"),
+      getItem("Equipment Type", "12", <ToolOutlined />, "/master/equipment-type"),
+      getItem("Packing Type", "13", <InboxOutlined />, "/master/packing-type"),
+      getItem("Product Category", "14", <ShoppingOutlined />, "/master/product-category"),
+      getItem("Product Type", "15", <ProductOutlined />, "/master/product-type"),
+      getItem("Other Expense", "16", <ArrowUpOutlined />, "/master/other-expense"),
+      getItem("Parameter Category", "17", <SlidersOutlined />, "/master/parameter-category"),
+      getItem("Parameter", "18", <ControlOutlined />, "/master/parameter"),
+      getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
+      getItem("Labour", "20", <UserOutlined />, "/master/labour"),
+      getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
+      getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-tableref")
+    ]),
+
+    getItem("Transaction", "Transaction", <ContainerOutlined />, null, [
+      getItem("Taking Sample", "23", null, "/transaction/taking-sample"),
+      getItem("Sample Registration", "24", null, "/transaction/sample-registration"),
+      getItem("Sample Handling", "25", null, "/transaction/sample-handling"),
+      getItem("Testing Result", "26", null, "/transaction/testing-result"),
+      getItem("Maintenance Request", "27", null, "/transaction/maintenance-request"),
+      getItem("Maintenance Process", "28", null, "/transaction/maintenance-process"),
+      getItem("Testing Order", "29", null, "/transaction/testing-order"),
+      getItem("Planning Taking Sample", "30", null, "/transaction/planning-taking-sample"),
+      getItem("Testing process", "31", null, "/transaction/testing-process"),
+      getItem("Adjustment", "32", null, "/transaction/adjustment"),
+    ]),
     // getItem("Team", "sub2", <TeamOutlined />, null, [
     //   getItem("Team 1", "6", null, "/team/team1"),
     //   getItem("Team 2", "8", null, "/team/team2"),
@@ -127,6 +98,7 @@ const MySidebar = ({ children }) => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        width={250} // Menambahkan lebar Sider
         style={{
           overflow: "auto",
           height: "100vh",
@@ -144,13 +116,13 @@ const MySidebar = ({ children }) => {
         <Menu
           theme="light"
           mode="inline"
-          // defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={["1"]}
           items={items}
         />
       </Sider>
       <Layout
         style={{
-          marginLeft: collapsed ? 80 : 200,
+          marginLeft: collapsed ? 80 : 250, // Menyesuaikan margin kiri sesuai dengan lebar Sider
           transition: "margin-left 0.2s",
           display: "flex",
           flexDirection: "column",
@@ -183,12 +155,12 @@ const MySidebar = ({ children }) => {
           {children}
         </Content>
         {/* <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer> */}
+      style={{
+        textAlign: "center",
+      }}
+    >
+      Ant Design ©{new Date().getFullYear()} Created by Ant UED
+    </Footer> */}
       </Layout>
     </Layout>
   );

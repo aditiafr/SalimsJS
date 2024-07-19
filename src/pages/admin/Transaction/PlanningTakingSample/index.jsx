@@ -9,7 +9,7 @@ const PlanningTakingSample = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="PLANNING TAKING SAMPLE" subtitle="All data planning taking sample" />
         <div>
-          <Link to="/master/planning-taking-sample/form">
+          <Link to="/transaction/planning-taking-sample/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
