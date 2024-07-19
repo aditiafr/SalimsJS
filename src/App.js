@@ -3,6 +3,7 @@ import MySidebar from "./components/Sidebar";
 import { Route, Routes } from "react-router-dom";
 import RoutesDashboard from "./routes/routesDashboard";
 import Login from "./pages/Login";
+import MyFooter from "./components/Footer";
 
 const App = () => {
   return (
@@ -12,9 +13,12 @@ const App = () => {
         <Route
           path="/*"
           element={
-            <MySidebar>
-              <RoutesDashboard />
-            </MySidebar>
+            <>
+              <MySidebar>
+                <RoutesDashboard />
+              </MySidebar>
+              <MyFooter />
+            </>
           }
         />
       </Routes>
