@@ -33,6 +33,14 @@ import SampleStorageLocation from "../pages/admin/Master/SampleStorageLocation";
 import FormSampleStorageLocation from "../pages/admin/Master/SampleStorageLocation/form";
 import StorageLocation from "../pages/admin/Master/StorageLocation";
 import FormStorageLocation from "../pages/admin/Master/StorageLocation/form";
+import Vendor from "../pages/admin/Master/Vendor";
+import FormVendor from "../pages/admin/Master/Vendor/form";
+import TestMethode from "../pages/admin/Master/TestMethode";
+import FormTestMethode from "../pages/admin/Master/TestMethode/form";
+import TimePoint from "../pages/admin/Master/TimePoint";
+import FormTimePoint from "../pages/admin/Master/TimePoint/form";
+import Customer from "../pages/admin/Master/Customer";
+import FormCustomer from "../pages/admin/Master/Customer/form";
 
 const RoutesDashboard = () => {
   const mainRoutes = [
@@ -76,6 +84,42 @@ const RoutesDashboard = () => {
     {
       path: "/master/storage-location/form",
       element: <FormStorageLocation />,
+    },
+    
+    {
+      path: "/master/vendor",
+      element: <Vendor />,
+    },
+    {
+      path: "/master/vendor/form",
+      element: <FormVendor />,
+    },
+    
+    {
+      path: "/master/test-methode",
+      element: <TestMethode />,
+    },
+    {
+      path: "/master/test-methode/form",
+      element: <FormTestMethode />,
+    },
+    
+    {
+      path: "/master/time-point",
+      element: <TimePoint />,
+    },
+    {
+      path: "/master/time-point/form",
+      element: <FormTimePoint />,
+    },
+    
+    {
+      path: "/master/customer",
+      element: <Customer />,
+    },
+    {
+      path: "/master/customer/form",
+      element: <FormCustomer />,
     },
 
 
