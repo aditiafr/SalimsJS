@@ -41,6 +41,16 @@ import TimePoint from "../pages/admin/Master/TimePoint";
 import FormTimePoint from "../pages/admin/Master/TimePoint/form";
 import Customer from "../pages/admin/Master/Customer";
 import FormCustomer from "../pages/admin/Master/Customer/form";
+import Department from "../pages/admin/Master/Department";
+import FormDepartment from "../pages/admin/Master/Department/form";
+import EquipmentType from "../pages/admin/Master/EquipmentType";
+import FormEquipmentType from "../pages/admin/Master/EquipmentType/form";
+import PackingType from "../pages/admin/Master/PackingType";
+import FormPackingType from "../pages/admin/Master/PackingType/form";
+import ProductCategory from "../pages/admin/Master/ProductCategory";
+import FormProductCategory from "../pages/admin/Master/ProductCategory/form";
+import ProductType from "../pages/admin/Master/ProductType";
+import FormProductType from "../pages/admin/Master/ProductType/form";
 
 const RoutesDashboard = () => {
   const mainRoutes = [
@@ -120,6 +130,51 @@ const RoutesDashboard = () => {
     {
       path: "/master/customer/form",
       element: <FormCustomer />,
+    },
+    
+    {
+      path: "/master/department",
+      element: <Department />,
+    },
+    {
+      path: "/master/department/form",
+      element: <FormDepartment />,
+    },
+    
+    {
+      path: "/master/equipment-type",
+      element: <EquipmentType />,
+    },
+    {
+      path: "/master/equipment-type/form",
+      element: <FormEquipmentType />,
+    },
+    
+    {
+      path: "/master/packing-type",
+      element: <PackingType />,
+    },
+    {
+      path: "/master/packing-type/form",
+      element: <FormPackingType />,
+    },
+    
+    {
+      path: "/master/product-category",
+      element: <ProductCategory />,
+    },
+    {
+      path: "/master/product-category/form",
+      element: <FormProductCategory />,
+    },
+    
+    {
+      path: "/master/product-type",
+      element: <ProductType />,
+    },
+    {
+      path: "/master/product-type/form",
+      element: <FormProductType />,
     },
 
 
