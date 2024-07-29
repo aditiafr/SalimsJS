@@ -1,9 +1,10 @@
 import { Button, Input, Space, Table } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EditBuilding from "./edit";
 import DeleteBuilding from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { getBuilding } from "../API/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -13,61 +14,19 @@ const columns = [
     title: "No",
     dataIndex: "key",
     key: "key",
-    width: 80,
+    width: 40,
     fixed: "left",
   },
   {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
+    title: "BuildingCode",
+    dataIndex: "BuildingCode",
+    key: "BuildingCode",
     width: 150,
   },
   {
-    title: "Address",
-    dataIndex: "Address",
-    key: "Address",
-    width: 150,
-  },
-  {
-    title: "ZIP Code",
-    dataIndex: "ZIPCode",
-    key: "ZIPCode",
-    width: 150,
-  },
-  {
-    title: "City",
-    dataIndex: "City",
-    key: "City",
-    width: 150,
-  },
-  {
-    title: "Country",
-    dataIndex: "Country",
-    key: "Country",
-    width: 150,
-  },
-  {
-    title: "Phone",
-    dataIndex: "Phone",
-    key: "Phone",
-    width: 150,
-  },
-  {
-    title: "Contact",
-    dataIndex: "Contact",
-    key: "Contact",
-    width: 150,
-  },
-  {
-    title: "Fax",
-    dataIndex: "Fax",
-    key: "Fax",
-    width: 150,
-  },
-  {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
+    title: "BuildingName",
+    dataIndex: "BuildingName",
+    key: "BuildingName",
     width: 150,
   },
   {
@@ -82,58 +41,76 @@ const columns = [
     ),
   },
 ];
-const data = [
-  {
-    key: "1",
-    Code: "BLD01",
-    Address: "Jl. Jendral Sudirman",
-    ZIPCode: "ZIP01",
-    City: "Jakarta Pusat",
-    Country: "Indonesia",
-    Phone: "0812345678",
-    Contact: "Slamet",
-    Fax: "17829",
-    Desciption: "Test Data",
-  },
-  {
-    key: "2",
-    Code: "BLD02",
-    Address: "Jl. Jendral Sudirman",
-    ZIPCode: "ZIP01",
-    City: "Jakarta Pusat",
-    Country: "Indonesia",
-    Phone: "0812345678",
-    Contact: "Slamet",
-    Fax: "17829",
-    Desciption: "Test Data",
-  },
-  {
-    key: "3",
-    Code: "BLD03",
-    Address: "Jl. Jendral Sudirman",
-    ZIPCode: "ZIP01",
-    City: "Jakarta Pusat",
-    Country: "Indonesia",
-    Phone: "0812345678",
-    Contact: "Slamet",
-    Fax: "17829",
-    Desciption: "Test Data",
-  },
-  {
-    key: "4",
-    Code: "BLD04",
-    Address: "Jl. Jendral Sudirman",
-    ZIPCode: "ZIP01",
-    City: "Jakarta Pusat",
-    Country: "Indonesia",
-    Phone: "0812345678",
-    Contact: "Slamet",
-    Fax: "17829",
-    Desciption: "Test Data",
-  },
-];
+// const data = [
+//   {
+//     key: "1",
+//     Code: "BLD01",
+//     Address: "Jl. Jendral Sudirman",
+//     ZIPCode: "ZIP01",
+//     City: "Jakarta Pusat",
+//     Country: "Indonesia",
+//     Phone: "0812345678",
+//     Contact: "Slamet",
+//     Fax: "17829",
+//     Desciption: "Test Data",
+//   },
+//   {
+//     key: "2",
+//     Code: "BLD02",
+//     Address: "Jl. Jendral Sudirman",
+//     ZIPCode: "ZIP01",
+//     City: "Jakarta Pusat",
+//     Country: "Indonesia",
+//     Phone: "0812345678",
+//     Contact: "Slamet",
+//     Fax: "17829",
+//     Desciption: "Test Data",
+//   },
+//   {
+//     key: "3",
+//     Code: "BLD03",
+//     Address: "Jl. Jendral Sudirman",
+//     ZIPCode: "ZIP01",
+//     City: "Jakarta Pusat",
+//     Country: "Indonesia",
+//     Phone: "0812345678",
+//     Contact: "Slamet",
+//     Fax: "17829",
+//     Desciption: "Test Data",
+//   },
+//   {
+//     key: "4",
+//     Code: "BLD04",
+//     Address: "Jl. Jendral Sudirman",
+//     ZIPCode: "ZIP01",
+//     City: "Jakarta Pusat",
+//     Country: "Indonesia",
+//     Phone: "0812345678",
+//     Contact: "Slamet",
+//     Fax: "17829",
+//     Desciption: "Test Data",
+//   },
+// ];
 
 const Building = () => {
+
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await getBuilding();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+  console.log(data);
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">

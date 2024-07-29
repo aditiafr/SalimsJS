@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,11 +20,18 @@ const Login = () => {
         }
       );
       console.log(response.data);
+
+      // Menyimpan response.data ke localStorage
+      // localStorage.setItem('userData', JSON.stringify(response.data));
+
+      Cookies.set('accessToken', response.data.Token, { expires: 7 });
+
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
     }
   };
+
 
   return (
     <>
