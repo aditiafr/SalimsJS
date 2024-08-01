@@ -24,3 +24,14 @@ export const getDepartments = async () => {
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
+
+export const getWarehouse = async () => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.get(`${baseUrl}/get/wareouse`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+} 

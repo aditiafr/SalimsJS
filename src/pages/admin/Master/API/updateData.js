@@ -23,3 +23,13 @@ export const updateDepartment = async (DepartmentCode, DepartmentData) => {
     });
     return response;
 }
+
+export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/warehouse?WarehouseCode=${WarehouseCode}`, WarehouseData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

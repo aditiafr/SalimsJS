@@ -5,26 +5,36 @@ import EditBuilding from "./edit";
 import DeleteBuilding from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { getBuilding } from "../API/getData";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const Building = () => {
   const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await getBuilding();
       setData(response);
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     {
@@ -119,18 +129,19 @@ const Building = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
+          <Input
             placeholder="search..."
             allowClear
-            onSearch={onSearch}
+            value={searchText}
+            onChange={handleSearch}
             style={{ width: 200 }}
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
