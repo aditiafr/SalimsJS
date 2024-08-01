@@ -9,91 +9,7 @@ const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "No",
-    dataIndex: "key",
-    key: "key",
-    width: 40,
-    fixed: "left",
-  },
-  {
-    title: "BuildingCode",
-    dataIndex: "BuildingCode",
-    key: "BuildingCode",
-    width: 150,
-  },
-  {
-    title: "BuildingName",
-    dataIndex: "BuildingName",
-    key: "BuildingName",
-    width: 150,
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditBuilding />
-        <DeleteBuilding />
-      </Space>
-    ),
-  },
-];
-// const data = [
-//   {
-//     key: "1",
-//     Code: "BLD01",
-//     Address: "Jl. Jendral Sudirman",
-//     ZIPCode: "ZIP01",
-//     City: "Jakarta Pusat",
-//     Country: "Indonesia",
-//     Phone: "0812345678",
-//     Contact: "Slamet",
-//     Fax: "17829",
-//     Desciption: "Test Data",
-//   },
-//   {
-//     key: "2",
-//     Code: "BLD02",
-//     Address: "Jl. Jendral Sudirman",
-//     ZIPCode: "ZIP01",
-//     City: "Jakarta Pusat",
-//     Country: "Indonesia",
-//     Phone: "0812345678",
-//     Contact: "Slamet",
-//     Fax: "17829",
-//     Desciption: "Test Data",
-//   },
-//   {
-//     key: "3",
-//     Code: "BLD03",
-//     Address: "Jl. Jendral Sudirman",
-//     ZIPCode: "ZIP01",
-//     City: "Jakarta Pusat",
-//     Country: "Indonesia",
-//     Phone: "0812345678",
-//     Contact: "Slamet",
-//     Fax: "17829",
-//     Desciption: "Test Data",
-//   },
-//   {
-//     key: "4",
-//     Code: "BLD04",
-//     Address: "Jl. Jendral Sudirman",
-//     ZIPCode: "ZIP01",
-//     City: "Jakarta Pusat",
-//     Country: "Indonesia",
-//     Phone: "0812345678",
-//     Contact: "Slamet",
-//     Fax: "17829",
-//     Desciption: "Test Data",
-//   },
-// ];
-
 const Building = () => {
-
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
@@ -109,7 +25,87 @@ const Building = () => {
     fetchData();
   }, [])
 
-  console.log(data);
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "BuildingCode",
+      dataIndex: "BuildingCode",
+      key: "BuildingCode",
+      width: 150,
+    },
+    {
+      title: "BuildingName",
+      dataIndex: "BuildingName",
+      key: "BuildingName",
+      width: 150,
+    },
+    {
+      title: "Address",
+      dataIndex: "Address",
+      key: "Address",
+      width: 150,
+    },
+    {
+      title: "Phone",
+      dataIndex: "Phone",
+      key: "Phone",
+      width: 150,
+    },
+    {
+      title: "Fax",
+      dataIndex: "Fax",
+      key: "Fax",
+      width: 150,
+    },
+    {
+      title: "Contact",
+      dataIndex: "Contact",
+      key: "Contact",
+      width: 150,
+    },
+    {
+      title: "ZIPCode",
+      dataIndex: "ZIPCode",
+      key: "ZIPCode",
+      width: 150,
+    },
+    {
+      title: "City",
+      dataIndex: "City",
+      key: "City",
+      width: 150,
+    },
+    {
+      title: "Country",
+      dataIndex: "Country",
+      key: "Country",
+      width: 150,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 150,
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditBuilding dataSource={record} onEdit={fetchData} />
+          <DeleteBuilding />
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <>

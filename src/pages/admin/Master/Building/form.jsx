@@ -1,13 +1,72 @@
+import React, { useEffect, useState } from 'react';
+import { Col, Form, Input, Row } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { Col, Form, Input, Row } from "antd";
+import { postBuilding } from "../API/postData";
+import { JsonCreateModif } from "../API/Json";
+import { useMessageContext } from '../../../../components/Dashboard/Global/MessageContext';
+import { getBuilding } from '../API/getData';
 
 const FormBuilding = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [buildingCode, setBuildingCode] = useState("");
+
+  const fetchBuilding = async () => {
+    try {
+      setLoading(true);
+      const response = await getBuilding();
+      if (response.length > 0) {
+        const BCode = response.filter(
+          (item) => item.BuildingCode && item.BuildingCode.startsWith("BLD")
+        );
+        if (BCode.length > 0) {
+          const lastCode = BCode[BCode.length - 1].BuildingCode;
+          const nextNumber = parseInt(lastCode.substr(3)) + 1;
+          setBuildingCode(`BLD${nextNumber.toString().padStart(2, "0")}`);
+        } else {
+          setBuildingCode("BLD01");
+        }
+      } else {
+        setBuildingCode("BLD01");
+      }
+    } catch (error) {
+      setBuildingCode("BLD01");
+      console.log(error.response.statusText);
+    }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    fetchBuilding();
+  }, [])
+
+  useEffect(() => {
+    form.setFieldsValue({ BuildingCode: buildingCode });
+  }, [buildingCode, form]);
+
+  const handleSubmit = async (values) => {
+    console.log("Success:", values);
+    try {
+      const modifiedValues = {
+        ...values,
+        ...JsonCreateModif
+      }
+      const response = await postBuilding(modifiedValues);
+      messageApi.open({
+        type: 'success',
+        content: response.data.statusMessage,
+      });
+      navigate("/master/building");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -25,7 +84,7 @@ const FormBuilding = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -33,12 +92,12 @@ const FormBuilding = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="Code"
+                label="Building Code"
+                name="BuildingCode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Code!",
+                    message: "Please input your Building Code!",
                   },
                 ]}
               >
@@ -48,12 +107,12 @@ const FormBuilding = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Building Name"
+                name="BuildingName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Building Name!",
                   },
                 ]}
               >
@@ -78,12 +137,27 @@ const FormBuilding = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="ZipCode"
-                name="ZipCode"
+                label="Phone"
+                name="Phone"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your ZipCode!",
+                    message: "Please input your Phone!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Contact"
+                name="Contact"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Contact!",
                   },
                 ]}
               >
@@ -123,36 +197,6 @@ const FormBuilding = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Phone"
-                name="Phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Phone!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact"
-                name="Contact"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
                 label="Fax"
                 name="Fax"
                 rules={[
@@ -167,12 +211,29 @@ const FormBuilding = () => {
             </Col>
 
             <Col xs={24} sm={12}>
+              <Form.Item
+                label="ZIPCode"
+                name="ZIPCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your ZIPCode!",
+                  },
+                ]}
+              >
+                <Input maxLength={5} />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
               <Form.Item label="Description" name="Description">
                 <Input.TextArea />
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
+
         </Form>
       </div>
     </>

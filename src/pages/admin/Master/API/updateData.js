@@ -3,13 +3,13 @@ import Cookies from "js-cookie";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 
-export const getBuilding = async () => {
+
+export const updateBuilding = async (BuildingCode, BuildingData) => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/building`, {
+    const response = await axios.patch(`${baseUrl}/put/building?BuildingCode=${BuildingCode}`, BuildingData, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
-
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+    return response;
+}

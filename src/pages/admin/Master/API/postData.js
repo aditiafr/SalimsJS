@@ -3,13 +3,14 @@ import Cookies from "js-cookie";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 
-export const getBuilding = async () => {
+
+// MASTER DATA
+export const postBuilding = async (BuildingData) => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/building`, {
+    const response = await axios.post(`${baseUrl}/post/building`, BuildingData, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
-
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+    return response;
+}

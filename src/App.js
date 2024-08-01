@@ -17,7 +17,7 @@ const App = () => {
               <MySidebar>
                 <RoutesDashboard />
               </MySidebar>
-              <MyFooter />
+              {/* <MyFooter /> */}
             </>
           }
         />

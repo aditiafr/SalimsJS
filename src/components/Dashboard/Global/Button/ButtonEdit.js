@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 
-const ButtonEdit = ({ onReset }) => {
+const ButtonEdit = ({ onReset, onLoading }) => {
   return (
     <div
       style={{
@@ -20,7 +20,7 @@ const ButtonEdit = ({ onReset }) => {
       <Button type="primary" danger htmlType="button" onClick={onReset}>
         Cancel
       </Button>
-      <Button type="primary" htmlType="submit">
+      <Button type="primary" htmlType="submit" loading={onLoading}>
         Submit
       </Button>
     </div>
