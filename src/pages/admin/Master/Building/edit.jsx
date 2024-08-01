@@ -9,8 +9,6 @@ import { updateBuilding } from "../API/updateData";
 
 const EditBuilding = ({ dataSource, onEdit }) => {
 
-  console.log(dataSource);
-
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { messageApi } = useMessageContext();
@@ -50,7 +48,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
   };
 
   const onReset = () => {
-    form.resetFields();
+    form.setFieldsValue(dataSource);
     setIsModalOpen(false);
   };
 
@@ -109,7 +107,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                   },
                 ]}
               >
-                <Input />
+                <Input autoFocus />
               </Form.Item>
             </Col>
 
@@ -145,6 +143,21 @@ const EditBuilding = ({ dataSource, onEdit }) => {
 
             <Col xs={24} sm={12}>
               <Form.Item
+                label="Fax"
+                name="Fax"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Fax!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
                 label="Contact"
                 name="Contact"
                 rules={[
@@ -155,6 +168,21 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 ]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="ZIP Code"
+                name="ZIPCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your ZIP Code!",
+                  },
+                ]}
+              >
+                <Input maxLength={5} />
               </Form.Item>
             </Col>
 
@@ -189,36 +217,6 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="Fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIPCode"
-                name="ZIPCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIPCode!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
               <Form.Item label="Description" name="Description">
                 <Input.TextArea />
               </Form.Item>
@@ -227,7 +225,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
 
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
-      </Modal>
+      </Modal >
     </>
   );
 };

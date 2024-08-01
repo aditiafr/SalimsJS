@@ -43,7 +43,7 @@ const FormBuilding = () => {
 
   useEffect(() => {
     fetchBuilding();
-  }, [])
+  }, []);
 
   useEffect(() => {
     form.setFieldsValue({ BuildingCode: buildingCode });
@@ -116,7 +116,7 @@ const FormBuilding = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input autoFocus />
               </Form.Item>
             </Col>
 
@@ -152,6 +152,21 @@ const FormBuilding = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
+                label="Fax"
+                name="Fax"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Fax!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
                 label="Contact"
                 name="Contact"
                 rules={[
@@ -162,6 +177,21 @@ const FormBuilding = () => {
                 ]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="ZIP Code"
+                name="ZIPCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your ZIP Code!",
+                  },
+                ]}
+              >
+                <Input maxLength={5} />
               </Form.Item>
             </Col>
 
@@ -192,36 +222,6 @@ const FormBuilding = () => {
                 ]}
               >
                 <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="Fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIPCode"
-                name="ZIPCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIPCode!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
               </Form.Item>
             </Col>
 

@@ -14,3 +14,13 @@ export const postBuilding = async (BuildingData) => {
     });
     return response;
 }
+
+export const postWarehouse = async (WarehouseData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.post(`${baseUrl}/post/warehouse`, WarehouseData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
