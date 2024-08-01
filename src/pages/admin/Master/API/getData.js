@@ -13,3 +13,14 @@ export const getBuilding = async () => {
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
 } 
+
+export const getDepartments = async () => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.get(`${baseUrl}/get/department`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+}

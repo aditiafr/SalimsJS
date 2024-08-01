@@ -13,3 +13,13 @@ export const updateBuilding = async (BuildingCode, BuildingData) => {
     });
     return response;
 }
+
+export const updateDepartment = async (DepartmentCode, DepartmentData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/department?DeepCode=${DepartmentCode}`, DepartmentData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

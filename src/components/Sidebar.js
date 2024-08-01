@@ -26,6 +26,10 @@ import {
   CalculatorOutlined,
   DatabaseOutlined,
   ContainerOutlined,
+  BorderOuterOutlined,
+  BorderInnerOutlined,
+  TagOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Link } from "react-router-dom";
@@ -70,7 +74,11 @@ const MySidebar = ({ children }) => {
       getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
       getItem("Labour", "20", <UserOutlined />, "/master/labour"),
       getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
-      getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-tableref")
+      getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-table-ref"),
+      getItem("Zona", "23", <BorderOuterOutlined />, "/master/zona"),
+      getItem("Sub Zona", "24", <BorderInnerOutlined />, "/master/sub-zona"),
+      getItem("Price List M", "25", <TagOutlined />, "/master/price-list-m"),
+      getItem("Price List D", "26", <TagsOutlined />, "/master/price-list-d"),
     ]),
 
     getItem("Transaction", "Transaction", <ContainerOutlined />, null, [

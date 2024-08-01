@@ -1,52 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
-import { EditFilled } from "@ant-design/icons";
-import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../API/Json";
-import { updateDepartment } from "../API/updateData";
+import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { EditFilled } from "@ant-design/icons";
+import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
+import React, { useState } from "react";
 
-const EditDepartment = ({ dataSource, onEdit }) => {
-  console.log(dataSource);
-
-  const [form] = Form.useForm();
+const EditParameterCategory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    form.setFieldsValue(dataSource);
-  }, [dataSource, form]);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (values) => {
-    console.log("Updated data:", values);
+  const [form] = Form.useForm();
 
-    try {
-      setLoading(true);
-      const payload = {
-        ...values,
-        ...JsonCreateModif,
-      };
-
-      const response = await updateDepartment(dataSource.DepCode, payload);
-      messageApi.open({
-        type: "success",
-        content: response.data.statusMessage,
-      });
-
-      onEdit(true);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-    setLoading(false);
+  const onFinish = (values) => {
+    console.log("Success:", values);
   };
-
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -65,8 +34,8 @@ const EditDepartment = ({ dataSource, onEdit }) => {
       <Modal
         title={
           <HeaderTitle
-            title="DEPARTMENT"
-            subtitle="Edit data a department"
+            title="PARAMETER CATEGORY"
+            subtitle="Edit data a parameter category"
           />
         }
         centered
@@ -84,7 +53,7 @@ const EditDepartment = ({ dataSource, onEdit }) => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={handleSubmit}
+          onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -93,24 +62,24 @@ const EditDepartment = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Code"
-                name="DepCode"
+                name="Code"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Code!",
+                    message: "Please input your Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} disabled />
+                <Input maxLength={20} />
               </Form.Item>
               
               <Form.Item
                 label="Name"
-                name="DepName"
+                name="Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Name!",
+                    message: "Please input your Name!",
                   },
                 ]}
               >
@@ -123,16 +92,16 @@ const EditDepartment = ({ dataSource, onEdit }) => {
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
+              <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>
           </Row>
-          <ButtonEdit onReset={onReset} onLoading={loading}/>
+          <ButtonEdit onReset={onReset} />
         </Form>
       </Modal>
     </>
   );
 };
 
-export default EditDepartment;
+export default EditParameterCategory;
