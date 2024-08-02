@@ -34,9 +34,9 @@ const columns = [
     width: 150,
   },
   {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
     width: 150,
   },
   {
@@ -57,7 +57,7 @@ const data = [
     Building: "BLD01",
     Code: "001",
     Name: "Sudirman",
-    Desciption: "Test Data",
+    Description: "Test Data",
   },
 ];
 

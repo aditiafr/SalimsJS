@@ -8,8 +8,6 @@ import { JsonCreateModif } from "../API/Json";
 import { updateDepartment } from "../API/updateData";
 
 const EditDepartment = ({ dataSource, onEdit }) => {
-  console.log(dataSource);
-
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { messageApi } = useMessageContext();

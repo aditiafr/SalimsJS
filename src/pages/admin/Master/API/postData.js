@@ -34,3 +34,13 @@ export const postWarehouse = async (WarehouseData) => {
     });
     return response;
 }
+
+export const postEquipmentType = async (EquipmentTypeData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.post(`${baseUrl}/post/equipmentType`, EquipmentTypeData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

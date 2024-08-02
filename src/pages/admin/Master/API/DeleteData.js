@@ -12,3 +12,13 @@ export const deleteDepartment = async (DepartmentCode) => {
     });
     return response;
 }
+
+export const deleteEquipmentType = async (EquipmentTypeCode) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/delete/equipmentType?EquipmentTypeCode=${EquipmentTypeCode}`, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

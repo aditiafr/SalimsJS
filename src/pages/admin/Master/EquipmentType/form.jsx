@@ -1,13 +1,77 @@
 import { Form, Input, Col, Row, Checkbox } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { useEffect, useState } from "react";
+import { postEquipmentType } from "../API/postData";
+import { JsonCreateModif } from "../API/Json";
+import { getEquipmentType } from "../API/getData";
 
 const FormEquipmentType = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [equipmentTypeCode, setEquipmentTypeCode] = useState("");
+
+  const fetchEquipmentType = async () => {
+    try {
+      setLoading(true);
+      const response = await getEquipmentType();
+      if (response.length > 0) {
+        const ECode = response.filter(
+          (item) => item.EquipmentTypeCode && item.EquipmentTypeCode.startsWith("EQ-")
+        );
+
+        if (ECode.length > 0) {
+          const lastCode = ECode[ECode.length - 1].EquipmentTypeCode;
+          const nextNumber = parseInt(lastCode.substr(3)) + 1;
+          setEquipmentTypeCode(`EQ-${nextNumber.toString().padStart(3, "0")}`);
+        } else {
+          setEquipmentTypeCode("EQ-01");
+        }
+      } else {
+        setEquipmentTypeCode("EQ-01");
+      }
+    } catch (error) {
+      setEquipmentTypeCode("EQ-01");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchEquipmentType();
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ equipmentTypeCode: equipmentTypeCode });
+  }, [equipmentTypeCode, form]);
+
+  const handleSubmit = async (values) => {
+    console.log("Send data:", values);
+
+    try {
+      const payload = {
+        ...values,
+        ...JsonCreateModif,
+      };
+
+      const response = await postEquipmentType(payload);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+
+      navigate("/master/equipment-type");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -28,7 +92,7 @@ const FormEquipmentType = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -36,25 +100,25 @@ const FormEquipmentType = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="Code"
+                label="Equipment Type Code"
+                name="equipmentTypeCode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Code!",
+                    message: "Please input Equipment Type Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input />
               </Form.Item>
 
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Equipment Type Name"
+                name="equipmentTypeName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input Equipment Type Name!",
                   },
                 ]}
               >
@@ -63,16 +127,16 @@ const FormEquipmentType = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
+              <Form.Item name="isSuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

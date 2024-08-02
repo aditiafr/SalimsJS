@@ -3,76 +3,77 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditEquipmentType from "./edit";
 import DeleteEquipmentType from "./delete";
+import { useEffect, useState } from "react";
+import { getEquipmentType } from "../API/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditEquipmentType />
-        <DeleteEquipmentType name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Code: "EQP001",
-    Name: "Equipment Type 1",
-    Desciption: "Description Equipment Type 1",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Code: "EQP002",
-    Name: "Equipment Type 2",
-    Desciption: "Description Equipment Type 2",
-    Suspended: true,
-  },
-  {
-    key: 3,
-    Code: "EQP003",
-    Name: "Equipment Type 3",
-    Desciption: null,
-    Suspended: false,
-  },
-];
-
 const EquipmentType = () => {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await getEquipmentType()
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "Equipment Type Code",
+      dataIndex: "EquipmentTypeCode",
+      key: "EquipmentTypeCode",
+      width: 80,
+    },
+    {
+      title: "Equipment Type Name",
+      dataIndex: "EquipmentTypeName",
+      key: "EquipmentTypeName",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 200,
+      render: (text) => (text || "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "Suspended",
+      key: "IsSuspend",
+      width: 100,
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditEquipmentType dataSource={record} onEdit={fetchData} />
+          <DeleteEquipmentType EquipmentTypeCode={record.EquipmentTypeCode} name={record.EquipmentTypeName} onDelete={fetchData} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">

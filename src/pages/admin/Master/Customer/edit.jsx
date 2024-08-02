@@ -261,7 +261,7 @@ const EditCustomer = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Desciption">
+              <Form.Item label="Description" name="Description">
                 <Input.TextArea />
               </Form.Item>
             </Col>

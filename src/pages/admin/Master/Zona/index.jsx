@@ -46,9 +46,9 @@ const columns = [
     width: 100,
   },
   {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
     width: 200,
     render: (text) => (text ?? "N/A"),
   },

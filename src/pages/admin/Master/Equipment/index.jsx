@@ -83,9 +83,9 @@ const columns = [
     render: (text) => (text ? `${text}°C` : "N/A"),
   },
   {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
     width: 200,
     render: (text) => (text ?? "N/A"),
   },

@@ -69,9 +69,9 @@ const columns = [
     width: 150,
   },
   {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
     width: 150,
   },
   {
@@ -107,7 +107,7 @@ const data = [
     Phone: "0812398162",
     Contact: "Ahmad",
     Email: "ahmad@gmail.com",
-    Desciption: "Data 1",
+    Description: "Data 1",
     Suspended: false,
   },
   {
@@ -121,7 +121,7 @@ const data = [
     Phone: "0822398262",
     Contact: "Ahmad",
     Email: "ahmad@gmail.com",
-    Desciption: "Data 2",
+    Description: "Data 2",
     Suspended: true,
   },
 ];

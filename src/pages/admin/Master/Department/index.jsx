@@ -55,7 +55,7 @@ const Department = () => {
     {
       title: "Suspended",
       dataIndex: "Suspended",
-      key: "Suspended",
+      key: "IsSuspend",
       width: 100,
       render: (suspended = false) => (
          <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>

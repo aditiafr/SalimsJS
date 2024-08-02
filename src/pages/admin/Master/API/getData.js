@@ -35,3 +35,14 @@ export const getWarehouse = async () => {
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
 } 
+
+export const getEquipmentType = async () => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.get(`${baseUrl}/get/equipmentType`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+}

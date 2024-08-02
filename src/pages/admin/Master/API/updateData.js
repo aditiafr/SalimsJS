@@ -33,3 +33,13 @@ export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
     });
     return response;
 }
+
+export const updateEquipmentType = async (EquipmentTypeCode, EquipmentTypeData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/equipmentType?EquipmentTypeCode=${EquipmentTypeCode}`, EquipmentTypeData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
