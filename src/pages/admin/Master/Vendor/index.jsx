@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table } from "antd";
 import EditVendor from "./edit";
 import DeleteVendor from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";

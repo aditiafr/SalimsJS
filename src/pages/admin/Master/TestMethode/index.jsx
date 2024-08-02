@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditTestMethode from "./edit";
