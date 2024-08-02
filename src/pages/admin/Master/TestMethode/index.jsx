@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import EditTestMethode from "./edit";
 import DeleteTestMethode from "./delete";
 import { useEffect, useState } from "react";
-import { getTestMethode } from "../API/getData";
+import { getTestMethode } from "../../../../Api/Master/getData";
 
 const TestMethode = () => {
   const [data, setData] = useState([]);

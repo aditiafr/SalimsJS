@@ -5,7 +5,7 @@ import DeleteTimePoint from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getTimePoint } from "../API/getData";
+import { getTimePoint } from "../../../../Api/Master/getData";
 
 const TimePoint = () => {
   const [data, setData] = useState([]);

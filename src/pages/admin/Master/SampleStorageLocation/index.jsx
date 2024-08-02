@@ -4,7 +4,7 @@ import DeleteSampleStorageLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getSampleSLocation } from "../API/getData";
+import { getSampleSLocation } from "../../../../Api/Master/getData";
 
 const SampleStorageLocation = () => {
   const [data, setData] = useState([]);

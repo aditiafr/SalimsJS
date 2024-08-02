@@ -4,10 +4,10 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useCallback, useEffect, useState } from "react";
-import { getSampleSLocation } from "../API/getData";
 import InputModal from "./InputModal";
-import { JsonCreateModif } from "../API/Json";
-import { postSampleSLocation } from "../API/postData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { postSampleSLocation } from "../../../../Api/Master/postData";
+import { getSampleSLocation } from "../../../../Api/Master/getData";
 
 const FormSampleStorageLocation = () => {
   const [form] = Form.useForm();
@@ -23,7 +23,6 @@ const FormSampleStorageLocation = () => {
 
   const fetchSampleSLocation = useCallback(async () => {
     try {
-      setLoading(true);
       const response = await getSampleSLocation(buildingCode);
       if (response.length > 0) {
         const BCode = response.filter(
@@ -43,7 +42,6 @@ const FormSampleStorageLocation = () => {
       setSampleSLocationCode("LOC01");
       console.log(error.response.statusText);
     }
-    setLoading(false);
   }, [buildingCode]);
 
   useEffect(() => {
@@ -86,9 +84,9 @@ const FormSampleStorageLocation = () => {
     form.resetFields();
   };
 
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+  // const onChange = (date, dateString) => {
+  //   console.log(date, dateString);
+  // };
 
   return (
     <>
@@ -200,7 +198,7 @@ const FormSampleStorageLocation = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

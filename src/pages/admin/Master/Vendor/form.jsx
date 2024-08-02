@@ -1,12 +1,12 @@
+import { useEffect, useState } from "react";
 import { Col, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { useEffect, useState } from "react";
-import { getVendor } from "../API/getData";
-import { JsonCreateModif } from "../API/Json";
-import { postVendor } from "../API/postData";
+import { getVendor } from "../../../../Api/Master/getData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { postVendor } from "../../../../Api/Master/postData";
 
 const FormVendor = () => {
   const [form] = Form.useForm();

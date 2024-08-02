@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import EditWarehouse from "./edit";
 import DeleteBuilding from "../Building/delete";
 import { useEffect, useState } from "react";
-import { getWarehouse } from "../API/getData";
+import { getWarehouse } from "../../../../Api/Master/getData";
 
 const Page = () => {
   const [data, setData] = useState([]);

@@ -4,7 +4,7 @@ import DeleteVendor from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getVendor } from "../API/getData";
+import { getVendor } from "../../../../Api/Master/getData";
 
 const Vendor = () => {
   const [data, setData] = useState([]);

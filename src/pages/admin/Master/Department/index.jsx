@@ -4,7 +4,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditDepartment from "./edit";
 import DeleteDepartment from "./delete";
-import { getDepartments } from "../API/getData";
+import { getDepartments } from "../../../../Api/Master/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);

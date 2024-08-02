@@ -4,9 +4,9 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
-import { getWarehouse } from "../API/getData";
-import { JsonCreateModif } from "../API/Json";
-import { postWarehouse } from "../API/postData";
+import { getWarehouse } from "../../../../Api/Master/getData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { postWarehouse } from "../../../../Api/Master/postData";
 
 const FormWarehouse = () => {
   const [form] = Form.useForm();

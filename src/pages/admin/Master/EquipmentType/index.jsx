@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import EditEquipmentType from "./edit";
 import DeleteEquipmentType from "./delete";
 import { useEffect, useState } from "react";
-import { getEquipmentType } from "../API/getData";
+import { getEquipmentType } from "../../../../Api/Master/getData";
+
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);

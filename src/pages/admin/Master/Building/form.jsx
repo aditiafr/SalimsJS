@@ -3,10 +3,10 @@ import { Col, Form, Input, Row } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { postBuilding } from "../API/postData";
-import { JsonCreateModif } from "../API/Json";
 import { useMessageContext } from '../../../../components/Dashboard/Global/MessageContext';
-import { getBuilding } from '../API/getData';
+import { getBuilding } from '../../../../Api/Master/getData';
+import { JsonCreateModif } from '../../../../Api/Master/Json';
+import { postBuilding } from '../../../../Api/Master/postData';
 
 const FormBuilding = () => {
   const [form] = Form.useForm();

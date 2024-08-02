@@ -3,7 +3,7 @@ import { Button, Modal, Tooltip } from "antd";
 import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { deleteDepartment } from "../API/DeleteData";
+import { deleteDepartment } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 

@@ -1,5 +1,3 @@
-"use client";
-
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
 import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Modal, Tooltip } from "antd";

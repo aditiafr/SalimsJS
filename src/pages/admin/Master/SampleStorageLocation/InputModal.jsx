@@ -1,6 +1,6 @@
 import { Input, Modal, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { getBuilding } from '../API/getData';
+import { getBuilding } from '../../../../Api/Master/getData';
 
 const columns = [
     {

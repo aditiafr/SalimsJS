@@ -4,7 +4,7 @@ import DeleteCustomer from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getCustomer } from "../API/getData";
+import { getCustomer } from "../../../../Api/Master/getData";
 
 const Customer = () => {
   const [data, setData] = useState([]);

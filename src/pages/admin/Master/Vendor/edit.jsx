@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../API/Json";
-import { updateVendor } from "../API/updateData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { updateVendor } from "../../../../Api/Master/updateData";
 
 const EditVendor = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();

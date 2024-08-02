@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import EditBuilding from "./edit";
 import DeleteBuilding from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-import { getBuilding } from "../API/getData";
+import { getBuilding } from "../../../../Api/Master/getData";
 
 const Building = () => {
   const [data, setData] = useState([]);

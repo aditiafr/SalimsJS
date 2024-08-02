@@ -3,9 +3,9 @@ import { Button, Col, Form, Input, Modal, Row, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { JsonCreateModif } from "../API/Json";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { updateBuilding } from "../API/updateData";
+import { updateBuilding } from "../../../../Api/Master/updateData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
 
 const EditBuilding = ({ dataSource, onEdit }) => {
 

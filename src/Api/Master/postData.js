@@ -75,16 +75,6 @@ export const postCustomer = async (CustomerData) => {
     return response;
 }
 
-export const postDepartments = async (DepartmentData) => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.post(`${baseUrl}/post/department`, DepartmentData, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response;
-}
-
 export const postEquipmentType = async (EquipmentTypeData) => {
     const token = Cookies.get('accessToken');
     const response = await axios.post(`${baseUrl}/post/equipment`, EquipmentTypeData, {

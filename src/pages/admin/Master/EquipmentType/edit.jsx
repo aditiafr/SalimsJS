@@ -4,8 +4,8 @@ import { EditFilled } from "@ant-design/icons";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../API/Json";
-import { updateEquipmentType } from "../API/updateData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { updateEquipmentType } from "../../../../Api/Master/updateData";
 
 const EditEquipmentType = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
@@ -28,7 +28,7 @@ const EditEquipmentType = ({ dataSource, onEdit }) => {
       setLoading(true);
       const payload = {
         ...values,
-        ...JsonCreateModif,
+        ...JsonCreateModif
       };
 
       const response = await updateEquipmentType(dataSource.EquipmentTypeCode, payload);

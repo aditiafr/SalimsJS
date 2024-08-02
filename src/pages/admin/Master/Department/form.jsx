@@ -4,9 +4,9 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
-import { getDepartments } from "../API/getData";
-import { postDepartment } from "../API/postData";
-import { JsonCreateModif } from "../API/Json";
+import { getDepartments } from "../../../../Api/Master/getData";
+import { JsonCreateModif } from "../../../../Api/Master/Json";
+import { postDepartment } from "../../../../Api/Master/postData";
 
 const FormDepartment = () => {
   const [form] = Form.useForm();
@@ -57,7 +57,7 @@ const FormDepartment = () => {
     try {
       const payload = {
         ...values,
-        ...JsonCreateModif,
+        ...JsonCreateModif
       };
 
       const response = await postDepartment(payload);
