@@ -80,16 +80,16 @@ const MySidebar = ({ children }) => {
     ]),
 
     getItem("Transaction", "Transaction", <ContainerOutlined />, null, [
-      getItem("Taking Sample", "23", null, "/transaction/taking-sample"),
-      getItem("Sample Registration", "24", null, "/transaction/sample-registration"),
-      getItem("Sample Handling", "25", null, "/transaction/sample-handling"),
-      getItem("Testing Result", "26", null, "/transaction/testing-result"),
-      getItem("Maintenance Request", "27", null, "/transaction/maintenance-request"),
-      getItem("Maintenance Process", "28", null, "/transaction/maintenance-process"),
-      getItem("Testing Order", "29", null, "/transaction/testing-order"),
-      getItem("Planning Taking Sample", "30", null, "/transaction/planning-taking-sample"),
-      getItem("Testing process", "31", null, "/transaction/testing-process"),
-      getItem("Adjustment", "32", null, "/transaction/adjustment"),
+      getItem("Taking Sample", "27", null, "/transaction/taking-sample"),
+      getItem("Sample Registration", "28", null, "/transaction/sample-registration"),
+      getItem("Sample Handling", "29", null, "/transaction/sample-handling"),
+      getItem("Testing Result", "30", null, "/transaction/testing-result"),
+      getItem("Maintenance Request", "31", null, "/transaction/maintenance-request"),
+      getItem("Maintenance Process", "32", null, "/transaction/maintenance-process"),
+      getItem("Testing Order", "33", null, "/transaction/testing-order"),
+      getItem("Planning Taking Sample", "34", null, "/transaction/planning-taking-sample"),
+      getItem("Testing process", "35", null, "/transaction/testing-process"),
+      getItem("Adjustment", "36", null, "/transaction/adjustment"),
     ]),
     // getItem("Team", "sub2", <TeamOutlined />, null, [
     //   getItem("Team 1", "6", null, "/team/team1"),
@@ -116,8 +116,8 @@ const MySidebar = ({ children }) => {
         }}
       >
         <div className="demo-logo-vertical" />
-        <div className="w-full px-4 py-2">
-          <img src="/assets/image/salims.png" alt="..." />
+        <div className="w-full px-6 pt-2 pb-4">
+          <img src="/assets/images/salims.png" alt="..." className="w-32" />
         </div>
         <Menu
           theme="light"
