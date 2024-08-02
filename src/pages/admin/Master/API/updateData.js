@@ -14,6 +14,16 @@ export const updateBuilding = async (BuildingCode, BuildingData) => {
     return response;
 }
 
+export const updateDepartment = async (DepartmentCode, DepartmentData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/department?DeepCode=${DepartmentCode}`, DepartmentData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
     const token = Cookies.get('accessToken');
     const response = await axios.patch(`${baseUrl}/put/warehouse?WarehouseCode=${WarehouseCode}`, WarehouseData, {
@@ -57,6 +67,16 @@ export const updateTestMethode = async (MethodId, TestMethodeData) => {
 export const updateCustomer = async (CustomerCode, CustomerData) => {
     const token = Cookies.get('accessToken');
     const response = await axios.patch(`${baseUrl}/put/customer?CustomerCode=${CustomerCode}`, CustomerData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateEquipmentType = async (BranchCode, Version, EquipmentCode, CustomerData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/equipment?BranchCode=${BranchCode}&Version=${Version}&EquipmentCode=${EquipmentCode}`, CustomerData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

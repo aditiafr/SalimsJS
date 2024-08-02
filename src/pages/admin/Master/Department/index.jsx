@@ -1,79 +1,79 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditDepartment from "./edit";
 import DeleteDepartment from "./delete";
+import { getDepartments } from "../API/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-       <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditDepartment />
-        <DeleteDepartment name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Code: "HR",
-    Name: "Human Resourcce",
-    Desciption: "A department that manage human resource",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Code: "IT",
-    Name: "Information Technology",
-    Desciption: "A department that manage information technology",
-    Suspended: true, 
-  },
-  {
-    key: 3,
-    Code: "FIN",
-    Name: "Finance",
-    Desciption: null,
-    Suspended: false,
-  }
-];
-
 const Department = () => {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await getDepartments();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "DepCode",
+      dataIndex: "DepCode",
+      key: "DepCode",
+      width: 80,
+    },
+    {
+      title: "DepName",
+      dataIndex: "DepName",
+      key: "DepName",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 200,
+      render: (text) => (text || "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "Suspended",
+      key: "IsSuspend",
+      width: 100,
+      render: (suspended = false) => (
+         <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditDepartment dataSource={record} onEdit={fetchData} />
+          <DeleteDepartment DepartmentCode={record.DepCode} name={record.DepName} onDelete={fetchData} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">

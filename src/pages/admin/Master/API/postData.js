@@ -15,6 +15,16 @@ export const postBuilding = async (BuildingData) => {
     return response;
 }
 
+export const postDepartment = async (DepartmentData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.post(`${baseUrl}/post/department`, DepartmentData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const postWarehouse = async (WarehouseData) => {
     const token = Cookies.get('accessToken');
     const response = await axios.post(`${baseUrl}/post/warehouse`, WarehouseData, {
@@ -58,6 +68,26 @@ export const postTestMethode = async (TestMethodeData) => {
 export const postCustomer = async (CustomerData) => {
     const token = Cookies.get('accessToken');
     const response = await axios.post(`${baseUrl}/post/customer`, CustomerData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postDepartments = async (DepartmentData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.post(`${baseUrl}/post/department`, DepartmentData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postEquipmentType = async (EquipmentTypeData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.post(`${baseUrl}/post/equipment`, EquipmentTypeData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

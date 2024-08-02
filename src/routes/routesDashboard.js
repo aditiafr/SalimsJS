@@ -51,6 +51,28 @@ import ProductCategory from "../pages/admin/Master/ProductCategory";
 import FormProductCategory from "../pages/admin/Master/ProductCategory/form";
 import ProductType from "../pages/admin/Master/ProductType";
 import FormProductType from "../pages/admin/Master/ProductType/form";
+import OtherExpense from "../pages/admin/Master/OtherExpense";
+import FormOtherExpense from "../pages/admin/Master/OtherExpense/form";
+import ParameterCategory from "../pages/admin/Master/ParameterCategory";
+import FormParameterCategory from "../pages/admin/Master/ParameterCategory/form";
+import Parameter from "../pages/admin/Master/Parameter";
+import FormParameter from "../pages/admin/Master/Parameter/form";
+import Equipment from "../pages/admin/Master/Equipment";
+import FormEquipment from "../pages/admin/Master/Equipment/form";
+import Labour from "../pages/admin/Master/Labour";
+import FormLabour from "../pages/admin/Master/Labour/form";
+import Formula from "../pages/admin/Master/Formula";
+import FormFormula from "../pages/admin/Master/Formula/form";
+import FormulaTableRef from "../pages/admin/Master/FormulaTableRef";
+import FormFormulaTableRef from "../pages/admin/Master/FormulaTableRef/form";
+import Zona from "../pages/admin/Master/Zona";
+import FormZona from "../pages/admin/Master/Zona/form";
+import SubZona from "../pages/admin/Master/SubZona";
+import FormSubZona from "../pages/admin/Master/SubZona/form";
+import PriceListD from "../pages/admin/Master/PriceListD";
+import FormPriceListD from "../pages/admin/Master/PriceListD/form";
+import PriceListM from "../pages/admin/Master/PriceListM";
+import FormPriceListM from "../pages/admin/Master/PriceListM/form";
 
 const RoutesDashboard = () => {
   const mainRoutes = [
@@ -158,7 +180,6 @@ const RoutesDashboard = () => {
       path: "/master/packing-type/form",
       element: <FormPackingType />,
     },
-    
     {
       path: "/master/product-category",
       element: <ProductCategory />,
@@ -167,7 +188,6 @@ const RoutesDashboard = () => {
       path: "/master/product-category/form",
       element: <FormProductCategory />,
     },
-    
     {
       path: "/master/product-type",
       element: <ProductType />,
@@ -176,7 +196,94 @@ const RoutesDashboard = () => {
       path: "/master/product-type/form",
       element: <FormProductType />,
     },
-
+    {
+      path: "/master/other-expense",
+      element: <OtherExpense />,
+    },
+    {
+      path: "/master/other-expense/form",
+      element: <FormOtherExpense />,
+    },
+    {
+      path: "/master/parameter-category",
+      element: <ParameterCategory />,
+    },
+    {
+      path: "/master/parameter-category/form",
+      element: <FormParameterCategory />,
+    },
+    {
+      path: "/master/parameter",
+      element: <Parameter />,
+    },
+    {
+      path: "/master/parameter/form",
+      element: <FormParameter />,
+    },
+    {
+      path: "/master/equipment",
+      element: <Equipment />,
+    },
+    {
+      path: "/master/equipment/form",
+      element: <FormEquipment />,
+    },
+    {
+      path: "/master/labour",
+      element: <Labour />,
+    },
+    {
+      path: "/master/labour/form",
+      element: <FormLabour />,
+    },
+    {
+      path: "/master/formula",
+      element: <Formula />,
+    },
+    {
+      path: "/master/formula/form",
+      element: <FormFormula />,
+    },
+    {
+      path: "/master/formula-table-ref",
+      element: <FormulaTableRef />,
+    },
+    {
+      path: "/master/formula-table-ref/form",
+      element: <FormFormulaTableRef />,
+    },
+    {
+      path: "/master/zona",
+      element: <Zona />,
+    },
+    {
+      path: "/master/zona/form",
+      element: <FormZona />,
+    },
+    {
+      path: "/master/sub-zona",
+      element: <SubZona />,
+    },
+    {
+      path: "/master/sub-zona/form",
+      element: <FormSubZona />,
+    },
+    {
+      path: "/master/price-list-d",
+      element: <PriceListD />,
+    },
+    {
+      path: "/master/price-list-d/form",
+      element: <FormPriceListD />,
+    },
+    {
+      path: "/master/price-list-m",
+      element: <PriceListM  />,
+    },
+    {
+      path: "/master/price-list-m/form",
+      element: <FormPriceListM />,
+    },
 
     // TRANSACTION
 

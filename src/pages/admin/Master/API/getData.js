@@ -12,7 +12,7 @@ export const getBuilding = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-}
+} 
 
 export const getWarehouse = async () => {
     const token = Cookies.get('accessToken');
@@ -23,11 +23,11 @@ export const getWarehouse = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-}
+} 
 
-export const getSampleSLocation = async (BuildingCode) => {
+export const getSampleSLocation = async () => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/sampleLocation${BuildingCode ? `?BuildingCode=${BuildingCode}` : ''}`, {
+    const response = await axios.get(`${baseUrl}/get/samplelocation`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -49,7 +49,7 @@ export const getVendor = async () => {
 
 export const getTestMethode = async () => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/testMethode`, {
+    const response = await axios.get(`${baseUrl}/get/testmethode`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -60,7 +60,7 @@ export const getTestMethode = async () => {
 
 export const getTimePoint = async () => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/timePoint`, {
+    const response = await axios.get(`${baseUrl}/get/timepoint`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -72,6 +72,28 @@ export const getTimePoint = async () => {
 export const getCustomer = async () => {
     const token = Cookies.get('accessToken');
     const response = await axios.get(`${baseUrl}/get/customer`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+} 
+
+export const getEquipmentType = async () => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.get(`${baseUrl}/get/equipmentType`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+} 
+
+export const getDepartments = async () => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.get(`${baseUrl}/get/department`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
