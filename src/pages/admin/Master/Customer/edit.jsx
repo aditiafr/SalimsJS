@@ -1,20 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Table, Tag, Tooltip } from "antd";
 import { EditFilled } from "@ant-design/icons";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { JsonCreateModif } from "../API/Json";
+import { updateCustomer } from "../API/updateData";
 
-const EditCustomer = () => {
+const EditCustomer = ({ dataSource, onEdit }) => {
+
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    form.setFieldsValue(dataSource);
+  }, [dataSource, form])
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const [form] = Form.useForm();
-
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Success:", values);
+    try {
+      setLoading(true);
+      const modifiedValues = {
+        ...values,
+        ...JsonCreateModif
+      }
+      const response = await updateCustomer(dataSource.CustomerCode, modifiedValues);
+      messageApi.open({
+        type: 'success',
+        content: response.data.statusMessage,
+      });
+      onEdit(true);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -25,7 +51,7 @@ const EditCustomer = () => {
     setIsModalOpen(false);
   };
 
-  
+
   const columns = [
     {
       title: "key",
@@ -127,27 +153,27 @@ const EditCustomer = () => {
           <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="Code"
+                label="Customer Code"
+                name="CustomerCode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Code!",
+                    message: "Please input your Customer Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input readOnly />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Customer Name"
+                name="CustomerName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Customer Name!",
                   },
                 ]}
               >
@@ -162,56 +188,11 @@ const EditCustomer = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Address!",
                   },
                 ]}
               >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIPCode"
-                name="ZIPCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="City"
-                name="City"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Country"
-                name="Country"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Name!",
-                  },
-                ]}
-              >
-                <Input />
+                <Input.TextArea />
               </Form.Item>
             </Col>
 
@@ -222,22 +203,7 @@ const EditCustomer = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact"
-                name="Contact"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Phone!",
                   },
                 ]}
               >
@@ -252,7 +218,7 @@ const EditCustomer = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Email!",
                   },
                 ]}
               >
@@ -261,7 +227,67 @@ const EditCustomer = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Desciption">
+              <Form.Item
+                label="Contact"
+                name="Contact"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Contact!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="ZIP Code"
+                name="ZIPCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your ZIP Code!",
+                  },
+                ]}
+              >
+                <Input maxLength={5} />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="City"
+                name="City"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your City!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Country"
+                name="Country"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Country!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item label="Description" name="Description">
                 <Input.TextArea />
               </Form.Item>
             </Col>
@@ -273,17 +299,17 @@ const EditCustomer = () => {
               //   rowSelection
               columns={columns}
               dataSource={data}
-              //   pagination={{
-              //     showSizeChanger: true,
-              //     defaultPageSize: 10,
-              //   }}
-              //   scroll={{
-              //     x: 1000,
-              //   }}
+            //   pagination={{
+            //     showSizeChanger: true,
+            //     defaultPageSize: 10,
+            //   }}
+            //   scroll={{
+            //     x: 1000,
+            //   }}
             />
           </Row>
 
-          <ButtonEdit onReset={onReset} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>
     </>

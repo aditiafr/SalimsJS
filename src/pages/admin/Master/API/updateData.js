@@ -23,3 +23,43 @@ export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
     });
     return response;
 }
+
+export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, SampleSLocationData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/sampleLocation?BuildingCode=${BuildingCode}&LocationCode=${SampleSLocationCode}`, SampleSLocationData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateVendor = async (BranchCode, VendorCode, VendorData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/vendor?branchCode=${BranchCode}&vendorCode=${VendorCode}`, VendorData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateTestMethode = async (MethodId, TestMethodeData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/testMethode?methodId=${MethodId}`, TestMethodeData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateCustomer = async (CustomerCode, CustomerData) => {
+    const token = Cookies.get('accessToken');
+    const response = await axios.patch(`${baseUrl}/put/customer?CustomerCode=${CustomerCode}`, CustomerData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

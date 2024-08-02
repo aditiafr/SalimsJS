@@ -18,7 +18,6 @@ const FormBuilding = () => {
 
   const fetchBuilding = async () => {
     try {
-      setLoading(true);
       const response = await getBuilding();
       if (response.length > 0) {
         const BCode = response.filter(
@@ -38,7 +37,6 @@ const FormBuilding = () => {
       setBuildingCode("BLD01");
       console.log(error.response.statusText);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -52,6 +50,7 @@ const FormBuilding = () => {
   const handleSubmit = async (values) => {
     console.log("Success:", values);
     try {
+      setLoading(true);
       const modifiedValues = {
         ...values,
         ...JsonCreateModif
@@ -65,6 +64,7 @@ const FormBuilding = () => {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {

@@ -3,65 +3,95 @@ import EditSampleStorageLocation from "./edit";
 import DeleteSampleStorageLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
-
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: "key",
-    dataIndex: "key",
-    key: "key",
-    width: 80,
-  },
-  {
-    title: "Building",
-    dataIndex: "Building",
-    key: "Building",
-    width: 150,
-  },
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 150,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 150,
-  },
-  {
-    title: "Desciption",
-    dataIndex: "Desciption",
-    key: "Desciption",
-    width: 150,
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditSampleStorageLocation />
-        <DeleteSampleStorageLocation />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: "1",
-    Building: "BLD01",
-    Code: "001",
-    Name: "Sudirman",
-    Desciption: "Test Data",
-  },
-];
+import { useEffect, useState } from "react";
+import { getSampleSLocation } from "../API/getData";
 
 const SampleStorageLocation = () => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getSampleSLocation();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 80,
+    },
+    {
+      title: "Building Code",
+      dataIndex: "BuildingCode",
+      key: "BuildingCode",
+      width: 150,
+    },
+    {
+      title: "Location Code",
+      dataIndex: "LocationCode",
+      key: "LocationCode",
+      width: 150,
+    },
+    {
+      title: "Location Name",
+      dataIndex: "LocationName",
+      key: "LocationName",
+      width: 150,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 150,
+    },
+    {
+      title: "Date Of Use",
+      dataIndex: "DateOfUse",
+      key: "DateOfUse",
+      width: 150,
+    },
+    {
+      title: "Date Of Available",
+      dataIndex: "DateOfAvailable",
+      key: "DateOfAvailable",
+      width: 150,
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditSampleStorageLocation dataSource={record} onEdit={fetchData} />
+          <DeleteSampleStorageLocation />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -77,19 +107,19 @@ const SampleStorageLocation = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
+          <Input
+            placeholder="search..."
+            allowClear
+            value={searchText}
+            onChange={handleSearch}
+            style={{ width: 200 }}
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

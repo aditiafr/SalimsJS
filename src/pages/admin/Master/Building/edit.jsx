@@ -18,7 +18,6 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     form.setFieldsValue(dataSource);
   }, [dataSource, form])
 
-
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -43,6 +42,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     }
     setLoading(false);
   };
+  
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };

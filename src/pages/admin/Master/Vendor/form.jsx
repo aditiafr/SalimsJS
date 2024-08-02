@@ -1,12 +1,72 @@
 import { Col, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { useEffect, useState } from "react";
+import { getVendor } from "../API/getData";
+import { JsonCreateModif } from "../API/Json";
+import { postVendor } from "../API/postData";
 
 const FormVendor = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values) => {
+  const [vendorCode, setVendorCode] = useState("");
+
+  const fetchVendor = async () => {
+    try {
+      setLoading(true);
+      const response = await getVendor();
+      if (response.length > 0) {
+        const BCode = response.filter(
+          (item) => item.VendorCode && item.VendorCode.startsWith("VR")
+        );
+        if (BCode.length > 0) {
+          const lastCode = BCode[BCode.length - 1].VendorCode;
+          const nextNumber = parseInt(lastCode.substr(2)) + 1;
+          setVendorCode(`VR${nextNumber.toString().padStart(2, "0")}`);
+        } else {
+          setVendorCode("VR01");
+        }
+      } else {
+        setVendorCode("VR01");
+      }
+    } catch (error) {
+      setVendorCode("VR01");
+      console.log(error.response.statusText);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchVendor();
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ VendorCode: vendorCode });
+  }, [vendorCode, form]);
+
+  const onFinish = async (values) => {
     console.log("Success:", values);
+    try {
+      setLoading(true);
+      const modifiedValues = {
+        ...values,
+        ...JsonCreateModif
+      }
+      const response = await postVendor(modifiedValues);
+      messageApi.open({
+        type: 'success',
+        content: response.data.statusMessage,
+      });
+      navigate("/master/vendor");
+    } catch (error) {
+      console.log(error);
+
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -33,16 +93,16 @@ const FormVendor = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Branch"
-                name="Branch"
+                label="Branch Code"
+                name="BranchCode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Branch!",
+                    message: "Please input your Branch Code!",
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={5} />
               </Form.Item>
             </Col>
 
@@ -57,18 +117,18 @@ const FormVendor = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={5} />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Vendor Name"
+                name="VendorName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Vendor Name!",
                   },
                 ]}
               >
@@ -78,61 +138,16 @@ const FormVendor = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Email  "
-                name="Email "
+                label="Address"
+                name="Address"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Email !",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address 1"
-                name="Address1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address 1!",
+                    message: "Please input your Address!",
                   },
                 ]}
               >
                 <Input.TextArea />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address 2"
-                name="Address2"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address 2!",
-                  },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIP Code"
-                name="ZIPCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIP Code!",
-                  },
-                ]}
-              >
-                <Input />
               </Form.Item>
             </Col>
 
@@ -153,57 +168,27 @@ const FormVendor = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
+                label="Postal Code"
+                name="PostalCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Postal Code!",
+                  },
+                ]}
+              >
+                <Input maxLength={5} />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
                 label="Country"
                 name="Country"
                 rules={[
                   {
                     required: true,
                     message: "Please input your Country!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="Fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact Person"
-                name="ContactPerson"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact Person!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Hp"
-                name="Hp"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Hp!",
                   },
                 ]}
               >
@@ -228,6 +213,21 @@ const FormVendor = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
+                label="Fax"
+                name="Fax"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Fax!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
                 label="NPWP"
                 name="NPWP"
                 rules={[
@@ -243,12 +243,12 @@ const FormVendor = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Type"
-                name="Type"
+                label="Contact Person"
+                name="ContactPerson"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Type!",
+                    message: "Please input your Contact Person!",
                   },
                 ]}
               >
@@ -262,7 +262,7 @@ const FormVendor = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>
