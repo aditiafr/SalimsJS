@@ -1,9 +1,10 @@
 import { Col, DatePicker, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 
 const FormTakingSample = () => {
   const [form] = Form.useForm();
-
+  console.log('---------------------------------------------------------------------')
   const onFinish = (values) => {
     console.log("Success:", values);
   };

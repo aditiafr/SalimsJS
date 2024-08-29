@@ -33,12 +33,12 @@ const FormMaintenanceRequest = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Result Number"
-                name="ResultNumber"
+                label="MR Number"
+                name="MRNumber"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Result Number!",
+                    message: "Please input MR Number!",
                   },
                 ]}
               >
@@ -48,12 +48,12 @@ const FormMaintenanceRequest = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Result Date"
-                name="ResultDate"
+                label="MR Date"
+                name="MRDate"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Result Date!",
+                    message: "Please input MR Date!",
                   },
                 ]}
               >
@@ -62,38 +62,38 @@ const FormMaintenanceRequest = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item
-                label="Req Number"
-                name="ReqNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Req Number!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Authorized Code"
-                name="AuthorizedCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Authorized Code!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
               <Form.Item label="Description" name="Description">
                 <Input.TextArea />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Equipment Code"
+                name="EquipmentCode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input Equipment Code!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Status"
+                name="Status"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input Status!",
+                  },
+                ]}
+              >
+                <Input />
               </Form.Item>
             </Col>
           </Row>
