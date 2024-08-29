@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { mapFromHttp } from "../../mapper/EquipmentType";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 
@@ -82,13 +83,13 @@ export const getCustomer = async () => {
 
 export const getEquipmentType = async () => {
     const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/equipmentType`, {
+    const response = await axios.get(`${baseUrl}/v1/equipment/type/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+    return mapFromHttp(response.data.data);
 } 
 
 export const getDepartments = async () => {

@@ -15,7 +15,7 @@ export const deleteDepartment = async (DepartmentCode) => {
 
 export const deleteEquipmentType = async (EquipmentTypeCode) => {
     const token = Cookies.get('accessToken');
-    const response = await axios.patch(`${baseUrl}/delete/equipmentType?EquipmentTypeCode=${EquipmentTypeCode}`, {}, {
+    const response = await axios.delete(`${baseUrl}/v1/equipment/type/delete/${EquipmentTypeCode}`, {}, {
         headers: {
             Authorization: `Bearer ${token}`
         }

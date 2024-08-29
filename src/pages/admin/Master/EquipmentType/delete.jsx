@@ -16,7 +16,7 @@ const DeleteEquipmentType = ({ EquipmentTypeCode, name, onDelete }) => {
       const response = await deleteEquipmentType(EquipmentTypeCode);
       messageApi.open({
         type: "success",
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
       onDelete(true);
       Modal.destroyAll();

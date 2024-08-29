@@ -4,8 +4,8 @@ import { EditFilled } from "@ant-design/icons";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { updateEquipmentType } from "../../../../Api/Master/updateData";
+import { mapToHttp } from "../../../../mapper/EquipmentType";
 
 const EditEquipmentType = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
@@ -18,6 +18,7 @@ const EditEquipmentType = ({ dataSource, onEdit }) => {
   }, [dataSource, form]);
 
   const showModal = () => {
+    form.setFieldsValue(dataSource);
     setIsModalOpen(true);
   };
 
@@ -26,15 +27,12 @@ const EditEquipmentType = ({ dataSource, onEdit }) => {
 
     try {
       setLoading(true);
-      const payload = {
-        ...values,
-        ...JsonCreateModif
-      };
+      const payload = mapToHttp(values);
 
-      const response = await updateEquipmentType(dataSource.EquipmentTypeCode, payload);
+      const response = await updateEquipmentType(payload);
       messageApi.open({
         type: "success",
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
 
       onEdit(true);

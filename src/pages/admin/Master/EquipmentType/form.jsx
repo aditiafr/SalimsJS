@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
 import { getEquipmentType } from "../../../../Api/Master/getData";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { postEquipmentType } from "../../../../Api/Master/postData";
+import { mapToHttp } from "../../../../mapper/EquipmentType";
 
 const FormEquipmentType = () => {
   const [form] = Form.useForm();
@@ -14,7 +14,7 @@ const FormEquipmentType = () => {
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
-  const [equipmentTypeCode, setEquipmentTypeCode] = useState("");
+  const [EquipmentTypeCode, setEquipmentTypeCode] = useState("");
 
   const fetchEquipmentType = async () => {
     try {
@@ -48,22 +48,17 @@ const FormEquipmentType = () => {
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue({ equipmentTypeCode: equipmentTypeCode });
-  }, [equipmentTypeCode, form]);
+    form.setFieldsValue({ EquipmentTypeCode: EquipmentTypeCode });
+  }, [EquipmentTypeCode, form]);
 
   const handleSubmit = async (values) => {
-    console.log("Send data:", values);
-
     try {
-      const payload = {
-        ...values,
-        ...JsonCreateModif
-      };
+      const payload = mapToHttp(values);
 
       const response = await postEquipmentType(payload);
       messageApi.open({
         type: "success",
-        content: response.data.message,
+        content: response.data.msg,
       });
 
       navigate("/master/equipment-type");
@@ -101,7 +96,7 @@ const FormEquipmentType = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Equipment Type Code"
-                name="equipmentTypeCode"
+                name="EquipmentTypeCode"
                 rules={[
                   {
                     required: true,
@@ -114,7 +109,7 @@ const FormEquipmentType = () => {
 
               <Form.Item
                 label="Equipment Type Name"
-                name="equipmentTypeName"
+                name="EquipmentTypeName"
                 rules={[
                   {
                     required: true,
@@ -127,11 +122,11 @@ const FormEquipmentType = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
+              <Form.Item label="Description" name="Description">
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="isSuspend" valuePropName="checked" initialValue={false}>
+              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>

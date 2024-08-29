@@ -15,7 +15,10 @@ const EquipmentType = () => {
 
   const fetchData = async () => {
     try {
+    console.log('adadawd')
+
       const response = await getEquipmentType()
+      console.log('adad', response)
       setData(response);
     } catch (error) {
       console.log(error);

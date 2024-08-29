@@ -74,9 +74,9 @@ export const updateCustomer = async (CustomerCode, CustomerData) => {
     return response;
 }
 
-export const updateEquipmentType = async (BranchCode, Version, EquipmentCode, CustomerData) => {
+export const updateEquipmentType = async (EquipmentTypeData) => {
     const token = Cookies.get('accessToken');
-    const response = await axios.patch(`${baseUrl}/put/equipment?BranchCode=${BranchCode}&Version=${Version}&EquipmentCode=${EquipmentCode}`, CustomerData, {
+    const response = await axios.put(`${baseUrl}/v1/equipment/type/update`, EquipmentTypeData, {
         headers: {
             Authorization: `Bearer ${token}`
         }
