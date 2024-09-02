@@ -2,11 +2,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { mapFromHttp } from "../../mapper/EquipmentType";
 
-const baseUrl = process.env.REACT_APP_BASEURL;
+const baseURL = process.env.REACT_APP_BASEURL;
 
 export const getBuilding = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/building`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/building`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -16,8 +16,8 @@ export const getBuilding = async () => {
 } 
 
 export const getWarehouse = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/wareouse`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/wareouse`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -27,8 +27,8 @@ export const getWarehouse = async () => {
 } 
 
 export const getSampleSLocation = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/samplelocation`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/samplelocation`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -38,8 +38,8 @@ export const getSampleSLocation = async () => {
 } 
 
 export const getVendor = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/vendor`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/vendor/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -49,8 +49,8 @@ export const getVendor = async () => {
 } 
 
 export const getTestMethode = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/testmethode`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/testmethode`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -60,8 +60,8 @@ export const getTestMethode = async () => {
 } 
 
 export const getTimePoint = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/timepoint`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/timepoint`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -71,8 +71,8 @@ export const getTimePoint = async () => {
 } 
 
 export const getCustomer = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/customer`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/customer`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -82,8 +82,8 @@ export const getCustomer = async () => {
 } 
 
 export const getEquipmentType = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/v1/equipment/type/list`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/equipment/type/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -93,8 +93,8 @@ export const getEquipmentType = async () => {
 } 
 
 export const getDepartments = async () => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.get(`${baseUrl}/get/department`, {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/get/department`, {
         headers: {
             Authorization: `Bearer ${token}`
         }

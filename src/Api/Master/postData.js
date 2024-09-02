@@ -6,7 +6,7 @@ const baseUrl = process.env.REACT_APP_BASEURL;
 
 // MASTER DATA
 export const postBuilding = async (BuildingData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/building`, BuildingData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -16,7 +16,7 @@ export const postBuilding = async (BuildingData) => {
 }
 
 export const postDepartment = async (DepartmentData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/department`, DepartmentData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -26,7 +26,7 @@ export const postDepartment = async (DepartmentData) => {
 }
 
 export const postWarehouse = async (WarehouseData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/warehouse`, WarehouseData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -36,7 +36,7 @@ export const postWarehouse = async (WarehouseData) => {
 }
 
 export const postSampleSLocation = async (SampleSLocationData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/sampleLocation`, SampleSLocationData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -46,8 +46,8 @@ export const postSampleSLocation = async (SampleSLocationData) => {
 }
 
 export const postVendor = async (VendorData) => {
-    const token = Cookies.get('accessToken');
-    const response = await axios.post(`${baseUrl}/post/vendor`, VendorData, {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/v1/vendor/store`, VendorData, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -56,7 +56,7 @@ export const postVendor = async (VendorData) => {
 }
 
 export const postTestMethode = async (TestMethodeData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/testMethode`, TestMethodeData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -66,7 +66,7 @@ export const postTestMethode = async (TestMethodeData) => {
 }
 
 export const postCustomer = async (CustomerData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/customer`, CustomerData, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -76,7 +76,7 @@ export const postCustomer = async (CustomerData) => {
 }
 
 export const postEquipmentType = async (EquipmentTypeData) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/v1/equipment/type/store`, EquipmentTypeData, {
         headers: {
             Authorization: `Bearer ${token}`

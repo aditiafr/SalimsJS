@@ -5,7 +5,6 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { getVendor } from "../../../../Api/Master/getData";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { postVendor } from "../../../../Api/Master/postData";
 
 const FormVendor = () => {
@@ -13,8 +12,14 @@ const FormVendor = () => {
   const navigate = useNavigate();
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
-
   const [vendorCode, setVendorCode] = useState("");
+
+  useEffect(() => {
+    form.setFieldsValue({
+      branchcode: "00001"
+    })
+  }, [form]);
+
 
   const fetchVendor = async () => {
     try {
@@ -53,14 +58,15 @@ const FormVendor = () => {
     console.log("Success:", values);
     try {
       setLoading(true);
-      const modifiedValues = {
+      const payload = {
         ...values,
-        ...JsonCreateModif
       }
-      const response = await postVendor(modifiedValues);
+      console.log(payload);
+      
+      const response = await postVendor(payload);
       messageApi.open({
         type: 'success',
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
       navigate("/master/vendor");
     } catch (error) {
@@ -94,7 +100,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Branch Code"
-                name="BranchCode"
+                name="branchcode"
                 rules={[
                   {
                     required: true,
@@ -102,14 +108,14 @@ const FormVendor = () => {
                   },
                 ]}
               >
-                <Input maxLength={5} />
+                <Input readOnly />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Vendor Code"
-                name="VendorCode"
+                name="vendorcode"
                 rules={[
                   {
                     required: true,
@@ -124,7 +130,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Vendor Name"
-                name="VendorName"
+                name="vendorname"
                 rules={[
                   {
                     required: true,
@@ -139,7 +145,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -154,7 +160,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
                 rules={[
                   {
                     required: true,
@@ -169,7 +175,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Postal Code"
-                name="PostalCode"
+                name="postalcode"
                 rules={[
                   {
                     required: true,
@@ -184,7 +190,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Country"
-                name="Country"
+                name="country"
                 rules={[
                   {
                     required: true,
@@ -199,7 +205,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Phone"
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -214,7 +220,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Fax"
-                name="Fax"
+                name="fax"
                 rules={[
                   {
                     required: true,
@@ -229,7 +235,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="NPWP"
-                name="NPWP"
+                name="npwp"
                 rules={[
                   {
                     required: true,
@@ -244,7 +250,7 @@ const FormVendor = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact Person"
-                name="ContactPerson"
+                name="contactperson"
                 rules={[
                   {
                     required: true,
@@ -262,7 +268,7 @@ const FormVendor = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} onLoading={loading} />
+          <ButtonSubmit onReset={onReset} />
         </Form>
       </div>
     </>

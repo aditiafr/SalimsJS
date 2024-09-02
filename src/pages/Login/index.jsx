@@ -1,30 +1,39 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `http://95.111.195.75:88/user/post/login`,
-        {
-          userNam: username,
-          userPwd: password,
-        }
-      );
+      console.log(formData);
+      const response = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/auth/login`, formData);
       console.log(response.data);
 
-      // Menyimpan response.data ke localStorage
-      // localStorage.setItem('userData', JSON.stringify(response.data));
-
-      Cookies.set('accessToken', response.data.Token, { expires: 7 });
+      Cookies.set('access_token', response.data.access_token, { expires: 7 });
 
       navigate("/dashboard");
     } catch (error) {
@@ -32,77 +41,81 @@ const Login = () => {
     }
   };
 
-
   return (
-    <>
-      <section className="bg-gray-50">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <a
-            href="/"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900"
-          >
-            <img className="w-44" src="/assets/images/salims.png" alt="logo" />
-            {/* Flowbite */}
-          </a>
-          <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                Sign in to your account
-              </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
+    <div className="h-screen max-w-screen mx-auto flex items-center justify-center bg-gray-100">
+      <div className="max-h-screen-lg max-w-screen-lg w-full flex drop-shadow-md">
+
+        <div className="w-1/2 bg-cover bg-center rounded-s-xl hidden lg:block" style={{ backgroundImage: "url('https://static.vecteezy.com/system/resources/thumbnails/039/302/250/small_2x/ai-generated-back-to-school-science-lab-excitement-highlight-the-excitement-of-a-science-experiment-in-a-laboratory-setting-background-image-generative-ai-photo.jpg')" }} />
+
+        <div className="bg-white py-6 lg:py-10 px-8 lg:px-14 w-full lg:w-1/2 lg:rounded-e-xl mx-4 lg:mx-0">
+          {/* <img src="/assets/images/logo.png" alt="Logo Icon" className="w-20 md:w-28 h-20 md:h-28" /> */}
+          {/* <p className="text-4xl drop-shadow-md font-bold">SA-CRMS</p> */}
+          <img className="w-44" src="/assets/images/salims.png" alt="logo" />
+          <div className="py-6">
+            <h1 className="text-[42px] md:text-[58px] text-[#219BBC] leading-none">Hello, <span className="font-bold">Welcome!</span></h1>
+          </div>
+          <div className="my-2">
+            <form onSubmit={handleSubmit} method="POST">
+              <div className="flex flex-col gap-4">
                 <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                  >
+                  <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
                     Username
                   </label>
-                  <input
-                    type="username"
-                    name="username"
-                    id="username"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    placeholder="Username"
-                    required=""
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
+                  <div className="mt-2">
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      autoComplete="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="Username"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                  >
+                  <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                     Password
                   </label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    required=""
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                  <div className="mt-2 relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      autoComplete="current-password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="Password"
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="text-gray-500 hover:text-gray-700 absolute right-2 top-1.5"
+                    >
+                      {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
-                  Sign in
-                </button>
-                <p className="text-sm font-light text-gray-500">
-                  Don’t have an account yet?{" "}
-                  <a
-                    href="/"
-                    className="font-medium text-primary-600 hover:underline "
-                  >
-                    Sign up
-                  </a>
-                </p>
-              </form>
-            </div>
+              </div>
+
+              <Link to="">
+                <p className="text-right pt-2 text-[#219BBC] hover:text-indigo-400">Forget password?</p>
+              </Link>
+
+              <div className="flex gap-4">
+                <button type="submit" className=" bg-[#219BBC] hover:bg-indigo-500 text-white py-2 max-w-32 w-full rounded-md mt-8">Log in</button>
+              </div>
+            </form>
           </div>
         </div>
-      </section>
-    </>
+
+      </div>
+    </div>
   );
 };
 

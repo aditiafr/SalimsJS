@@ -15,9 +15,7 @@ const EquipmentType = () => {
 
   const fetchData = async () => {
     try {
-    console.log('adadawd')
-
-      const response = await getEquipmentType()
+      const response = await getEquipmentType();
       console.log('adad', response)
       setData(response);
     } catch (error) {
@@ -28,6 +26,9 @@ const EquipmentType = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  console.log("DATA", data);
+  
 
   const columns = [
     {
@@ -62,7 +63,7 @@ const EquipmentType = () => {
       key: "IsSuspend",
       width: 100,
       render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
