@@ -42,3 +42,13 @@ export const deleteProductCategory = async (ProductCategoryCode) => {
     });
     return response;
 }
+
+export const deleteProductType = async (ProductTypeCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/v1/product-type/delete/${ProductTypeCode}`,  {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

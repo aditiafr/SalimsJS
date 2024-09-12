@@ -4,6 +4,7 @@ import { EquipmentTypeMapFromHttp } from "../../mapper/EquipmentType";
 import { DepartmentMapFromHttp } from "../../mapper/Department";
 import { PackingTypeMapFromHttp } from "../../mapper/PackingType";
 import { ProductCategoryMapFromHttp } from "../../mapper/ProductCategory";
+import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
@@ -118,12 +119,13 @@ export const getDepartmentNextCode = async () => {
     return response.data.data.departmentCode;
 }
 
-export const getPackingTypes = async () => {
+export const getPackingTypes = async (params) => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/v1/unit/list`, {
         headers: {
             Authorization: `Bearer ${token}`
-        }
+        },
+        params
     });
 
     return PackingTypeMapFromHttp(response.data.data);
@@ -140,12 +142,13 @@ export const getPackingTypeNextCode = async () => {
     return response.data.data.unitCode;
 }
 
-export const getProductCategories = async () => {
+export const getProductCategories = async (params) => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/v1/product-category/list`, {
         headers: {
             Authorization: `Bearer ${token}`
-        }
+        },
+        params
     });
 
     return ProductCategoryMapFromHttp(response.data.data);
@@ -160,4 +163,27 @@ export const getProductCategoryNextCode = async () => {
     });
 
     return response.data.data.productCategoryCode;
+}
+
+export const getProductTypes = async (params) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/product-type/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+
+    return ProductTypeMapFromHttp(response.data.data);
+}
+
+export const getProductTypeNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/product-type/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.productTypeCode;
 }

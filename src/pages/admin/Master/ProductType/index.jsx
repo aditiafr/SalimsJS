@@ -3,76 +3,78 @@ import EditProductType from "./edit";
 import DeleteProductType from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { useEffect, useState } from "react";
+import { getProductTypes } from "../../../../Api/Master/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditProductType />
-        <DeleteProductType name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Code : "02",
-    Name: "Reagent",
-    Description: null,
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Code : "03",
-    Name: "Consumable",
-    Description: "Product that can be used only once",
-    Suspended: false,
-  },
-  {
-    key: 3,
-    Code : "04",
-    Name: "Equipment",
-    Description: "Product that can be used multiple times",
-    Suspended: true,
-  },
-];
-
 const ProductType = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getProductTypes( {
+        sortParam: 'prodtypecode', 
+        sortOrder: 'desc',
+      });
+      
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "Code",
+      dataIndex: "ProductTypeCode",
+      key: "ProductTypeCode",
+      width: 80,
+    },
+    {
+      title: "Name",
+      dataIndex: "ProductTypeName",
+      key: "ProductTypeName",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 200,
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "IsSuspend",
+      key: "IsSuspend",
+      width: 100,
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditProductType dataSource={record} onEdit={fetchData} />
+          <DeleteProductType ProductTypeCode={record.ProductTypeCode} name={record.Name} onDelete={fetchData} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -97,7 +99,7 @@ const ProductType = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}
