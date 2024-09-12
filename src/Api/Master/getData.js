@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { mapFromHttp } from "../../mapper/EquipmentType";
+import { EquipmentTypeMapFromHttp } from "../../mapper/EquipmentType";
+import { DepartmentMapFromHttp } from "../../mapper/Department";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
@@ -89,16 +90,28 @@ export const getEquipmentType = async () => {
         }
     });
 
-    return mapFromHttp(response.data.data);
+    return EquipmentTypeMapFromHttp(response.data.data);
 } 
 
-export const getDepartments = async () => {
+export const getDepartments = async (params) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/department`, {
+    const response = await axios.get(`${baseURL}/v1/department/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+
+    return DepartmentMapFromHttp(response.data.data);
+} 
+
+export const getDepartmentNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/department/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+    return response.data.data.departmentCode;
+}

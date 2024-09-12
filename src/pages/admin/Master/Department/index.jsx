@@ -11,13 +11,22 @@ const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const Department = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await getDepartments();
+      setLoading(true);
+      const response = await getDepartments( {
+        sortParam: 'depcode', 
+        sortOrder: 'desc',
+      });
       setData(response);
+      console.log(response);
+      
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,15 +43,15 @@ const Department = () => {
       fixed: "left",
     },
     {
-      title: "DepCode",
-      dataIndex: "DepCode",
-      key: "DepCode",
+      title: "Department Code",
+      dataIndex: "DepartmentCode",
+      key: "DepartmentCode",
       width: 80,
     },
     {
-      title: "DepName",
-      dataIndex: "DepName",
-      key: "DepName",
+      title: "Department Name",
+      dataIndex: "DepartmentName",
+      key: "DepartmentName",
       width: 100,
     },
     {
@@ -54,12 +63,12 @@ const Department = () => {
     },
     {
       title: "Suspended",
-      dataIndex: "Suspended",
+      dataIndex: "IsSuspend",
       key: "IsSuspend",
       width: 100,
-      render: (suspended = false) => (
-         <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-      ),
+      render: (suspended) => {
+        return <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      }
     },
     {
       title: "Action",
@@ -68,7 +77,7 @@ const Department = () => {
       render: (_, record) => (
         <Space>
           <EditDepartment dataSource={record} onEdit={fetchData} />
-          <DeleteDepartment DepartmentCode={record.DepCode} name={record.DepName} onDelete={fetchData} />
+          <DeleteDepartment DepartmentCode={record.DepartmentCode} name={record.DepartmentName} onDelete={fetchData} />
         </Space>
       ),
     },
@@ -98,7 +107,7 @@ const Department = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}

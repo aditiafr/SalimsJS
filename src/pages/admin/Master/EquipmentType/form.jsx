@@ -3,10 +3,9 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { useEffect, useState } from "react";
-import { getEquipmentType } from "../../../../Api/Master/getData";
+import { useState } from "react";
 import { postEquipmentType } from "../../../../Api/Master/postData";
-import { mapToHttp } from "../../../../mapper/EquipmentType";
+import { EquipmentTypeMapToHttp } from "../../../../mapper/EquipmentType";
 
 const FormEquipmentType = () => {
   const [form] = Form.useForm();
@@ -14,46 +13,10 @@ const FormEquipmentType = () => {
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
-  const [EquipmentTypeCode, setEquipmentTypeCode] = useState("");
-
-  const fetchEquipmentType = async () => {
-    try {
-      setLoading(true);
-      const response = await getEquipmentType();
-      if (response.length > 0) {
-        const ECode = response.filter(
-          (item) => item.EquipmentTypeCode && item.EquipmentTypeCode.startsWith("EQ-")
-        );
-
-        if (ECode.length > 0) {
-          const lastCode = ECode[ECode.length - 1].EquipmentTypeCode;
-          const nextNumber = parseInt(lastCode.substr(3)) + 1;
-          setEquipmentTypeCode(`EQ-${nextNumber.toString().padStart(3, "0")}`);
-        } else {
-          setEquipmentTypeCode("EQ-01");
-        }
-      } else {
-        setEquipmentTypeCode("EQ-01");
-      }
-    } catch (error) {
-      setEquipmentTypeCode("EQ-01");
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEquipmentType();
-  }, []);
-
-  useEffect(() => {
-    form.setFieldsValue({ EquipmentTypeCode: EquipmentTypeCode });
-  }, [EquipmentTypeCode, form]);
-
   const handleSubmit = async (values) => {
     try {
-      const payload = mapToHttp(values);
+      setLoading(true);
+      const payload = EquipmentTypeMapToHttp(values);
 
       const response = await postEquipmentType(payload);
       messageApi.open({
@@ -64,6 +27,8 @@ const FormEquipmentType = () => {
       navigate("/master/equipment-type");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,7 +64,7 @@ const FormEquipmentType = () => {
                 name="EquipmentTypeCode"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please input Equipment Type Code!",
                   },
                 ]}

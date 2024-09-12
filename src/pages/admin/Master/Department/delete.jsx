@@ -17,7 +17,7 @@ const DeleteDepartment = ({ DepartmentCode, name, onDelete }) => {
       const response = await deleteDepartment(DepartmentCode);
       messageApi.open({
         type: "success",
-        content: response.data.statusMessage,
+        content: response.data.message,
       });
       onDelete(true);
       Modal.destroyAll();

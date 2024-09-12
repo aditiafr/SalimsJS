@@ -16,7 +16,7 @@ export const updateBuilding = async (BuildingCode, BuildingData) => {
 
 export const updateDepartment = async (DepartmentCode, DepartmentData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.patch(`${baseUrl}/put/department?DeepCode=${DepartmentCode}`, DepartmentData, {
+    const response = await axios.put(`${baseUrl}/v1/department/update/${DepartmentCode}`, DepartmentData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

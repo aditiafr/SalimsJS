@@ -17,7 +17,7 @@ export const postBuilding = async (BuildingData) => {
 
 export const postDepartment = async (DepartmentData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/department`, DepartmentData, {
+    const response = await axios.post(`${baseUrl}/v1/department/store`, DepartmentData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

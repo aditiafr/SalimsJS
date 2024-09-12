@@ -4,39 +4,25 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
-import { getDepartments } from "../../../../Api/Master/getData";
+import { getDepartmentNextCode } from "../../../../Api/Master/getData";
 import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { postDepartment } from "../../../../Api/Master/postData";
+import { DepartmentMapToHttp } from "../../../../mapper/Department";
 
 const FormDepartment = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
-
   const [departmentCode, setDepartmentCode] = useState("");
 
-  const fetchDepartment = async () => {
+  const fetchDepartmentNextCode = async () => {
     try {
       setLoading(true);
-      const response = await getDepartments();
-      if (response.length > 0) {
-        const DCode = response.filter(
-          (item) => item.DepCode && item.DepCode.startsWith("D")
-        );
-
-        if (DCode.length > 0) {
-          const lastCode = DCode[DCode.length - 1].DepCode;
-          const nextNumber = parseInt(lastCode.substr(1)) + 1;
-          setDepartmentCode(`D${nextNumber.toString().padStart(2, "0")}`);
-        } else {
-          setDepartmentCode("D01");
-        }
-      } else {
-        setDepartmentCode("D01");
-      }
+      const nextDepartmentCode = await getDepartmentNextCode();
+      
+      setDepartmentCode(nextDepartmentCode);
     } catch (error) {
-      setDepartmentCode("D01");
       console.log(error);
     } finally {
       setLoading(false);
@@ -44,31 +30,29 @@ const FormDepartment = () => {
   };
 
   useEffect(() => {
-    fetchDepartment();
+    fetchDepartmentNextCode();
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue({ depCode: departmentCode });
+    form.setFieldsValue({ DepartmentCode: departmentCode });
   }, [departmentCode, form]);
 
   const handleSubmit = async (values) => {
-    console.log("Send data:", values);
-
     try {
-      const payload = {
-        ...values,
-        ...JsonCreateModif
-      };
+      setLoading(true);
+      const payload = DepartmentMapToHttp(values);
 
       const response = await postDepartment(payload);
       messageApi.open({
         type: "success",
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
 
       navigate("/master/department");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,11 +84,11 @@ const FormDepartment = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="depCode"
+                label="Department Code"
+                name="DepartmentCode"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please input Code!",
                   },
                 ]}
@@ -114,7 +98,7 @@ const FormDepartment = () => {
 
               <Form.Item
                 label="Name"
-                name="depName"
+                name="DepartmentName"
                 rules={[
                   {
                     required: true,
@@ -127,11 +111,11 @@ const FormDepartment = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
+              <Form.Item label="Description" name="Description">
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="isSuspend" valuePropName="checked" initialValue={false}>
+              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>

@@ -5,7 +5,7 @@ const baseUrl = process.env.REACT_APP_BASEURL;
 
 export const deleteDepartment = async (DepartmentCode) => {
     const token = Cookies.get('access_token');
-    const response = await axios.patch(`${baseUrl}/delete/department?DeepCode=${DepartmentCode}`, {}, {
+    const response = await axios.delete(`${baseUrl}/v1/department/delete/${DepartmentCode}`,  {
         headers: {
             Authorization: `Bearer ${token}`
         }

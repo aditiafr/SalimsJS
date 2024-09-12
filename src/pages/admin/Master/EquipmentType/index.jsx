@@ -12,14 +12,18 @@ const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const EquipmentType = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await getEquipmentType();
       console.log('adad', response)
       setData(response);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,7 +107,7 @@ const EquipmentType = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}

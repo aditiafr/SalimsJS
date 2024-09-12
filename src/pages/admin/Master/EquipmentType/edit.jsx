@@ -5,7 +5,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { updateEquipmentType } from "../../../../Api/Master/updateData";
-import { mapToHttp } from "../../../../mapper/EquipmentType";
+import { EquipmentTypeMapToHttp } from "../../../../mapper/EquipmentType";
 
 const EditEquipmentType = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
@@ -27,7 +27,7 @@ const EditEquipmentType = ({ dataSource, onEdit }) => {
 
     try {
       setLoading(true);
-      const payload = mapToHttp(values);
+      const payload = EquipmentTypeMapToHttp(values);
 
       const response = await updateEquipmentType(payload);
       messageApi.open({

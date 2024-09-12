@@ -1,4 +1,4 @@
-export const mapFromHttp = (data) => {
+export const EquipmentTypeMapFromHttp = (data) => {
   return data.map((row, index) => ({ 
     EquipmentTypeCode: row.equipmenttypecode,
     EquipmentTypeName: row.equipmenttypename,
@@ -8,7 +8,7 @@ export const mapFromHttp = (data) => {
   }));
 }
 
-export const mapToHttp = (data) => {
+export const EquipmentTypeMapToHttp = (data) => {
   return {
     equipmenttypecode: data.EquipmentTypeCode,
     equipmenttypename: data.EquipmentTypeName,

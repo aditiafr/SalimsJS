@@ -6,6 +6,7 @@ import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdi
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { updateDepartment } from "../../../../Api/Master/updateData";
+import { DepartmentMapToHttp } from "../../../../mapper/Department";
 
 const EditDepartment = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
@@ -18,31 +19,28 @@ const EditDepartment = ({ dataSource, onEdit }) => {
   }, [dataSource, form]);
 
   const showModal = () => {
+    form.setFieldsValue(dataSource);
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (values) => {
-    console.log("Updated data:", values);
-
     try {
       setLoading(true);
-      const payload = {
-        ...values,
-        ...JsonCreateModif
-      };
+      const payload = DepartmentMapToHttp(values);
 
-      const response = await updateDepartment(dataSource.DepCode, payload);
+      const response = await updateDepartment(dataSource.DepartmentCode, payload);
       messageApi.open({
         type: "success",
-        content: response.data.statusMessage,
+        content: response.data.message,
       });
 
       onEdit(true);
       setIsModalOpen(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -90,8 +88,8 @@ const EditDepartment = ({ dataSource, onEdit }) => {
           <Row gutter={30} style={{ margin: "0px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="DepCode"
+                label="DepartmentCode"
+                name="DepartmentCode"
                 rules={[
                   {
                     required: true,
@@ -103,8 +101,8 @@ const EditDepartment = ({ dataSource, onEdit }) => {
               </Form.Item>
               
               <Form.Item
-                label="Name"
-                name="DepName"
+                label="DepartmentName"
+                name="DepartmentName"
                 rules={[
                   {
                     required: true,
