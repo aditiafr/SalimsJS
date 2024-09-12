@@ -20,9 +20,8 @@ const Department = () => {
         sortParam: 'depcode', 
         sortOrder: 'desc',
       });
-      setData(response);
-      console.log(response);
       
+      setData(response);
     } catch (error) {
       console.log(error);
     } finally {

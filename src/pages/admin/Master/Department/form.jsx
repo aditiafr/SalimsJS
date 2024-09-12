@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
 import { getDepartmentNextCode } from "../../../../Api/Master/getData";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { postDepartment } from "../../../../Api/Master/postData";
 import { DepartmentMapToHttp } from "../../../../mapper/Department";
 
@@ -45,7 +44,7 @@ const FormDepartment = () => {
       const response = await postDepartment(payload);
       messageApi.open({
         type: "success",
-        content: response.data.msg,
+        content: response.data.message,
       });
 
       navigate("/master/department");
@@ -93,7 +92,7 @@ const FormDepartment = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={5} />
               </Form.Item>
 
               <Form.Item

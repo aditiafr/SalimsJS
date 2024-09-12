@@ -84,3 +84,23 @@ export const postEquipmentType = async (EquipmentTypeData) => {
     });
     return response;
 }
+
+export const postPackingType = async (PackingTypeData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/v1/unit/store`, PackingTypeData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postProductCategory = async (ProductCategoryData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/v1/product-category/store`, ProductCategoryData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

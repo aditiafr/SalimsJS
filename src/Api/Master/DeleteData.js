@@ -22,3 +22,23 @@ export const deleteEquipmentType = async (EquipmentTypeCode) => {
     });
     return response;
 }
+
+export const deletePackingType = async (PackingTypeCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/v1/unit/delete/${PackingTypeCode}`,  {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const deleteProductCategory = async (ProductCategoryCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/v1/product-category/delete/${ProductCategoryCode}`,  {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

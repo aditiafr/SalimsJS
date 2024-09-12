@@ -11,8 +11,6 @@ const DeleteDepartment = ({ DepartmentCode, name, onDelete }) => {
   const { messageApi } = useMessageContext();
 
   const handleDelete = async () => {
-    console.log("Delete Data!");
-
     try {
       const response = await deleteDepartment(DepartmentCode);
       messageApi.open({

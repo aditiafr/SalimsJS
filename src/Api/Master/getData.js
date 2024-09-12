@@ -2,6 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { EquipmentTypeMapFromHttp } from "../../mapper/EquipmentType";
 import { DepartmentMapFromHttp } from "../../mapper/Department";
+import { PackingTypeMapFromHttp } from "../../mapper/PackingType";
+import { ProductCategoryMapFromHttp } from "../../mapper/ProductCategory";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
@@ -114,4 +116,48 @@ export const getDepartmentNextCode = async () => {
     });
 
     return response.data.data.departmentCode;
+}
+
+export const getPackingTypes = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/unit/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return PackingTypeMapFromHttp(response.data.data);
+}
+
+export const getPackingTypeNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/unit/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.unitCode;
+}
+
+export const getProductCategories = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/product-category/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return ProductCategoryMapFromHttp(response.data.data);
+}
+
+export const getProductCategoryNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/v1/product-category/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.productCategoryCode;
 }

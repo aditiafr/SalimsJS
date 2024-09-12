@@ -3,76 +3,78 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditPackingType from "./edit";
 import DeletePackingType from "./delete";
+import { useEffect, useState } from "react";
+import { getPackingTypes } from "../../../../Api/Master/getData";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditPackingType />
-        <DeletePackingType name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Code: "P4",
-    Name: "Ampoule",
-    Description: "Ampoule",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Code: "P5",
-    Name: "Bottle",
-    Description: "Bottle",
-    Suspended: true,
-  },
-  {
-    key: 3,
-    Code: "P6",
-    Name: "Can",
-    Description: null,
-    Suspended: false,
-  },
-];
-
 const PackingType = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getPackingTypes( {
+        sortParam: 'unitcode', 
+        sortOrder: 'desc',
+      });
+      setData(response);
+      
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "Packing Type Code",
+      dataIndex: "PackingTypeCode",
+      key: "PackingTypeCode",
+      width: 80,
+    },
+    {
+      title: "Packing Type Name",
+      dataIndex: "PackingTypeName",
+      key: "PackingTypeName",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      width: 200,
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "IsSuspend",
+      key: "IsSuspend",
+      width: 100,
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditPackingType dataSource={record} onEdit={fetchData} />
+          <DeletePackingType PackingTypeCode={record.PackingTypeCode} name={record.PackingTypeName} onDelete={fetchData} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -97,7 +99,7 @@ const PackingType = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}

@@ -83,3 +83,23 @@ export const updateEquipmentType = async (EquipmentTypeData) => {
     });
     return response;
 }
+
+export const updatePackingType = async (PackingTypeCode, PackingTypeData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/v1/unit/update/${PackingTypeCode}`, PackingTypeData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateProductCategory = async (ProductCategoryCode, ProductCategoryData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/v1/product-category/update/${ProductCategoryCode}`, ProductCategoryData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
