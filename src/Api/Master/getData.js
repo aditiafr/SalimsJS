@@ -43,7 +43,7 @@ export const getSampleSLocation = async () => {
 
 export const getVendor = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/vendor/list`, {
+    const response = await axios.get(`${baseURL}/vendor/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -87,7 +87,7 @@ export const getCustomer = async () => {
 
 export const getEquipmentType = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/equipment/type/list`, {
+    const response = await axios.get(`${baseURL}/equipment/type/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -98,7 +98,7 @@ export const getEquipmentType = async () => {
 
 export const getDepartments = async (params) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/department/list`, {
+    const response = await axios.get(`${baseURL}/department/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         },
@@ -110,7 +110,7 @@ export const getDepartments = async (params) => {
 
 export const getDepartmentNextCode = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/department/next-code`, {
+    const response = await axios.get(`${baseURL}/department/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -121,7 +121,7 @@ export const getDepartmentNextCode = async () => {
 
 export const getPackingTypes = async (params) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/unit/list`, {
+    const response = await axios.get(`${baseURL}/unit/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         },
@@ -133,7 +133,7 @@ export const getPackingTypes = async (params) => {
 
 export const getPackingTypeNextCode = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/unit/next-code`, {
+    const response = await axios.get(`${baseURL}/unit/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -144,7 +144,7 @@ export const getPackingTypeNextCode = async () => {
 
 export const getProductCategories = async (params) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/product-category/list`, {
+    const response = await axios.get(`${baseURL}/product-category/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         },
@@ -156,7 +156,7 @@ export const getProductCategories = async (params) => {
 
 export const getProductCategoryNextCode = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/product-category/next-code`, {
+    const response = await axios.get(`${baseURL}/product-category/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -167,7 +167,7 @@ export const getProductCategoryNextCode = async () => {
 
 export const getProductTypes = async (params) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/product-type/list`, {
+    const response = await axios.get(`${baseURL}/product-type/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         },
@@ -179,7 +179,7 @@ export const getProductTypes = async (params) => {
 
 export const getProductTypeNextCode = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/v1/product-type/next-code`, {
+    const response = await axios.get(`${baseURL}/product-type/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
