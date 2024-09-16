@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EditBuilding from "./edit";
@@ -45,64 +45,63 @@ const Building = () => {
       fixed: "left",
     },
     {
-      title: "BuildingCode",
-      dataIndex: "BuildingCode",
-      key: "BuildingCode",
-      width: 150,
+      title: "Building Code",
+      dataIndex: "buildingcode",
+      key: "buildingcode",
+      fixed: "left",
     },
     {
-      title: "BuildingName",
-      dataIndex: "BuildingName",
-      key: "BuildingName",
-      width: 150,
+      title: "Building Name",
+      dataIndex: "buildingname",
+      key: "buildingname",
     },
     {
       title: "Address",
-      dataIndex: "Address",
-      key: "Address",
-      width: 150,
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: "Phone",
-      dataIndex: "Phone",
-      key: "Phone",
-      width: 150,
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Fax",
-      dataIndex: "Fax",
-      key: "Fax",
-      width: 150,
+      dataIndex: "fax",
+      key: "fax",
     },
     {
-      title: "Contact",
-      dataIndex: "Contact",
-      key: "Contact",
-      width: 150,
+      title: "Contact Name",
+      dataIndex: "contact",
+      key: "contact",
     },
     {
-      title: "ZIPCode",
-      dataIndex: "ZIPCode",
-      key: "ZIPCode",
-      width: 150,
+      title: "Zip Code",
+      dataIndex: "zipcode",
+      key: "zipcode",
     },
     {
       title: "City",
-      dataIndex: "City",
-      key: "City",
-      width: 150,
+      dataIndex: "city",
+      key: "city",
     },
     {
       title: "Country",
-      dataIndex: "Country",
-      key: "Country",
-      width: 150,
+      dataIndex: "country",
+      key: "country",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 150,
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Action",
@@ -111,7 +110,7 @@ const Building = () => {
       render: (_, record) => (
         <Space>
           <EditBuilding dataSource={record} onEdit={fetchData} />
-          <DeleteBuilding />
+          <DeleteBuilding dataSource={record} onDelete={fetchData} />
         </Space>
       ),
     },
@@ -147,7 +146,7 @@ const Building = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 1800,
           }}
         />
       </div>

@@ -1,77 +1,94 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table } from "antd";
 import EditStorageLocation from "./edit";
 import DeleteStorageLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
-
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: "key",
-    dataIndex: "key",
-    key: "key",
-    width: 80,
-  },
-  {
-    title: "Warehouse",
-    dataIndex: "Warehouse",
-    key: "Warehouse",
-    width: 150,
-  },
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 150,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 150,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 150,
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 120,
-    render: (suspended) => (
-      <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditStorageLocation />
-        <DeleteStorageLocation />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: "1",
-    Warehouse: "WH01",
-    Code: "001",
-    Name: "Sudirman",
-    Description: "Test Data",
-    Suspense: false,
-  },
-];
+import { useEffect, useState } from "react";
+import { getStorageLocation } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const StorageLocation = () => {
+
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getStorageLocation();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "key",
+      dataIndex: "key",
+      key: "key",
+      fixed: "left",
+      width: 80,
+    },
+    {
+      title: "LocationCode",
+      dataIndex: "LocationCode",
+      key: "LocationCode",
+      fixed: "left",
+    },
+    {
+      title: "LocationName",
+      dataIndex: "LocationName",
+      key: "LocationName",
+    },
+    {
+      title: "WarehouseName",
+      dataIndex: "WarehouseName",
+      key: "WarehouseName",
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+    },
+    // {
+    //   title: "Suspended",
+    //   dataIndex: "Suspended",
+    //   key: "Suspended",
+    //   width: 120,
+    //   render: (suspended) => (
+    //     <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
+    //   ),
+    // },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditStorageLocation />
+          <DeleteStorageLocation />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -87,19 +104,13 @@ const StorageLocation = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

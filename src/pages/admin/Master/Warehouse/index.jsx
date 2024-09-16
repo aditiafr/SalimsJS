@@ -1,10 +1,11 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditWarehouse from "./edit";
-import DeleteBuilding from "../Building/delete";
 import { useEffect, useState } from "react";
 import { getWarehouse } from "../../../../Api/Master/getData";
+import DeleteWarehouse from "./delete";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -42,67 +43,67 @@ const Page = () => {
       title: "No",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
       width: 80,
     },
     {
       title: "Warehouse Code",
-      dataIndex: "WarehouseCode",
-      key: "WarehouseCode",
-      width: 150,
+      dataIndex: "warehousecode",
+      key: "warehousecode",
+      fixed: "left",
     },
     {
-      title: "Warehouse Name",
-      dataIndex: "WarehouseName",
-      key: "WarehouseName",
-      width: 150,
+      title: "Warehousen Name",
+      dataIndex: "warehousename",
+      key: "warehousename",
     },
     {
       title: "Address",
-      dataIndex: "Address",
-      key: "Address",
-      width: 150,
+      dataIndex: "address",
+      key: "address",
     },
     {
       title: "Phone",
-      dataIndex: "Phone",
-      key: "Phone",
-      width: 150,
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Fax",
-      dataIndex: "Fax",
-      key: "Fax",
-      width: 150,
+      dataIndex: "fax",
+      key: "fax",
     },
     {
       title: "Contact",
-      dataIndex: "Contact",
-      key: "Contact",
-      width: 150,
+      dataIndex: "contact",
+      key: "contact",
     },
     {
-      title: "ZIP Code",
-      dataIndex: "ZIPCode",
-      key: "ZIPCode",
-      width: 150,
+      title: "Zip Code",
+      dataIndex: "zipcode",
+      key: "zipcode",
     },
     {
       title: "City",
-      dataIndex: "City",
-      key: "City",
-      width: 150,
+      dataIndex: "city",
+      key: "city",
     },
     {
       title: "Country",
-      dataIndex: "Country",
-      key: "Country",
-      width: 150,
+      dataIndex: "country",
+      key: "country",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 150,
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Action",
@@ -111,7 +112,7 @@ const Page = () => {
       render: (_, record) => (
         <Space>
           <EditWarehouse dataSource={record} onEdit={fetchData} />
-          <DeleteBuilding />
+          <DeleteWarehouse dataSource={record} onDelete={fetchData} />
         </Space>
       ),
     },
@@ -129,13 +130,7 @@ const Page = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
@@ -147,7 +142,7 @@ const Page = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 2000,
           }}
         />
       </div>

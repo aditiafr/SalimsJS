@@ -10,25 +10,36 @@ const baseURL = process.env.REACT_APP_BASEURL;
 
 export const getBuilding = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/building`, {
+    const response = await axios.get(`${baseURL}/building/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
 
 export const getWarehouse = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/wareouse`, {
+    const response = await axios.get(`${baseURL}/warehouse/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+    return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
+}
+
+export const getStorageLocation = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/location/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
 
 export const getSampleSLocation = async () => {
     const token = Cookies.get('access_token');
@@ -39,7 +50,7 @@ export const getSampleSLocation = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+}
 
 export const getVendor = async () => {
     const token = Cookies.get('access_token');
@@ -50,7 +61,7 @@ export const getVendor = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+}
 
 export const getTestMethode = async () => {
     const token = Cookies.get('access_token');
@@ -61,7 +72,7 @@ export const getTestMethode = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+}
 
 export const getTimePoint = async () => {
     const token = Cookies.get('access_token');
@@ -72,7 +83,7 @@ export const getTimePoint = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+}
 
 export const getCustomer = async () => {
     const token = Cookies.get('access_token');
@@ -83,7 +94,7 @@ export const getCustomer = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-} 
+}
 
 export const getEquipmentType = async () => {
     const token = Cookies.get('access_token');
@@ -94,7 +105,7 @@ export const getEquipmentType = async () => {
     });
 
     return EquipmentTypeMapFromHttp(response.data.data);
-} 
+}
 
 export const getDepartments = async (params) => {
     const token = Cookies.get('access_token');
@@ -106,7 +117,7 @@ export const getDepartments = async (params) => {
     });
 
     return DepartmentMapFromHttp(response.data.data);
-} 
+}
 
 export const getDepartmentNextCode = async () => {
     const token = Cookies.get('access_token');

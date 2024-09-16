@@ -5,7 +5,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { updateBuilding } from "../../../../Api/Master/updateData";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
+import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditBuilding = ({ dataSource, onEdit }) => {
 
@@ -13,6 +13,12 @@ const EditBuilding = ({ dataSource, onEdit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const [isSuspend, setIsSuspend] = useState(dataSource.issuspend);
+
+  const handleSwitchChange = (checked) => {
+    setIsSuspend(checked);
+    form.setFieldsValue(dataSource);
+  };
 
   useEffect(() => {
     form.setFieldsValue(dataSource);
@@ -23,17 +29,17 @@ const EditBuilding = ({ dataSource, onEdit }) => {
   };
 
   const handleSubmit = async (values) => {
-    console.log("Success:", values);
     try {
       setLoading(true);
-      const modifiedValues = {
+      const payload = {
         ...values,
-        ...JsonCreateModif
+        issuspend: isSuspend
       }
-      const response = await updateBuilding(dataSource.BuildingCode, modifiedValues);
+      console.log(payload);
+      const response = await updateBuilding(dataSource.buildingcode, payload);
       messageApi.open({
         type: 'success',
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
       onEdit(true);
       setIsModalOpen(false);
@@ -42,13 +48,14 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     }
     setLoading(false);
   };
-  
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
     form.setFieldsValue(dataSource);
+    setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
 
@@ -59,7 +66,15 @@ const EditBuilding = ({ dataSource, onEdit }) => {
       </Tooltip>
 
       <Modal
-        title={<HeaderTitle title="Building" subtitle="Edit data a Building" />}
+        title={
+          <div className="flex justify-between items-center">
+            <HeaderTitle title="BUILDING" subtitle="Edit data a Building" />
+            <SwitchComponent
+              isSuspend={isSuspend}
+              handleSwitchChange={handleSwitchChange}
+            />
+          </div>
+        }
         centered
         open={isModalOpen}
         closable={false}
@@ -84,7 +99,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Building Code"
-                name="BuildingCode"
+                name="buildingcode"
                 rules={[
                   {
                     required: true,
@@ -99,7 +114,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Building Name"
-                name="BuildingName"
+                name="buildingname"
                 rules={[
                   {
                     required: true,
@@ -114,7 +129,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -129,7 +144,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Phone"
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -144,7 +159,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Fax"
-                name="Fax"
+                name="fax"
                 rules={[
                   {
                     required: true,
@@ -159,7 +174,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact"
-                name="Contact"
+                name="contact"
                 rules={[
                   {
                     required: true,
@@ -174,7 +189,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
                 rules={[
                   {
                     required: true,
@@ -189,7 +204,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
                 rules={[
                   {
                     required: true,
@@ -204,7 +219,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Country"
-                name="Country"
+                name="country"
                 rules={[
                   {
                     required: true,
@@ -217,7 +232,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>

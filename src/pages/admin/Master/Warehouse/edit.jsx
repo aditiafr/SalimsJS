@@ -4,14 +4,20 @@ import { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { updateWarehouse } from "../../../../Api/Master/updateData";
+import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditWarehouse = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const [isSuspend, setIsSuspend] = useState(dataSource.issuspend ? dataSource.issuspend : false);
+
+  const handleSwitchChange = (checked) => {
+    setIsSuspend(checked);
+    form.setFieldsValue(dataSource);
+  };
 
   useEffect(() => {
     form.setFieldsValue(dataSource);
@@ -22,17 +28,18 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
   };
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     try {
       setLoading(true);
-      const modifiedValues = {
+      const payload = {
         ...values,
-        ...JsonCreateModif
+        issuspend: isSuspend
       }
-      const response = await updateWarehouse(dataSource.WarehouseCode, modifiedValues);
+      console.log(payload);
+
+      const response = await updateWarehouse(dataSource.warehousecode, payload);
       messageApi.open({
         type: 'success',
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
       onEdit(true);
       setIsModalOpen(false);
@@ -47,6 +54,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
 
   const onReset = () => {
     form.setFieldsValue(dataSource);
+    setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
 
@@ -58,7 +66,13 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
 
       <Modal
         title={
-          <HeaderTitle title="WAREHOUSE" subtitle="Edit data a warehouse" />
+          <div className="flex justify-between items-center">
+            <HeaderTitle title="WAREHOUSE" subtitle="Edit data a warehouse" />
+            <SwitchComponent
+              isSuspend={isSuspend}
+              handleSwitchChange={handleSwitchChange}
+            />
+          </div>
         }
         centered
         open={isModalOpen}
@@ -84,7 +98,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Warehouse Code"
-                name="WarehouseCode"
+                name="warehousecode"
                 rules={[
                   {
                     required: true,
@@ -99,7 +113,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Warehouse Name"
-                name="WarehouseName"
+                name="warehousename"
                 rules={[
                   {
                     required: true,
@@ -114,7 +128,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -129,7 +143,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Phone"
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -144,7 +158,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Fax"
-                name="Fax"
+                name="fax"
                 rules={[
                   {
                     required: true,
@@ -159,7 +173,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact"
-                name="Contact"
+                name="contact"
                 rules={[
                   {
                     required: true,
@@ -174,7 +188,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
                 rules={[
                   {
                     required: true,
@@ -189,7 +203,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
                 rules={[
                   {
                     required: true,
@@ -204,7 +218,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Country"
-                name="Country"
+                name="country"
                 rules={[
                   {
                     required: true,
@@ -217,7 +231,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>

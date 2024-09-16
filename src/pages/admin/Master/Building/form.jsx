@@ -5,7 +5,6 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useMessageContext } from '../../../../components/Dashboard/Global/MessageContext';
 import { getBuilding } from '../../../../Api/Master/getData';
-import { JsonCreateModif } from '../../../../Api/Master/Json';
 import { postBuilding } from '../../../../Api/Master/postData';
 
 const FormBuilding = () => {
@@ -21,21 +20,21 @@ const FormBuilding = () => {
       const response = await getBuilding();
       if (response.length > 0) {
         const BCode = response.filter(
-          (item) => item.BuildingCode && item.BuildingCode.startsWith("BLD")
+          (item) => item.buildingcode && item.buildingcode.startsWith("BC")
         );
         if (BCode.length > 0) {
-          const lastCode = BCode[BCode.length - 1].BuildingCode;
-          const nextNumber = parseInt(lastCode.substr(3)) + 1;
-          setBuildingCode(`BLD${nextNumber.toString().padStart(2, "0")}`);
+          const lastCode = BCode[BCode.length - 1].buildingcode;
+          const nextNumber = parseInt(lastCode.substr(2)) + 1;
+          setBuildingCode(`BC${nextNumber.toString().padStart(3, "0")}`);
         } else {
-          setBuildingCode("BLD01");
+          setBuildingCode("BC001");
         }
       } else {
-        setBuildingCode("BLD01");
+        setBuildingCode("BC001");
       }
     } catch (error) {
-      setBuildingCode("BLD01");
-      console.log(error.response.statusText);
+      setBuildingCode("BC001");
+      console.log(error);
     }
   };
 
@@ -44,22 +43,18 @@ const FormBuilding = () => {
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue({ BuildingCode: buildingCode });
+    form.setFieldsValue({ buildingcode: buildingCode });
   }, [buildingCode, form]);
 
   const handleSubmit = async (values) => {
-    console.log("Success:", values);
     try {
       setLoading(true);
-      const modifiedValues = {
-        ...values,
-        ...JsonCreateModif
-      }
-      const response = await postBuilding(modifiedValues);
+      const response = await postBuilding(values);
       messageApi.open({
         type: 'success',
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
+
       navigate("/master/building");
     } catch (error) {
       console.log(error);
@@ -93,7 +88,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Building Code"
-                name="BuildingCode"
+                name="buildingcode"
                 rules={[
                   {
                     required: true,
@@ -108,7 +103,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Building Name"
-                name="BuildingName"
+                name="buildingname"
                 rules={[
                   {
                     required: true,
@@ -123,7 +118,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -138,7 +133,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Phone"
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -153,7 +148,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Fax"
-                name="Fax"
+                name="fax"
                 rules={[
                   {
                     required: true,
@@ -168,7 +163,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact"
-                name="Contact"
+                name="contact"
                 rules={[
                   {
                     required: true,
@@ -183,7 +178,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
                 rules={[
                   {
                     required: true,
@@ -198,7 +193,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
                 rules={[
                   {
                     required: true,
@@ -213,7 +208,7 @@ const FormBuilding = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Country"
-                name="Country"
+                name="country"
                 rules={[
                   {
                     required: true,
@@ -226,7 +221,7 @@ const FormBuilding = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>

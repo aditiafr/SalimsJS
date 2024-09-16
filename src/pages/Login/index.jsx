@@ -6,12 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,10 +28,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
+      setIsLoading(true);
       console.log(formData);
-      const response = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/auth/login`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_BASEURL}/auth/login`, formData);
       console.log(response.data);
 
       Cookies.set('access_token', response.data.access_token, { expires: 7 });
@@ -39,6 +40,7 @@ const Login = () => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -52,7 +54,7 @@ const Login = () => {
           {/* <p className="text-4xl drop-shadow-md font-bold">SA-CRMS</p> */}
           <img className="w-44" src="/assets/images/salims.png" alt="logo" />
           <div className="py-6">
-            <h1 className="text-[42px] md:text-[58px] text-[#219BBC] leading-none">Hello, <span className="font-bold">Welcome!</span></h1>
+            <h1 className="text-[42px] md:text-[58px] text-primary-500 leading-none">Hello, <span className="font-bold">Welcome!</span></h1>
           </div>
           <div className="my-2">
             <form onSubmit={handleSubmit} method="POST">
@@ -104,11 +106,17 @@ const Login = () => {
               </div>
 
               <Link to="">
-                <p className="text-right pt-2 text-[#219BBC] hover:text-indigo-400">Forget password?</p>
+                <p className="text-right pt-2 text-primary-500 hover:text-indigo-400">Forget password?</p>
               </Link>
 
               <div className="flex gap-4">
-                <button type="submit" className=" bg-[#219BBC] hover:bg-indigo-500 text-white py-2 max-w-32 w-full rounded-md mt-8">Log in</button>
+                <button type="submit" className={`${isLoading ? 'bg-primary-400' : 'bg-primary-500'} hover:bg-primary-400 text-white py-2 max-w-32 w-full rounded-md mt-8`}>
+                  {isLoading ?
+                    "Loading..."
+                    :
+                    "Login"
+                  }
+                </button>
               </div>
             </form>
           </div>

@@ -4,8 +4,6 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { useNavigate } from "react-router-dom";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
-import { getWarehouse } from "../../../../Api/Master/getData";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { postWarehouse } from "../../../../Api/Master/postData";
 
 const FormWarehouse = () => {
@@ -19,24 +17,24 @@ const FormWarehouse = () => {
   const fetchWarehouse = async () => {
     try {
       setLoading(true);
-      const response = await getWarehouse();
+      const response = await postWarehouse();
       if (response.length > 0) {
-        const BCode = response.filter(
-          (item) => item.WarehouseCode && item.WarehouseCode.startsWith("WH")
+        const WHCode = response.filter(
+          (item) => item.warehousecode && item.warehousecode.startsWith("WH")
         );
-        if (BCode.length > 0) {
-          const lastCode = BCode[BCode.length - 1].WarehouseCode;
+        if (WHCode.length > 0) {
+          const lastCode = WHCode[WHCode.length - 1].warehousecode;
           const nextNumber = parseInt(lastCode.substr(2)) + 1;
-          setWarehouseCode(`WH${nextNumber.toString().padStart(2, "0")}`);
+          setWarehouseCode(`WH${nextNumber.toString().padStart(3, "0")}`);
         } else {
-          setWarehouseCode("WH01");
+          setWarehouseCode("WH001");
         }
       } else {
-        setWarehouseCode("WH01");
+        setWarehouseCode("WH001");
       }
     } catch (error) {
-      setWarehouseCode("WH01");
-      console.log(error.response.statusText);
+      setWarehouseCode("WH001");
+      console.log(error);
     }
     setLoading(false);
   };
@@ -46,20 +44,15 @@ const FormWarehouse = () => {
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue({ WarehouseCode: warehouseCode });
+    form.setFieldsValue({ warehousecode: warehouseCode });
   }, [warehouseCode, form]);
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     try {
-      const modifiedValues = {
-        ...values,
-        ...JsonCreateModif
-      }
-      const response = await postWarehouse(modifiedValues);
+      const response = await postWarehouse(values);
       messageApi.open({
         type: 'success',
-        content: response.data.statusMessage,
+        content: response.data.msg,
       });
       navigate("/master/warehouse");
     } catch (error) {
@@ -92,7 +85,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Warehouse Code"
-                name="WarehouseCode"
+                name="warehousecode"
                 rules={[
                   {
                     required: true,
@@ -107,7 +100,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Warehouse Name"
-                name="WarehouseName"
+                name="warehousename"
                 rules={[
                   {
                     required: true,
@@ -122,7 +115,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -137,7 +130,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Phone"
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -152,7 +145,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Fax"
-                name="Fax"
+                name="fax"
                 rules={[
                   {
                     required: true,
@@ -167,7 +160,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact"
-                name="Contact"
+                name="contact"
                 rules={[
                   {
                     required: true,
@@ -182,7 +175,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
                 rules={[
                   {
                     required: true,
@@ -197,7 +190,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
                 rules={[
                   {
                     required: true,
@@ -212,7 +205,7 @@ const FormWarehouse = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Country"
-                name="Country"
+                name="country"
                 rules={[
                   {
                     required: true,
@@ -225,7 +218,7 @@ const FormWarehouse = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>
