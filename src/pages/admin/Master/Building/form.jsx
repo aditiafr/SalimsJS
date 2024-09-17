@@ -54,7 +54,6 @@ const FormBuilding = () => {
         type: 'success',
         content: response.data.msg,
       });
-
       navigate("/master/building");
     } catch (error) {
       console.log(error);

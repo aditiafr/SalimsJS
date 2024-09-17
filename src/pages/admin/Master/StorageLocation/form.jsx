@@ -3,47 +3,98 @@ import { Col, Form, Input, Row } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import InputModal from "./InputModal";
 import { useEffect, useState } from "react";
-import { getWarehouse } from "../../../../Api/Master/getData";
+import { getStorageLocation, getWarehouse } from "../../../../Api/Master/getData";
+import { postStorageLocation } from "../../../../Api/Master/postData";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 
 const FormStorageLocation = () => {
   const [form] = Form.useForm();
-
-  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
-  const [dataModal, setDataModal] = useState([]);
 
-  console.log(dataModal);
+  const [dataWarehouse, setDataWarehouse] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectWarehouse, setSelectWarehouse] = useState("");
+  console.log(selectWarehouse);
 
-  const fetchData = async () => {
+  const WarehouseName = selectWarehouse ? selectWarehouse.warehousename : '';
+  const WarehouseCode = selectWarehouse ? selectWarehouse.warehousecode : '';
+
+  const [locationCode, setLocationCode] = useState("");
+
+  const fetchWarehouse = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await getWarehouse();
       const filter = response.filter((item) => item.issuspend !== true).map((item, row) => ({ ...item, key: row + 1 }));
-      setData(filter);
+      setDataWarehouse(filter);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchWarehouse();
+  }, []);
+
+  const fetchLocation = async () => {
+    try {
+      const response = await getStorageLocation();
+      if (response.length > 0) {
+        const LCode = response.filter(
+          (item) => item.locationcode && item.locationcode.startsWith("LC")
+        );
+        if (LCode.length > 0) {
+          const lastCode = LCode[LCode.length - 1].locationcode;
+          const nextNumber = parseInt(lastCode.substr(2)) + 1;
+          setLocationCode(`LC${nextNumber.toString().padStart(3, "0")}`);
+        } else {
+          setLocationCode("LC001");
+        }
+      } else {
+        setLocationCode("LC001");
+      }
+    } catch (error) {
+      setLocationCode("LC001");
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLocation();
+  }, [])
+
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = {
+        ...values,
+        warehousecode: WarehouseCode
+      }
+      const response = await postStorageLocation(payload);
+      messageApi.open({
+        type: 'success',
+        content: response.data.msg,
+      });
+      navigate("/master/building");
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    form.setFieldsValue({ warehouse: dataModal.warehousename });
-  }, [dataModal.warehousename, form]);
-
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const onReset = () => {
     form.resetFields();
   };
+
+  useEffect(() => {
+    form.setFieldsValue({ warehousename: WarehouseName });
+    form.setFieldsValue({ locationcode: locationCode });
+  }, [WarehouseName, form, locationCode]);
 
   return (
     <>
@@ -57,31 +108,30 @@ const FormStorageLocation = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <InputModal
-                label="Warehouse"
-                name="warehouse"
-                dataSource={data}
-                loading={loading}
+                label="Warehouse Name"
+                name="warehousename"
+                dataSource={dataWarehouse}
+                loading={isLoading}
                 columns={columns}
-                onData={(values) => setDataModal(values)}
+                onData={(values) => setSelectWarehouse(values)}
               />
             </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="Code"
+                label="Location Code"
+                name="locationcode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Code!",
+                    message: "Please input your LocationCode!",
                   },
                 ]}
               >
@@ -91,12 +141,12 @@ const FormStorageLocation = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Location Name"
+                name="locationname"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Location Name!",
                   },
                 ]}
               >
@@ -105,12 +155,12 @@ const FormStorageLocation = () => {
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

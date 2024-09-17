@@ -48,23 +48,23 @@ const StorageLocation = () => {
     },
     {
       title: "LocationCode",
-      dataIndex: "LocationCode",
+      dataIndex: "locationcode",
       key: "LocationCode",
       fixed: "left",
     },
     {
       title: "LocationName",
-      dataIndex: "LocationName",
+      dataIndex: "locationname",
       key: "LocationName",
     },
     {
       title: "WarehouseName",
-      dataIndex: "WarehouseName",
+      dataIndex: "warehousename",
       key: "WarehouseName",
     },
     {
       title: "Description",
-      dataIndex: "Description",
+      dataIndex: "description",
       key: "Description",
     },
     // {
@@ -82,7 +82,7 @@ const StorageLocation = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditStorageLocation />
+          <EditStorageLocation dataSource={record} onEdit={fetchData} />
           <DeleteStorageLocation />
         </Space>
       ),

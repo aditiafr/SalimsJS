@@ -6,7 +6,7 @@ import SearchInput from '../../../../components/Dashboard/Global/Table/SearchInp
 const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -22,17 +22,21 @@ const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
         )
     );
 
-    const handleSelectData = () => {
-        onData(selectedRows[0]);
-        setIsModalOpen(false);
+    const rowSelection = {
+        type: "radio",
+        selectedRowKeys, // Bind selected row keys to rowSelection
+        onChange: (selectedRowKeys, selectedRows) => {
+            setSelectedRowKeys(selectedRowKeys); // Update selected row keys state
+            onData(selectedRows[0]);
+            setIsModalOpen(false);
+        },
     };
 
-    const rowSelection = {
-        type: 'radio',
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setSelectedRows(selectedRows);
-        },
+    // Handle row click event
+    const handleRowClick = (record, rowIndex) => {
+        setSelectedRowKeys([record.key]); // Update selected row keys
+        onData(record);
+        setIsModalOpen(false);
     };
 
     return (
@@ -64,7 +68,7 @@ const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
                 }}
                 footer={
                     <>
-                        <Button onClick={handleSelectData}>Submit</Button>
+                        {/* <Button onClick={handleSelectData}>Submit</Button> */}
                         <Button onClick={() => setIsModalOpen(false)}>Close</Button>
                     </>
                 }
@@ -77,13 +81,12 @@ const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
                     columns={columns}
                     dataSource={filteredData}
                     rowSelection={rowSelection}
-                    pagination={{
-                        showSizeChanger: true,
-                        defaultPageSize: 10,
-                    }}
-                    scroll={{
-                        x: 2000,
-                    }}
+                    onRow={(record, rowIndex) => ({
+                        onClick: () => {
+                            handleRowClick(record, rowIndex);
+                        },
+                    })}
+                    scroll={{ x: 2000 }}
                 />
             </Modal>
         </div>
