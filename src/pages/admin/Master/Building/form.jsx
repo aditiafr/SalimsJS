@@ -48,9 +48,10 @@ const FormBuilding = () => {
       }
       console.log(payload);
       const response = await postBuilding(payload);
+      console.log('Response', response);
       messageApi.open({
         type: 'success',
-        content: response.data.msg,
+        content: response.data.message,
       });
       navigate("/master/building");
     } catch (error) {
@@ -63,12 +64,11 @@ const FormBuilding = () => {
     form.resetFields();
   };
 
-  const validatePhoneNumber = (rule, value) => {
-    if (!value || /^[1-9]\d*$/.test(value)) {
-      return Promise.resolve();
+  const onlyNumber = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
     }
-    return Promise.reject("Phone number must be numeric and cannot start with 0");
-  };
+  }
 
   return (
     <>
@@ -132,12 +132,12 @@ const FormBuilding = () => {
                   required: true,
                   message: "Please input your Phone Number!",
                 },
-                {
-                  validator: validatePhoneNumber,
-                },
               ]}
             >
-              <Input addonBefore="+62" placeholder="Input Phone Number Example(8123456789)" />
+              <Input
+                placeholder="Input Phone Number Example(08123456789)"
+                onKeyPress={onlyNumber}
+              />
             </Form.Item>
 
             <Form.Item
