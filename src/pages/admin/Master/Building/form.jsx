@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useMessageContext } from '../../../../components/Dashboard/Global/MessageContext';
-import { getBuilding } from '../../../../Api/Master/getData';
+import { getBuildingNextCode } from '../../../../Api/Master/getData';
 import { postBuilding } from '../../../../Api/Master/postData';
 
 const FormBuilding = () => {
@@ -15,41 +15,39 @@ const FormBuilding = () => {
 
   const [buildingCode, setBuildingCode] = useState("");
 
-  const fetchBuilding = async () => {
+  const fetchNextCode = async () => {
     try {
-      const response = await getBuilding();
-      if (response.length > 0) {
-        const BCode = response.filter(
-          (item) => item.buildingcode && item.buildingcode.startsWith("BC")
-        );
-        if (BCode.length > 0) {
-          const lastCode = BCode[BCode.length - 1].buildingcode;
-          const nextNumber = parseInt(lastCode.substr(2)) + 1;
-          setBuildingCode(`BC${nextNumber.toString().padStart(3, "0")}`);
-        } else {
-          setBuildingCode("BC001");
-        }
-      } else {
-        setBuildingCode("BC001");
-      }
+      const res = await getBuildingNextCode();
+      setBuildingCode(res.buildingcode);
     } catch (error) {
-      setBuildingCode("BC001");
-      console.log(error);
+      console.log();
     }
-  };
+  }
 
   useEffect(() => {
-    fetchBuilding();
+    fetchNextCode();
   }, []);
 
-  useEffect(() => {
-    form.setFieldsValue({ buildingcode: buildingCode });
-  }, [buildingCode, form]);
+  // useEffect(() => {
+  //   form.setFieldsValue({ buildingcode: buildingCode });
+  // }, [buildingCode, form]);
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const response = await postBuilding(values);
+      let payload = {
+        ...values,
+        issuspend: 0
+      };
+      if (!values.buildingcode) {
+        form.setFieldsValue({ buildingcode: buildingCode });
+        payload = {
+          ...payload,
+          buildingcode: buildingCode
+        }
+      }
+      console.log(payload);
+      const response = await postBuilding(payload);
       messageApi.open({
         type: 'success',
         content: response.data.msg,
@@ -61,12 +59,15 @@ const FormBuilding = () => {
     setLoading(false);
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const onReset = () => {
     form.resetFields();
+  };
+
+  const validatePhoneNumber = (rule, value) => {
+    if (!value || /^[1-9]\d*$/.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Phone number must be numeric and cannot start with 0");
   };
 
   return (
@@ -79,152 +80,136 @@ const FormBuilding = () => {
           name="basic"
           layout="vertical"
           onFinish={handleSubmit}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Building Code"
-                name="buildingcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Building Name"
-                name="buildingname"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Name!",
-                  },
-                ]}
-              >
-                <Input autoFocus />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Building Code"
+              name="buildingcode"
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Building Code!",
+            //   },
+            // ]}
+            >
+              <Input placeholder="Input Building Code" maxLength={20} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address!",
-                  },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Building Name"
+              name="buildingname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Building Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Building Name" autoFocus />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Phone!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Address!",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Input Address" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Phone Number!",
+                },
+                {
+                  validator: validatePhoneNumber,
+                },
+              ]}
+            >
+              <Input addonBefore="+62" placeholder="Input Phone Number Example(8123456789)" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact"
-                name="contact"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Fax"
+              name="fax"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Fax!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Fax" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIP Code"
-                name="zipcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIP Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Contact Name"
+              name="contact"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Contact Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Contact Name" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your City!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="ZIP Code"
+              name="zipcode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your ZIP Code!",
+                },
+              ]}
+            >
+              <Input placeholder="Input ZIP Code" maxLength={5} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Country"
-                name="country"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Country!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="City"
+              name="city"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your City!",
+                },
+              ]}
+            >
+              <Input placeholder="Input City" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Country"
+              name="country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Country!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Country" />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
+
+          </div>
 
           <ButtonSubmit onReset={onReset} onLoading={loading} />
 

@@ -95,148 +95,130 @@ const EditBuilding = ({ dataSource, onEdit }) => {
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Building Code"
-                name="buildingcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-2">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Building Name"
-                name="buildingname"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Name!",
-                  },
-                ]}
-              >
-                <Input autoFocus />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Building Code"
+              name="buildingcode"
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Building Code!",
+            //   },
+            // ]}
+            >
+              <Input placeholder="Input Building Code" maxLength={20} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address!",
-                  },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Building Name"
+              name="buildingname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Building Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Building Name" autoFocus />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Phone!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Address!",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Input Address" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Number Phone"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Number Phone!",
+                },
+              ]}
+            >
+              <Input addonBefore="+62" placeholder="Input Number Phone Example(8123456789)" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact"
-                name="contact"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Fax"
+              name="fax"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Fax!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIP Code"
-                name="zipcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIP Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Contact"
+              name="contact"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Contact!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your City!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="ZIP Code"
+              name="zipcode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your ZIP Code!",
+                },
+              ]}
+            >
+              <Input maxLength={5} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Country"
-                name="country"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Country!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="City"
+              name="city"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your City!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Country"
+              name="country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Country!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea />
+            </Form.Item>
+
+          </div>
 
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>

@@ -20,7 +20,7 @@ const ButtonSubmit = ({ onReset, onLoading }) => {
       }}
     >
       <Button type="primary" danger htmlType="button" onClick={onReset}>
-        Cancel
+        Reset
       </Button>
       <Button type="primary" htmlType="submit" loading={onLoading}>
         Submit

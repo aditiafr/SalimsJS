@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Button, Dropdown, Layout, Menu, message, theme } from 'antd';
 import {
   HomeOutlined,
   LayoutOutlined,
@@ -28,13 +29,48 @@ import {
   BorderInnerOutlined,
   TagOutlined,
   TagsOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
-import { Link } from "react-router-dom";
-const { Header, Sider, Content, Footer } = Layout;
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
+const { Header, Content, Footer, Sider } = Layout;
 
 const MySidebar = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobile, setMobile] = useState(window.innerWidth <= 768);
+  const [selectedKeys, setSelectedKeys] = useState(["1"]);
+  const [openKeys, setOpenKeys] = useState();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMobile(window.innerWidth <= 768);
+    };
+    if (mobile) {
+      setCollapsed(true);
+    } else {
+      setCollapsed(false);
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [mobile]);
+
+  useEffect(() => {
+    // Read the selected key and open keys from localStorage
+    const storedSelectedKey = localStorage.getItem('selectedMenuKey');
+    const storedOpenKeys = localStorage.getItem('openMenuKeys');
+
+    if (storedSelectedKey) {
+      setSelectedKeys([storedSelectedKey]);
+    }
+
+    if (storedOpenKeys) {
+      setOpenKeys(JSON.parse(storedOpenKeys));
+    }
+  }, []);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -98,37 +134,89 @@ const MySidebar = ({ children }) => {
     // getItem("Files", "9", <FileOutlined />, "/files"),
   ];
 
+
+  const handleMenuClick = (e) => {
+    // Save the clicked menu key to localStorage
+    if (mobile) {
+      setCollapsed(true);
+    }
+    localStorage.setItem('selectedMenuKey', e.key);
+    setSelectedKeys([e.key]);
+  };
+
+  const handleOpenChange = (keys) => {
+    // Save the open keys to localStorage
+    localStorage.setItem('openMenuKeys', JSON.stringify(keys));
+    setOpenKeys(keys);
+  };
+
+  const handleSignOut = () => {
+    Cookies.remove('auth_token');
+    localStorage.clear();
+    navigate('/');
+    message.success('You have successfully Sign out.');
+  }
+
+  const menuItems = [
+    {
+      key: 'account',
+      icon: <UserOutlined />,
+      label: 'Profile Account',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: <button onClick={handleSignOut}>Sign Out</button>,
+    },
+  ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        width={250} // Menambahkan lebar Sider
-        style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "fixed",
-          left: 0,
-          top: 0,
-          bottom: 0,
-          background: colorBgContainer,
-        }}
-      >
-        <div className="demo-logo-vertical" />
-        <div className="w-full px-6 pt-2 pb-4">
-          <img src="/assets/images/salims.png" alt="..." className="w-32" />
-        </div>
-        <Menu
-          theme="light"
-          mode="inline"
-          defaultSelectedKeys={["1"]}
-          items={items}
-        />
-      </Sider>
+      {!mobile || (mobile && !collapsed) ? (
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          width={300}
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            background: "#001529",
+            color: "#fff"
+          }}
+        >
+          <div className="demo-logo-vertical" />
+          {/* <div className="w-full px-4 py-2 flex items-center justify-center">
+            {!collapsed ? (
+              <p className="text-4xl font-bold">SA-CRMS</p>
+            ) : (
+              <p className="text-xl font-bold">SA</p>
+            )}
+          </div> */}
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={selectedKeys}
+            openKeys={openKeys}
+            items={items}
+            onClick={handleMenuClick}
+            onOpenChange={handleOpenChange}
+            style={{
+              color: '#ffffff'
+            }}
+          />
+        </Sider>
+      ) : null}
       <Layout
         style={{
-          marginLeft: collapsed ? 80 : 250, // Menyesuaikan margin kiri sesuai dengan lebar Sider
+          marginLeft: mobile && collapsed ? 0 : (collapsed ? 80 : 300),
           transition: "margin-left 0.2s",
           display: "flex",
           flexDirection: "column",
@@ -138,6 +226,9 @@ const MySidebar = ({ children }) => {
           style={{
             padding: 0,
             background: colorBgContainer,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
           <Button
@@ -146,14 +237,24 @@ const MySidebar = ({ children }) => {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: "16px",
-              width: 64,
-              height: 64,
+              width: 42,
+              height: 42,
             }}
           />
+
+          <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+            <div className="flex items-center justify-center gap-2 mr-5 cursor-pointer">
+              <div className="border rounded-full p-2 flex items-center justify-center">
+                <UserOutlined style={{ fontSize: '16px' }} />
+              </div>
+              <p>{location.pathname.startsWith('/customer') ? "Customer" : "Admin"}</p>
+            </div>
+          </Dropdown>
         </Header>
+
         <Content
           style={{
-            margin: "24px 16px 0",
+            margin: "24px 16px",
             overflow: "initial",
             flex: 1,
           }}
@@ -161,12 +262,12 @@ const MySidebar = ({ children }) => {
           {children}
         </Content>
         {/* <Footer
-      style={{
-        textAlign: "center",
-      }}
-    >
-      Ant Design ©{new Date().getFullYear()} Created by Ant UED
-    </Footer> */}
+                    style={{
+                        textAlign: "center",
+                    }}
+                >
+                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                </Footer> */}
       </Layout>
     </Layout>
   );

@@ -19,6 +19,16 @@ export const getBuilding = async () => {
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
+export const getBuildingNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/building/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
+}
+
 export const getWarehouse = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/warehouse/list`, {
