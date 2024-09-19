@@ -1,70 +1,65 @@
-import { Col, Form, Input, Row } from "antd";
+import { Form, Input, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useNavigate } from "react-router-dom";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { useEffect, useState } from "react";
 import { postWarehouse } from "../../../../Api/Master/postData";
+import { getWarehouseNextCode } from "../../../../Api/Master/getData";
 
 const FormWarehouse = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
   const [warehouseCode, setWarehouseCode] = useState("");
 
-  const fetchWarehouse = async () => {
+  useEffect(() => {
+    const fetchNextCode = async () => {
+      try {
+        const res = await getWarehouseNextCode();
+        setWarehouseCode(res.warehouse);
+
+      } catch (error) {
+        console.log();
+      }
+    }
+    fetchNextCode();
+  }, []);
+
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const response = await postWarehouse();
-      if (response.length > 0) {
-        const WHCode = response.filter(
-          (item) => item.warehousecode && item.warehousecode.startsWith("WH")
-        );
-        if (WHCode.length > 0) {
-          const lastCode = WHCode[WHCode.length - 1].warehousecode;
-          const nextNumber = parseInt(lastCode.substr(2)) + 1;
-          setWarehouseCode(`WH${nextNumber.toString().padStart(3, "0")}`);
-        } else {
-          setWarehouseCode("WH001");
+      let payload = {
+        ...values,
+        city: 'CM001',
+        issuspend: 0,
+      };
+      if (!values.warehousecode) {
+        form.setFieldsValue({ warehousecode: warehouseCode });
+        payload = {
+          ...payload,
+          warehousecode: warehouseCode
         }
-      } else {
-        setWarehouseCode("WH001");
       }
+      console.log(payload);
+      const response = await postWarehouse(payload);
+      message.success(response.data.message);
+      navigate("/master/warehouse");
     } catch (error) {
-      setWarehouseCode("WH001");
+      message.error(error.response.data.message);
       console.log(error);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchWarehouse();
-  }, []);
-
-  useEffect(() => {
-    form.setFieldsValue({ warehousecode: warehouseCode });
-  }, [warehouseCode, form]);
-
-  const onFinish = async (values) => {
-    try {
-      const response = await postWarehouse(values);
-      messageApi.open({
-        type: 'success',
-        content: response.data.msg,
-      });
-      navigate("/master/warehouse");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const onReset = () => {
     form.resetFields();
+  };
+
+  const onlyNumber = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -76,153 +71,152 @@ const FormWarehouse = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Warehouse Code"
-                name="warehousecode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Warehouse Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Warehouse Name"
-                name="warehousename"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Warehouse Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address!",
-                  },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Warehouse Code"
+              name="warehousecode"
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Warehouse Code!",
+            //   },
+            // ]}
+            >
+              <Input placeholder="Input Warehouse Code" maxLength={6} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Phone!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Warehouse Name"
+              name="warehousename"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Warehouse Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Warehouse Name" autoFocus />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Address!",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Input Address" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact"
-                name="contact"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="City Name"
+              name="cityname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your City Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input City Name" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="ZIP Code"
-                name="zipcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your ZIP Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="ZIP Code"
+              name="zipcode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your ZIP Code!",
+                },
+              ]}
+            >
+              <Input placeholder="Input ZIP Code" maxLength={5} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your City!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Country"
+              name="country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Country!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Country" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Country"
-                name="country"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Country!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Phone Number!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Input Phone Number Example(08123456789)"
+                onKeyPress={onlyNumber}
+              />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Fax"
+              name="fax"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Fax!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Fax" />
+            </Form.Item>
+
+            <Form.Item
+              label="NPWP"
+              name="npwp"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your NPWP!",
+                },
+              ]}
+            >
+              <Input placeholder="Input NPWP" onKeyPress={onlyNumber} />
+            </Form.Item>
+
+            <Form.Item
+              label="Contact Name"
+              name="contact"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Contact Name!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Contact Name" />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description" className="col-span-2">
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
+
+          </div>
+
           <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>

@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditWarehouse from "./edit";
@@ -47,13 +47,13 @@ const Page = () => {
       width: 80,
     },
     {
-      title: "Warehouse Code",
+      title: "warehousecode",
       dataIndex: "warehousecode",
       key: "warehousecode",
       fixed: "left",
     },
     {
-      title: "Warehousen Name",
+      title: "Warehouse Name",
       dataIndex: "warehousename",
       key: "warehousename",
     },
@@ -63,14 +63,14 @@ const Page = () => {
       key: "address",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
       title: "Fax",
       dataIndex: "fax",
       key: "fax",
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Contact",
@@ -83,9 +83,14 @@ const Page = () => {
       key: "zipcode",
     },
     {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
+      title: "City Code",
+      dataIndex: "citycode",
+      key: "citycode",
+    },
+    {
+      title: "City Name",
+      dataIndex: "cityname",
+      key: "cityname",
     },
     {
       title: "Country",
@@ -112,7 +117,9 @@ const Page = () => {
       render: (_, record) => (
         <Space>
           <EditWarehouse dataSource={record} onEdit={fetchData} />
-          <DeleteWarehouse dataSource={record} onDelete={fetchData} />
+          {record.issuspend === false && (
+            <DeleteWarehouse dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },

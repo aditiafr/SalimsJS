@@ -19,14 +19,15 @@ export const deleteBuilding = async (BuildingCode) => {
 
 export const deleteWarehouse = async (WarehouseCode) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/warehouse/change-status/${WarehouseCode}`, {
-        warehousecode: WarehouseCode,
-        issuspend: true
-    }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    const response = await axios.patch(`${baseUrl}/warehouse/set-suspend/${WarehouseCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     return response;
 }
 

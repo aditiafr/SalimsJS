@@ -40,6 +40,27 @@ export const getWarehouse = async () => {
     return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
 }
 
+export const getWarehouseNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/warehouse/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
+}
+
+export const getCity = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/city/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
+}
+
 export const getStorageLocation = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/location/list`, {

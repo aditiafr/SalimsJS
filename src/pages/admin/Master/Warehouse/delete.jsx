@@ -1,21 +1,16 @@
 import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
-import { Button, Modal, Tooltip } from "antd";
+import { Button, message, Modal, Tooltip } from "antd";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { deleteWarehouse } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 
 const DeleteWarehouse = ({ dataSource, onDelete }) => {
-  const { messageApi } = useMessageContext();
 
   const handleDelete = async () => {
     try {
       const res = await deleteWarehouse(dataSource.warehousecode);
-      messageApi.open({
-        type: 'success',
-        content: res.data.msg,
-      });
+      message.success(res.data.message);
       onDelete(true);
       Modal.destroyAll();
     } catch (error) {

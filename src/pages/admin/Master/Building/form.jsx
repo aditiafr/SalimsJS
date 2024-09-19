@@ -13,18 +13,16 @@ const FormBuilding = () => {
 
   const [buildingCode, setBuildingCode] = useState("");
 
-  const fetchNextCode = async () => {
-    try {
-      const res = await getBuildingNextCode();
-      setBuildingCode(res.buildingcode);
-      console.log(res.buildingcode);
-
-    } catch (error) {
-      console.log();
-    }
-  }
-
   useEffect(() => {
+    const fetchNextCode = async () => {
+      try {
+        const res = await getBuildingNextCode();
+        setBuildingCode(res.buildingcode);
+
+      } catch (error) {
+        console.log();
+      }
+    }
     fetchNextCode();
   }, []);
 
@@ -35,14 +33,11 @@ const FormBuilding = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = {
-        ...values,
-        issuspend: 0
-      };
+      let payload = values;
       if (!values.buildingcode) {
         form.setFieldsValue({ buildingcode: buildingCode });
         payload = {
-          ...payload,
+          ...values,
           buildingcode: buildingCode
         }
       }
@@ -58,12 +53,6 @@ const FormBuilding = () => {
 
   const onReset = () => {
     form.resetFields();
-  };
-
-  const onlyNumber = (event) => {
-    if (!/[0-9]/.test(event.key)) {
-      event.preventDefault();
-    }
   };
 
   return (
@@ -124,15 +113,27 @@ const FormBuilding = () => {
               label="Phone Number"
               name="phone"
               rules={[
+                { required: true, message: "Please input your Phone Number!" },
                 {
-                  required: true,
-                  message: "Please input your Phone Number!",
+                  pattern: /^[0-9]+$/,
+                  message: "Please input numbers only!",
                 },
+                // {
+                //   min: 10,
+                //   max: 13,
+                //   message: "Phone number must be between 10 and 13 digits!",
+                // },
               ]}
             >
               <Input
+                type="tel"
                 placeholder="Input Phone Number Example(08123456789)"
-                onKeyPress={onlyNumber}
+                maxLength={13}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
               />
             </Form.Item>
 
