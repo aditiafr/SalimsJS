@@ -110,7 +110,9 @@ const Building = () => {
       render: (_, record) => (
         <Space>
           <EditBuilding dataSource={record} onEdit={fetchData} />
-          <DeleteBuilding dataSource={record} onDelete={fetchData} />
+          {record.issuspend === false && (
+            <DeleteBuilding dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },

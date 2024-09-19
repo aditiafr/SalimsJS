@@ -5,14 +5,15 @@ const baseUrl = process.env.REACT_APP_BASEURL;
 
 export const deleteBuilding = async (BuildingCode) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/building/change-status/${BuildingCode}`, {
-        buildingcode: BuildingCode,
-        issuspend: true
-    }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    const response = await axios.patch(`${baseUrl}/building/set-suspend/${BuildingCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     return response;
 }
 

@@ -1,19 +1,18 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip } from "antd";
+import { Button, Form, Input, message, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { updateBuilding } from "../../../../Api/Master/updateData";
 import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditBuilding = ({ dataSource, onEdit }) => {
+  console.log(dataSource);
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
-  const [isSuspend, setIsSuspend] = useState(dataSource.issuspend);
+  const [isSuspend, setIsSuspend] = useState(false);
 
   const handleSwitchChange = (checked) => {
     setIsSuspend(checked);
@@ -26,6 +25,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
+    setIsSuspend(dataSource.issuspend);
   };
 
   const handleSubmit = async (values) => {
@@ -35,12 +35,8 @@ const EditBuilding = ({ dataSource, onEdit }) => {
         ...values,
         issuspend: isSuspend
       }
-      console.log(payload);
       const response = await updateBuilding(dataSource.buildingcode, payload);
-      messageApi.open({
-        type: 'success',
-        content: response.data.msg,
-      });
+      message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
     } catch (error) {
@@ -57,6 +53,12 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     form.setFieldsValue(dataSource);
     setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
+  };
+
+  const onlyNumber = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -100,14 +102,8 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             <Form.Item
               label="Building Code"
               name="buildingcode"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Building Code!",
-            //   },
-            // ]}
             >
-              <Input placeholder="Input Building Code" maxLength={20} />
+              <Input placeholder="Input Building Code" disabled />
             </Form.Item>
 
             <Form.Item
@@ -137,16 +133,19 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             </Form.Item>
 
             <Form.Item
-              label="Number Phone"
+              label="Phone Number"
               name="phone"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Number Phone!",
+                  message: "Please input your Phone Number!",
                 },
               ]}
             >
-              <Input addonBefore="+62" placeholder="Input Number Phone Example(8123456789)" />
+              <Input
+                placeholder="Input Phone Number Example(08123456789)"
+                onKeyPress={onlyNumber}
+              />
             </Form.Item>
 
             <Form.Item

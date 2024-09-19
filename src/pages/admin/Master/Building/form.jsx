@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Form, Input, Row } from 'antd';
+import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { useMessageContext } from '../../../../components/Dashboard/Global/MessageContext';
 import { getBuildingNextCode } from '../../../../Api/Master/getData';
 import { postBuilding } from '../../../../Api/Master/postData';
 
 const FormBuilding = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
   const [buildingCode, setBuildingCode] = useState("");
@@ -19,6 +17,8 @@ const FormBuilding = () => {
     try {
       const res = await getBuildingNextCode();
       setBuildingCode(res.buildingcode);
+      console.log(res.buildingcode);
+
     } catch (error) {
       console.log();
     }
@@ -46,15 +46,11 @@ const FormBuilding = () => {
           buildingcode: buildingCode
         }
       }
-      console.log(payload);
       const response = await postBuilding(payload);
-      console.log('Response', response);
-      messageApi.open({
-        type: 'success',
-        content: response.data.message,
-      });
+      message.success(response.data.message);
       navigate("/master/building");
     } catch (error) {
+      message.error(error.response.data.message);
       console.log(error);
     }
     setLoading(false);
@@ -68,7 +64,7 @@ const FormBuilding = () => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
     }
-  }
+  };
 
   return (
     <>
@@ -95,7 +91,7 @@ const FormBuilding = () => {
             //   },
             // ]}
             >
-              <Input placeholder="Input Building Code" maxLength={20} />
+              <Input placeholder="Input Building Code" maxLength={6} />
             </Form.Item>
 
             <Form.Item
