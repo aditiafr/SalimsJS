@@ -1,5 +1,3 @@
-"use client";
-
 import { Button, Input, Space, Table } from "antd";
 import { Link } from "react-router-dom";
 import React from "react";

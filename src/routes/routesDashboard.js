@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/admin/Dashboard";
 
@@ -73,8 +73,26 @@ import PriceListD from "../pages/admin/Master/PriceListD";
 import FormPriceListD from "../pages/admin/Master/PriceListD/form";
 import PriceListM from "../pages/admin/Master/PriceListM";
 import FormPriceListM from "../pages/admin/Master/PriceListM/form";
+import { useState } from "react";
+import { getTran } from "../Api/General/GetData";
+import { NamePages } from "./namePages";
 
 const RoutesDashboard = () => {
+
+  const [Tran, setTran] = useState([]);
+
+  useEffect(() => {
+    const fetchTran = async () => {
+      try {
+        const res = await getTran();
+        setTran(res.map((row, index) => ({ ...row, page: NamePages[row.tranidx] })));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchTran();
+  }, []);
+
   const mainRoutes = [
     {
       path: "/dashboard",
@@ -82,6 +100,12 @@ const RoutesDashboard = () => {
     },
 
     // MASTER
+
+    ...Tran.map((item) => ({
+      path: `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`,
+      element: item.page, // Ganti dengan komponen yang sesuai untuk setiap rute
+    })),
+
     {
       path: "/master/building",
       element: <Building />,
@@ -90,7 +114,7 @@ const RoutesDashboard = () => {
       path: "/master/building/form",
       element: <FormBuilding />,
     },
-    
+
     {
       path: "/master/warehouse",
       element: <Warehouse />,
@@ -99,7 +123,7 @@ const RoutesDashboard = () => {
       path: "/master/warehouse/form",
       element: <FormWarehouse />,
     },
-    
+
     {
       path: "/master/sample-storage-location",
       element: <SampleStorageLocation />,
@@ -108,7 +132,7 @@ const RoutesDashboard = () => {
       path: "/master/sample-storage-location/form",
       element: <FormSampleStorageLocation />,
     },
-    
+
     {
       path: "/master/storage-location",
       element: <StorageLocation />,
@@ -117,7 +141,7 @@ const RoutesDashboard = () => {
       path: "/master/storage-location/form",
       element: <FormStorageLocation />,
     },
-    
+
     {
       path: "/master/vendor",
       element: <Vendor />,
@@ -126,7 +150,7 @@ const RoutesDashboard = () => {
       path: "/master/vendor/form",
       element: <FormVendor />,
     },
-    
+
     {
       path: "/master/test-methode",
       element: <TestMethode />,
@@ -135,7 +159,7 @@ const RoutesDashboard = () => {
       path: "/master/test-methode/form",
       element: <FormTestMethode />,
     },
-    
+
     {
       path: "/master/time-point",
       element: <TimePoint />,
@@ -144,7 +168,7 @@ const RoutesDashboard = () => {
       path: "/master/time-point/form",
       element: <FormTimePoint />,
     },
-    
+
     {
       path: "/master/customer",
       element: <Customer />,
@@ -153,7 +177,7 @@ const RoutesDashboard = () => {
       path: "/master/customer/form",
       element: <FormCustomer />,
     },
-    
+
     {
       path: "/master/department",
       element: <Department />,
@@ -162,7 +186,7 @@ const RoutesDashboard = () => {
       path: "/master/department/form",
       element: <FormDepartment />,
     },
-    
+
     {
       path: "/master/equipment-type",
       element: <EquipmentType />,
@@ -171,7 +195,7 @@ const RoutesDashboard = () => {
       path: "/master/equipment-type/form",
       element: <FormEquipmentType />,
     },
-    
+
     {
       path: "/master/packing-type",
       element: <PackingType />,
@@ -278,7 +302,7 @@ const RoutesDashboard = () => {
     },
     {
       path: "/master/price-list-m",
-      element: <PriceListM  />,
+      element: <PriceListM />,
     },
     {
       path: "/master/price-list-m/form",

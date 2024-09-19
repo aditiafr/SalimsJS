@@ -33,6 +33,7 @@ import {
 } from "@ant-design/icons";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { getTran } from '../Api/General/GetData';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -43,6 +44,28 @@ const MySidebar = ({ children }) => {
   const [mobile, setMobile] = useState(window.innerWidth <= 768);
   const [selectedKeys, setSelectedKeys] = useState(["1"]);
   const [openKeys, setOpenKeys] = useState();
+
+  const [dataTran, setDataTran] = useState([]);
+  const [TranMaster, setTranMaster] = useState([]);
+
+  useEffect(() => {
+    const fetchTran = async () => {
+      try {
+        const res = await getTran();
+        setDataTran(res);
+        setTranMaster(res.filter((item) => item.trantype === 'Master'));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchTran();
+
+  }, []);
+
+  // console.log("DATA TRAN", dataTran);
+  console.log("DATA TRAN Master", TranMaster);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -88,31 +111,34 @@ const MySidebar = ({ children }) => {
     getItem("dashboard", "1", <PieChartOutlined />, "/dashboard"),
 
     getItem("Master", "Master", <DatabaseOutlined />, null, [
-      getItem("Building", "2", <LayoutOutlined />, "/master/building"),
-      getItem("Warehouse", "3", <HomeOutlined />, "/master/warehouse"),
-      getItem("Sample Storage Location", "4", <GroupOutlined />, "/master/sample-storage-location"),
-      getItem("Storage Location", "5", <HddOutlined />, "/master/storage-location"),
-      getItem("Vendor", "6", <ShopOutlined />, "/master/vendor"),
-      getItem("Test Methode", "7", <ReconciliationOutlined />, "/master/test-methode"),
-      getItem("Time Point", "8", <FieldTimeOutlined />, "/master/time-point"),
-      getItem("Customer", "9", <TeamOutlined />, "/master/customer"),
-      getItem("Product", "10", <DropboxOutlined />, "/master/product"),
-      getItem("Department", "11", <ApartmentOutlined />, "/master/department"),
-      getItem("Equipment Type", "12", <ToolOutlined />, "/master/equipment-type"),
-      getItem("Packing Type", "13", <InboxOutlined />, "/master/packing-type"),
-      getItem("Product Category", "14", <ShoppingOutlined />, "/master/product-category"),
-      getItem("Product Type", "15", <ProductOutlined />, "/master/product-type"),
-      getItem("Other Expense", "16", <ArrowUpOutlined />, "/master/other-expense"),
-      getItem("Parameter Category", "17", <SlidersOutlined />, "/master/parameter-category"),
-      getItem("Parameter", "18", <ControlOutlined />, "/master/parameter"),
-      getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
-      getItem("Labour", "20", <UserOutlined />, "/master/labour"),
-      getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
-      getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-table-ref"),
-      getItem("Zona", "23", <BorderOuterOutlined />, "/master/zona"),
-      getItem("Sub Zona", "24", <BorderInnerOutlined />, "/master/sub-zona"),
-      getItem("Price List M", "25", <TagOutlined />, "/master/price-list-m"),
-      getItem("Price List D", "26", <TagsOutlined />, "/master/price-list-d"),
+      ...TranMaster.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
+      // getItem("Building", "2", <LayoutOutlined />, "/master/building"),
+      // getItem("Warehouse", "3", <HomeOutlined />, "/master/warehouse"),
+      // getItem("Sample Storage Location", "4", <GroupOutlined />, "/master/sample-storage-location"),
+      // getItem("Storage Location", "5", <HddOutlined />, "/master/storage-location"),
+      // getItem("Vendor", "6", <ShopOutlined />, "/master/vendor"),
+      // getItem("Test Methode", "7", <ReconciliationOutlined />, "/master/test-methode"),
+      // getItem("Time Point", "8", <FieldTimeOutlined />, "/master/time-point"),
+      // getItem("Customer", "9", <TeamOutlined />, "/master/customer"),
+      // getItem("Product", "10", <DropboxOutlined />, "/master/product"),
+      // getItem("Department", "11", <ApartmentOutlined />, "/master/department"),
+      // getItem("Equipment Type", "12", <ToolOutlined />, "/master/equipment-type"),
+      // getItem("Packing Type", "13", <InboxOutlined />, "/master/packing-type"),
+      // getItem("Product Category", "14", <ShoppingOutlined />, "/master/product-category"),
+      // getItem("Product Type", "15", <ProductOutlined />, "/master/product-type"),
+      // getItem("Other Expense", "16", <ArrowUpOutlined />, "/master/other-expense"),
+      // getItem("Parameter Category", "17", <SlidersOutlined />, "/master/parameter-category"),
+      // getItem("Parameter", "18", <ControlOutlined />, "/master/parameter"),
+      // getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
+      // getItem("Labour", "20", <UserOutlined />, "/master/labour"),
+      // getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
+      // getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-table-ref"),
+      // getItem("Zona", "23", <BorderOuterOutlined />, "/master/zona"),
+      // getItem("Sub Zona", "24", <BorderInnerOutlined />, "/master/sub-zona"),
+      // getItem("Price List M", "25", <TagOutlined />, "/master/price-list-m"),
+      // getItem("Price List D", "26", <TagsOutlined />, "/master/price-list-d"),
     ]),
 
     getItem("Transaction", "Transaction", <ContainerOutlined />, null, [

@@ -7,7 +7,7 @@ import { getWarehouse } from "../../../../Api/Master/getData";
 import DeleteWarehouse from "./delete";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const Page = () => {
+const Warehouse = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -157,4 +157,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Warehouse;
