@@ -1,17 +1,21 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip } from "antd";
+import { Button, Form, Input, message, Modal, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
 import { updateVendor } from "../../../../Api/Master/updateData";
+import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditVendor = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const [isSuspend, setIsSuspend] = useState(false);
+
+  const handleSwitchChange = (checked) => {
+    setIsSuspend(checked);
+    form.setFieldsValue(dataSource);
+  };
 
   useEffect(() => {
     form.setFieldsValue(dataSource);
@@ -20,35 +24,39 @@ const EditVendor = ({ dataSource, onEdit }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
+    setIsSuspend(dataSource.issuspend);
   };
-  const onFinish = async (values) => {
-    console.log("Success:", values);
+
+
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const modifiedValues = {
+      const payload = {
         ...values,
-        ...JsonCreateModif
+        issuspend: isSuspend
       }
-      const response = await updateVendor(dataSource.BranchCode, dataSource.VendorCode, modifiedValues);
-      messageApi.open({
-        type: 'success',
-        content: response.data.statusMessage,
-      });
-      onEdit(true);
-      setIsModalOpen(false);
+      console.log(payload);
+
+      // const response = await updateVendor(dataSource.branchcode ,dataSource.vendorcode, payload);
+      // message.success(response.data.message);
+      // onEdit(true);
+      // setIsModalOpen(false);
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
     form.resetFields();
     setIsModalOpen(false);
   };
+
+  const handleOnKeyPress = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
 
   return (
     <>
@@ -57,7 +65,15 @@ const EditVendor = ({ dataSource, onEdit }) => {
       </Tooltip>
 
       <Modal
-        title={<HeaderTitle title="VENDOR" subtitle="Edit data a vendor" />}
+        title={
+          <div className="flex justify-between items-center">
+            <HeaderTitle title="VENDOR" subtitle="Edit data a vendor" />
+            <SwitchComponent
+              isSuspend={isSuspend}
+              handleSwitchChange={handleSwitchChange}
+            />
+          </div>
+        }
         centered
         open={isModalOpen}
         closable={false}
@@ -73,183 +89,177 @@ const EditVendor = ({ dataSource, onEdit }) => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Branch Code"
-                name="BranchCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Branch Code!",
-                  },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Vendor Code"
-                name="VendorCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Vendor Code!",
-                  },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Vendor Code"
+              name="vendorcode"
+            >
+              <Input maxLength={6} disabled />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Vendor Name"
-                name="VendorName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Vendor Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Vendor Name"
+              name="vendorname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Vendor Name!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Address"
-                name="Address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Address!",
-                  },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Address!",
+                },
+              ]}
+            >
+              <Input.TextArea />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="City"
-                name="City"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your City!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Address 2"
+              name="address2"
+            >
+              <Input.TextArea />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Postal Code"
-                name="PostalCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Postal Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={5} />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="City"
+              name="city"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your City!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Country"
-                name="Country"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Country!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Postal Code"
+              name="postalcode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Postal Code!",
+                },
+              ]}
+            >
+              <Input maxLength={5} onKeyPress={handleOnKeyPress} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Phone"
-                name="Phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Phone!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Country"
+              name="country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Country!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Fax"
-                name="Fax"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Fax!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Email Address"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Email Address!",
+                },
+                {
+                  type: 'email',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="NPWP"
-                name="NPWP"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your NPWP!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Phone Number!",
+                },
+              ]}
+            >
+              <Input onKeyPress={handleOnKeyPress} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Contact Person"
-                name="ContactPerson"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Contact Person!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Hp Number"
+              name="hp"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Hp Number!",
+                },
+              ]}
+            >
+              <Input onKeyPress={handleOnKeyPress} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Fax Code"
+              name="fax"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Fax Code!",
+                },
+              ]}
+            >
+              <Input onKeyPress={handleOnKeyPress} />
+            </Form.Item>
+
+            <Form.Item
+              label="NPWP"
+              name="npwp"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your NPWP!",
+                },
+              ]}
+            >
+              <Input onKeyPress={handleOnKeyPress} />
+            </Form.Item>
+
+            <Form.Item
+              label="Contact Person"
+              name="contactperson"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Contact Person!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea />
+            </Form.Item>
+
+          </div>
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>

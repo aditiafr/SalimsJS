@@ -1,16 +1,16 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import EditVendor from "./edit";
 import DeleteVendor from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getVendor } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const Vendor = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const fetchData = async () => {
     try {
@@ -42,89 +42,89 @@ const Vendor = () => {
       title: "No",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
       width: 80,
     },
     {
-      title: "Branch Code",
-      dataIndex: "BranchCode",
-      key: "BranchCode",
-      width: 150,
-    },
-    {
       title: "Vendor Code",
-      dataIndex: "VendorCode",
-      key: "VendorCode",
-      width: 150,
+      dataIndex: "vendorcode",
+      key: "vendorcode",
+      fixed: "left",
     },
     {
       title: "Vendor Name",
-      dataIndex: "VendorName",
-      key: "VendorName",
-      width: 150,
+      dataIndex: "vendorname",
+      key: "vendorname",
     },
     {
       title: "Address",
-      dataIndex: "Address",
-      key: "Address",
-      width: 300,
+      dataIndex: "address",
+      key: "address",
     },
     {
       title: "City",
-      dataIndex: "City",
-      key: "City",
-      width: 150,
+      dataIndex: "city",
+      key: "city",
     },
     {
       title: "Postal Code",
-      dataIndex: "PostalCode",
-      key: "PostalCode",
-      width: 150,
+      dataIndex: "postalcode",
+      key: "postalcode",
     },
     {
       title: "Country",
-      dataIndex: "Country",
-      key: "Country",
-      width: 150,
+      dataIndex: "country",
+      key: "country",
     },
     {
-      title: "Phone",
-      dataIndex: "Phone",
-      key: "Phone",
-      width: 150,
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
-      title: "Fax",
-      dataIndex: "Fax",
-      key: "Fax",
-      width: 150,
+      title: "Fax Code",
+      dataIndex: "fax",
+      key: "fax",
     },
     {
       title: "NPWP",
-      dataIndex: "NPWP",
-      key: "NPWP",
-      width: 150,
+      dataIndex: "npwp",
+      key: "npwp",
     },
     {
       title: "Contact Person",
-      dataIndex: "ContactPerson",
-      key: "ContactPerson",
-      width: 150,
+      dataIndex: "contactperson",
+      key: "contactperson",
+    },
+    {
+      title: "Address 2",
+      dataIndex: "address2",
+      key: "address2",
+    },
+    {
+      title: "Hp Number",
+      dataIndex: "hp",
+      key: "hp",
+    },
+    {
+      title: "Email Address",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
+      dataIndex: "description",
+      key: "description",
       width: 150,
     },
-    // {
-    //   title: "Suspended",
-    //   dataIndex: "Suspended",
-    //   key: "Suspended",
-    //   width: 120,
-    //   render: (suspended) => (
-    //     <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
-    //   ),
-    // },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
+      ),
+    },
     {
       title: "Action",
       fixed: "right",
@@ -150,13 +150,7 @@ const Vendor = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
@@ -168,7 +162,7 @@ const Vendor = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 3000,
           }}
         />
       </div>

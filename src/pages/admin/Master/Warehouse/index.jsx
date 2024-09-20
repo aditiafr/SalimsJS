@@ -16,6 +16,8 @@ const Warehouse = () => {
     try {
       setLoading(true);
       const response = await getWarehouse();
+      console.log("DATA", response);
+      
       setData(response);
     } catch (error) {
       console.log(error);
@@ -83,14 +85,9 @@ const Warehouse = () => {
       key: "zipcode",
     },
     {
-      title: "City Code",
-      dataIndex: "citycode",
-      key: "citycode",
-    },
-    {
-      title: "City Name",
-      dataIndex: "cityname",
-      key: "cityname",
+      title: "City",
+      dataIndex: "city",
+      key: "city",
     },
     {
       title: "Country",

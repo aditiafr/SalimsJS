@@ -23,7 +23,7 @@ export const getBuilding = async () => {
 export const getBuildingNextCode = async () => {
     const token = Cookies.get('access_token');
     const selectedTranIdx = localStorage.getItem('selectedMenuKey');
-    const response = await axios.get(`${baseURL}/building/next-code`, {
+    const response = await axios.get(`${baseURL}/building/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -44,7 +44,8 @@ export const getWarehouse = async () => {
 
 export const getWarehouseNextCode = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/warehouse/next-code`, {
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/warehouse/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -52,15 +53,26 @@ export const getWarehouseNextCode = async () => {
     return response.data.data
 }
 
-export const getCity = async () => {
+export const getVendor = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/city/list`, {
+    const response = await axios.get(`${baseURL}/vendor/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getVendorNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/vendor/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
 }
 
 export const getStorageLocation = async () => {
@@ -77,17 +89,6 @@ export const getStorageLocation = async () => {
 export const getSampleSLocation = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/get/samplelocation`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
-}
-
-export const getVendor = async () => {
-    const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/vendor/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }

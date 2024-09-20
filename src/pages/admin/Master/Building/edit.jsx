@@ -54,11 +54,11 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     setIsModalOpen(false);
   };
 
-  const onlyNumber = (event) => {
+  const handleOnKeyPress = (event) => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
     }
-  };
+  }
 
   return (
     <>
@@ -96,7 +96,8 @@ const EditBuilding = ({ dataSource, onEdit }) => {
           autoComplete="off"
           form={form}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-2">
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
             <Form.Item
               label="Building Code"
@@ -135,20 +136,28 @@ const EditBuilding = ({ dataSource, onEdit }) => {
               label="Phone Number"
               name="phone"
               rules={[
+                { required: true, message: "Please input your Phone Number!" },
                 {
-                  required: true,
-                  message: "Please input your Phone Number!",
+                  pattern: /^[0-9]+$/,
+                  message: "Please input numbers only!",
                 },
+                // {
+                //   min: 10,
+                //   max: 13,
+                //   message: "Phone number must be between 10 and 13 digits!",
+                // },
               ]}
             >
               <Input
+                type="tel"
                 placeholder="Input Phone Number Example(08123456789)"
-                onKeyPress={onlyNumber}
+                maxLength={13}
+                onKeyPress={handleOnKeyPress}
               />
             </Form.Item>
 
             <Form.Item
-              label="Fax"
+              label="Fax Number"
               name="fax"
               rules={[
                 {
@@ -157,20 +166,23 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                placeholder="Input Fax"
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
-              label="Contact"
+              label="Contact Name"
               name="contact"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Contact!",
+                  message: "Please input your Contact Name!",
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Contact Name" />
             </Form.Item>
 
             <Form.Item
@@ -183,7 +195,11 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              <Input maxLength={5} />
+              <Input
+                placeholder="Input ZIP Code"
+                maxLength={5}
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
@@ -196,7 +212,7 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input City" />
             </Form.Item>
 
             <Form.Item
@@ -209,11 +225,11 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Country" />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 
           </div>

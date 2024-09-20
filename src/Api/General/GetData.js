@@ -13,3 +13,16 @@ export const getTran = async () => {
 
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
+
+export const getPrefix = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/prefix/generator-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}
+

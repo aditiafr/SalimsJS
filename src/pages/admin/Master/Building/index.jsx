@@ -60,6 +60,7 @@ const Building = () => {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      width: 350,
     },
     {
       title: "Phone Number",
@@ -143,7 +144,7 @@ const Building = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1800,
+            x: 2500,
           }}
         />
       </div>

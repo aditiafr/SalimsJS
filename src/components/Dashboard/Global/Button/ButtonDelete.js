@@ -14,7 +14,7 @@ const ButtonDelete = ({ onDelete }) => {
         Cancel
       </Button>
       <Button danger type="primary" onClick={onDelete}>
-        Delete
+        Submit
       </Button>
     </div>
   );

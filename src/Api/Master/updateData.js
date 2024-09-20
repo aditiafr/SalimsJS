@@ -46,7 +46,7 @@ export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, S
 
 export const updateVendor = async (BranchCode, VendorCode, VendorData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/put/vendor?branchCode=${BranchCode}&vendorCode=${VendorCode}`, VendorData, {
+    const response = await axios.put(`${baseUrl}vendor/update/${BranchCode}/${VendorCode}`, VendorData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

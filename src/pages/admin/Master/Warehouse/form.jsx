@@ -5,19 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { postWarehouse } from "../../../../Api/Master/postData";
 import { getWarehouseNextCode } from "../../../../Api/Master/getData";
+import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
 
 const FormWarehouse = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  const prefix = PrefixGlobal();
   const [warehouseCode, setWarehouseCode] = useState("");
 
   useEffect(() => {
     const fetchNextCode = async () => {
       try {
         const res = await getWarehouseNextCode();
-        setWarehouseCode(res.warehouse);
+        setWarehouseCode(res.warehousecode);
 
       } catch (error) {
         console.log();
@@ -29,11 +30,7 @@ const FormWarehouse = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = {
-        ...values,
-        city: 'CM001',
-        issuspend: 0,
-      };
+      let payload = values;
       if (!values.warehousecode) {
         form.setFieldsValue({ warehousecode: warehouseCode });
         payload = {
@@ -56,11 +53,11 @@ const FormWarehouse = () => {
     form.resetFields();
   };
 
-  const onlyNumber = (event) => {
+  const handleOnKeyPress = (event) => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
     }
-  };
+  }
 
   return (
     <>
@@ -81,12 +78,11 @@ const FormWarehouse = () => {
             <Form.Item
               label="Warehouse Code"
               name="warehousecode"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Warehouse Code!",
-            //   },
-            // ]}
+              rules={[
+                {
+                  validator: prefix,
+                },
+              ]}
             >
               <Input placeholder="Input Warehouse Code" maxLength={6} />
             </Form.Item>
@@ -118,16 +114,16 @@ const FormWarehouse = () => {
             </Form.Item>
 
             <Form.Item
-              label="City Name"
-              name="cityname"
+              label="City"
+              name="city"
               rules={[
                 {
                   required: true,
-                  message: "Please input your City Name!",
+                  message: "Please input your City!",
                 },
               ]}
             >
-              <Input placeholder="Input City Name" />
+              <Input placeholder="Input City" />
             </Form.Item>
 
             <Form.Item
@@ -140,7 +136,11 @@ const FormWarehouse = () => {
                 },
               ]}
             >
-              <Input placeholder="Input ZIP Code" maxLength={5} />
+              <Input
+                placeholder="Input ZIP Code"
+                maxLength={5}
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
@@ -168,34 +168,21 @@ const FormWarehouse = () => {
             >
               <Input
                 placeholder="Input Phone Number Example(08123456789)"
-                onKeyPress={onlyNumber}
+                onKeyPress={handleOnKeyPress}
               />
             </Form.Item>
 
             <Form.Item
-              label="Fax"
+              label="Fax Number"
               name="fax"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Fax!",
+                  message: "Please input your Fax Number!",
                 },
               ]}
             >
-              <Input placeholder="Input Fax" />
-            </Form.Item>
-
-            <Form.Item
-              label="NPWP"
-              name="npwp"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your NPWP!",
-                },
-              ]}
-            >
-              <Input placeholder="Input NPWP" onKeyPress={onlyNumber} />
+              <Input placeholder="Input Fax Number" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -211,7 +198,10 @@ const FormWarehouse = () => {
               <Input placeholder="Input Contact Name" />
             </Form.Item>
 
-            <Form.Item label="Description" name="description" className="col-span-2">
+            <Form.Item
+              label="Description"
+              name="description"
+            >
               <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 

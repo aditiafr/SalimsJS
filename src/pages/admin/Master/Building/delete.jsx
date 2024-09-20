@@ -1,4 +1,4 @@
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Tooltip } from "antd";
 import React from "react";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
@@ -23,7 +23,7 @@ const DeleteBuilding = ({ dataSource, onDelete }) => {
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to delete these items?",
+      title: "Do you want to suspend these items?",
       icon: <ExclamationCircleFilled />,
       content: content,
       centered: true,
@@ -33,8 +33,8 @@ const DeleteBuilding = ({ dataSource, onDelete }) => {
 
   return (
     <>
-      <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+      <Tooltip title="Suspend">
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

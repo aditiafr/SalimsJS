@@ -5,12 +5,14 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { getBuildingNextCode } from '../../../../Api/Master/getData';
 import { postBuilding } from '../../../../Api/Master/postData';
+import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 
 const FormBuilding = () => {
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  const prefix = PrefixGlobal();
   const [buildingCode, setBuildingCode] = useState("");
 
   useEffect(() => {
@@ -37,10 +39,11 @@ const FormBuilding = () => {
       if (!values.buildingcode) {
         form.setFieldsValue({ buildingcode: buildingCode });
         payload = {
-          ...values,
+          ...payload,
           buildingcode: buildingCode
         }
       }
+      // console.log(payload);
       const response = await postBuilding(payload);
       message.success(response.data.message);
       navigate("/master/building");
@@ -54,6 +57,12 @@ const FormBuilding = () => {
   const onReset = () => {
     form.resetFields();
   };
+
+  const handleOnKeyPress = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
 
   return (
     <>
@@ -73,12 +82,11 @@ const FormBuilding = () => {
             <Form.Item
               label="Building Code"
               name="buildingcode"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Building Code!",
-            //   },
-            // ]}
+              rules={[
+                {
+                  validator: prefix,
+                },
+              ]}
             >
               <Input placeholder="Input Building Code" maxLength={6} />
             </Form.Item>
@@ -129,16 +137,12 @@ const FormBuilding = () => {
                 type="tel"
                 placeholder="Input Phone Number Example(08123456789)"
                 maxLength={13}
-                onKeyPress={(event) => {
-                  if (!/[0-9]/.test(event.key)) {
-                    event.preventDefault();
-                  }
-                }}
+                onKeyPress={handleOnKeyPress}
               />
             </Form.Item>
 
             <Form.Item
-              label="Fax"
+              label="Fax Number"
               name="fax"
               rules={[
                 {
@@ -147,7 +151,10 @@ const FormBuilding = () => {
                 },
               ]}
             >
-              <Input placeholder="Input Fax" />
+              <Input
+                placeholder="Input Fax"
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
@@ -173,7 +180,11 @@ const FormBuilding = () => {
                 },
               ]}
             >
-              <Input placeholder="Input ZIP Code" maxLength={5} />
+              <Input
+                placeholder="Input ZIP Code"
+                maxLength={5}
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item

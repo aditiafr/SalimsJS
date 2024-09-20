@@ -53,7 +53,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
     setIsModalOpen(false);
   };
 
-  const onlyNumber = (event) => {
+  const handleOnKeyPress = (event) => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
     }
@@ -101,12 +101,6 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             <Form.Item
               label="Warehouse Code"
               name="warehousecode"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Warehouse Code!",
-            //   },
-            // ]}
             >
               <Input placeholder="Input Warehouse Code" maxLength={6} />
             </Form.Item>
@@ -138,16 +132,16 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             </Form.Item>
 
             <Form.Item
-              label="City Name"
-              name="cityname"
+              label="City"
+              name="city"
               rules={[
                 {
                   required: true,
-                  message: "Please input your City Name!",
+                  message: "Please input your City!",
                 },
               ]}
             >
-              <Input placeholder="Input City Name" />
+              <Input placeholder="Input City" />
             </Form.Item>
 
             <Form.Item
@@ -160,7 +154,11 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              <Input placeholder="Input ZIP Code" maxLength={5} />
+              <Input
+                placeholder="Input ZIP Code"
+                maxLength={5}
+                onKeyPress={handleOnKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
@@ -188,34 +186,21 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
             >
               <Input
                 placeholder="Input Phone Number Example(08123456789)"
-                onKeyPress={onlyNumber}
+                onKeyPress={handleOnKeyPress}
               />
             </Form.Item>
 
             <Form.Item
-              label="Fax"
+              label="Fax Number"
               name="fax"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Fax!",
+                  message: "Please input your Fax Number!",
                 },
               ]}
             >
-              <Input placeholder="Input Fax" />
-            </Form.Item>
-
-            <Form.Item
-              label="NPWP"
-              name="npwp"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your NPWP!",
-                },
-              ]}
-            >
-              <Input placeholder="Input NPWP" onKeyPress={onlyNumber} />
+              <Input placeholder="Input Fax Number" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -231,7 +216,10 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
               <Input placeholder="Input Contact Name" />
             </Form.Item>
 
-            <Form.Item label="Description" name="description" className="col-span-2">
+            <Form.Item
+              label="Description"
+              name="description"
+            >
               <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 
