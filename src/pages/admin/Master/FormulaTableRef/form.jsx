@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from 'react';
 import { Form, Input, Col, Row, Button, Table, Popconfirm } from 'antd';
 import ButtonSubmit from '../../../../components/Dashboard/Global/Button/ButtonSubmit';
@@ -176,7 +174,7 @@ const FormFormulaTableRef = () => {
                     Table Properties
                   </h3>
 
-                  <EditableTable columns={columns} initialData={initialData} canAddRow={false} canDeleteRow={false}/>
+                  <EditableTable columns={columns} initialData={initialData} canAddRow={false} canDeleteRow={false} />
                 </>
               )}
             </Col>

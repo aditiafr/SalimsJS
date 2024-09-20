@@ -1,4 +1,3 @@
-
 import { Button, Input, Space, Table } from "antd";
 import EditTimePoint from "./edit";
 import DeleteTimePoint from "./delete";

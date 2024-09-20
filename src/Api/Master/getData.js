@@ -8,6 +8,7 @@ import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
+
 export const getBuilding = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/building/list`, {
@@ -21,6 +22,7 @@ export const getBuilding = async () => {
 
 export const getBuildingNextCode = async () => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/building/next-code`, {
         headers: {
             Authorization: `Bearer ${token}`

@@ -4,7 +4,7 @@ import { EditFilled } from "@ant-design/icons";
 import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox, Select, TimePicker } from "antd";
 import React, { useState } from "react";
 
-const EditDepartment = () => {
+const EditParameter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -142,7 +142,7 @@ const EditDepartment = () => {
                 label="Std Lead Time (HH:mm)"
                 name="StdLeadTime"
               >
-                <TimePicker 
+                <TimePicker
                   format="HH:mm"
                   minuteStep={5}
                 />
@@ -154,7 +154,7 @@ const EditDepartment = () => {
                 label="Procedure No"
                 name="ProcedureNo"
               >
-                <Input />                
+                <Input />
               </Form.Item>
 
               <Form.Item
@@ -180,4 +180,4 @@ const EditDepartment = () => {
   );
 };
 
-export default EditDepartment;
+export default EditParameter;

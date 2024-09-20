@@ -3,7 +3,7 @@ import MySidebar from "./components/Sidebar";
 import { Route, Routes } from "react-router-dom";
 import RoutesDashboard from "./routes/routesDashboard";
 import Login from "./pages/Login";
-import MyFooter from "./components/Footer";
+// import MyFooter from "./components/Footer";
 
 const App = () => {
   return (

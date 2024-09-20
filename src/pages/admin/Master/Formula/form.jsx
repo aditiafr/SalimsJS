@@ -1,5 +1,3 @@
-"use client";
-
 import { Form, Input, Col, Row, Button, Radio } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
@@ -104,67 +102,67 @@ const FormFormula = () => {
               >
                 <Input maxLength={20} />
               </Form.Item>
-              
+
               <Form.Item
                 label="Version"
                 name="Version"
                 rules={[
-                 
+
                 ]}
               >
                 <Input maxLength={20} />
               </Form.Item>
-              
-              
-                <Form.Item
-                  label="Code"
-                  name="Code"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your Code!",
-                    },
-                  ]}
-                >
-                  <Row gutter={30}>
-                    <Col xs={24} sm={12}>
-                      <Input maxLength={20} />
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          console.log("clicked");
-                        }}
-                      >
-                        <SearchOutlined />
-                        Copy Formula
-                      </Button>
-                    </Col> 
-                  </Row>
-                </Form.Item>
-            
+
+
+              <Form.Item
+                label="Code"
+                name="Code"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Code!",
+                  },
+                ]}
+              >
                 <Row gutter={30}>
                   <Col xs={24} sm={12}>
-                    <Form.Item
-                      label="Name"
-                      name="Name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Name!",
-                        },
-                      ]}
+                    <Input maxLength={20} />
+                  </Col>
+                  <Col xs={24} sm={12}>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        console.log("clicked");
+                      }}
                     >
-                      <Input maxLength={20} />
-                    </Form.Item>
+                      <SearchOutlined />
+                      Copy Formula
+                    </Button>
                   </Col>
+                </Row>
+              </Form.Item>
 
-                  <Col xs={24} sm={12} style={{ marginTop: "30px" }}>
-                    <Form.Item name="IsNumeric" valuePropName="checked" initialValue={false}>
-                      <Checkbox>Is Numeric</Checkbox>
-                    </Form.Item>
-                  </Col>
+              <Row gutter={30}>
+                <Col xs={24} sm={12}>
+                  <Form.Item
+                    label="Name"
+                    name="Name"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your Name!",
+                      },
+                    ]}
+                  >
+                    <Input maxLength={20} />
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={12} style={{ marginTop: "30px" }}>
+                  <Form.Item name="IsNumeric" valuePropName="checked" initialValue={false}>
+                    <Checkbox>Is Numeric</Checkbox>
+                  </Form.Item>
+                </Col>
               </Row>
             </Col>
 
@@ -216,7 +214,7 @@ const FormFormula = () => {
                 name="SimResult"
                 readOnly
               >
-                <Input maxLength={20} disabled/>
+                <Input maxLength={20} disabled />
               </Form.Item>
             </Col>
           </Row>

@@ -13,43 +13,36 @@ const columns = [
     title: "Code",
     dataIndex: "Code",
     key: "Code",
-    width: 60,
   },
   {
     title: "Name",
     dataIndex: "Name",
     key: "Name",
-    width: 100,
   },
   {
     title: "Category",
     dataIndex: "Category",
     key: "Category",
-    width: 80,
   },
   {
     title: "Procedure No",
     dataIndex: "ProcedureNo",
     key: "ProcedureNo",
-    width: 100,
   },
   {
     title: "Procedure Name",
     dataIndex: "ProcedureName",
     key: "ProcedureName",
-    width: 100,
   },
   {
     title: "Std Lead Time",
     dataIndex: "StdLeadTime",
     key: "StdLeadTime",
-    width: 70,
   },
   {
     title: "Price",
     dataIndex: "Price",
     key: "Price",
-    width: 90,
     render: (text) => {
       const value = text ?? 0;
 
@@ -63,16 +56,14 @@ const columns = [
     title: "Description",
     dataIndex: "Description",
     key: "Description",
-    width: 100,
     render: (text) => (text ?? "N/A"),
   },
   {
     title: "Suspended",
     dataIndex: "Suspended",
     key: "Suspended",
-    width: 100,
     render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
     ),
   },
   {
@@ -184,7 +175,7 @@ const Parameter = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 1800,
           }}
         />
       </div>

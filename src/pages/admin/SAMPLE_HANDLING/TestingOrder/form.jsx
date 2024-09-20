@@ -1,6 +1,6 @@
+import { Col, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { Col, Form, Input, Row } from "antd";
 
 const FormTestingOrder = () => {
   const [form] = Form.useForm();

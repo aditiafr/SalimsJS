@@ -1,41 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, Layout, Menu, message, theme } from 'antd';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Button, Dropdown, Input, Layout, Menu, message, theme } from 'antd';
 import {
-  HomeOutlined,
-  LayoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PieChartOutlined,
-  TeamOutlined,
   UserOutlined,
-  ApartmentOutlined,
-  ToolOutlined,
-  InboxOutlined,
-  ShoppingOutlined,
-  ProductOutlined,
-  ArrowUpOutlined,
-  SlidersOutlined,
-  ControlOutlined,
-  GroupOutlined,
-  HddOutlined,
-  ShopOutlined,
-  ReconciliationOutlined,
-  FieldTimeOutlined,
-  DropboxOutlined,
-  CalculatorOutlined,
   DatabaseOutlined,
-  ContainerOutlined,
-  BorderOuterOutlined,
-  BorderInnerOutlined,
-  TagOutlined,
-  TagsOutlined,
   LogoutOutlined,
+  SearchOutlined,
+  ExperimentOutlined,
+  InboxOutlined,
+  ReconciliationOutlined,
+  FileProtectOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { getTran } from '../Api/General/GetData';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const MySidebar = ({ children }) => {
   const navigate = useNavigate();
@@ -44,16 +27,28 @@ const MySidebar = ({ children }) => {
   const [mobile, setMobile] = useState(window.innerWidth <= 768);
   const [selectedKeys, setSelectedKeys] = useState(["1"]);
   const [openKeys, setOpenKeys] = useState();
+  const [searchValue, setSearchValue] = useState('');
+  const searchInputRef = useRef(null);
 
-  const [dataTran, setDataTran] = useState([]);
+  // const [dataTran, setDataTran] = useState([]);
   const [TranMaster, setTranMaster] = useState([]);
+  const [TranSample, setTranSample] = useState([]);
+  const [TranInventory, setTranInventory] = useState([]);
+  const [TranEquipmentMaintenance, setTranEquipmentMaintenance] = useState([]);
+  const [TranSetup, setTranSetup] = useState([]);
+  const [Approval, setApproval] = useState([]);
 
   useEffect(() => {
     const fetchTran = async () => {
       try {
         const res = await getTran();
-        setDataTran(res);
+        // setDataTran(res);
         setTranMaster(res.filter((item) => item.trantype === 'Master'));
+        setTranSample(res.filter((item) => item.trantype === 'Sample_Handling'));
+        setTranInventory(res.filter((item) => item.trantype === 'Inventory'));
+        setTranEquipmentMaintenance(res.filter((item) => item.trantype === 'Equipment_Maintenance'));
+        setTranSetup(res.filter((item) => item.trantype === 'Setup'));
+        setApproval(res.filter((item) => item.trantype === 'Approval'));
       } catch (error) {
         console.log(error);
       }
@@ -62,9 +57,6 @@ const MySidebar = ({ children }) => {
     fetchTran();
 
   }, []);
-
-  // console.log("DATA TRAN", dataTran);
-  console.log("DATA TRAN Master", TranMaster);
 
 
   useEffect(() => {
@@ -108,51 +100,56 @@ const MySidebar = ({ children }) => {
   }
 
   const items = [
-    getItem("dashboard", "1", <PieChartOutlined />, "/dashboard"),
+    getItem("DASHBOARD", "1", <PieChartOutlined />, "/dashboard"),
 
-    getItem("Master", "Master", <DatabaseOutlined />, null, [
+    getItem("MASTER", "Master", <DatabaseOutlined />, null, [
       ...TranMaster.map((item) =>
         getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
       ),
-      // getItem("Building", "2", <LayoutOutlined />, "/master/building"),
-      // getItem("Warehouse", "3", <HomeOutlined />, "/master/warehouse"),
-      // getItem("Sample Storage Location", "4", <GroupOutlined />, "/master/sample-storage-location"),
-      // getItem("Storage Location", "5", <HddOutlined />, "/master/storage-location"),
-      // getItem("Vendor", "6", <ShopOutlined />, "/master/vendor"),
-      // getItem("Test Methode", "7", <ReconciliationOutlined />, "/master/test-methode"),
-      // getItem("Time Point", "8", <FieldTimeOutlined />, "/master/time-point"),
-      // getItem("Customer", "9", <TeamOutlined />, "/master/customer"),
-      // getItem("Product", "10", <DropboxOutlined />, "/master/product"),
-      // getItem("Department", "11", <ApartmentOutlined />, "/master/department"),
-      // getItem("Equipment Type", "12", <ToolOutlined />, "/master/equipment-type"),
-      // getItem("Packing Type", "13", <InboxOutlined />, "/master/packing-type"),
-      // getItem("Product Category", "14", <ShoppingOutlined />, "/master/product-category"),
-      // getItem("Product Type", "15", <ProductOutlined />, "/master/product-type"),
-      // getItem("Other Expense", "16", <ArrowUpOutlined />, "/master/other-expense"),
-      // getItem("Parameter Category", "17", <SlidersOutlined />, "/master/parameter-category"),
-      // getItem("Parameter", "18", <ControlOutlined />, "/master/parameter"),
-      // getItem("Equipment", "19", <ToolOutlined />, "/master/equipment"),
-      // getItem("Labour", "20", <UserOutlined />, "/master/labour"),
-      // getItem("Formula", "21", <CalculatorOutlined />, "/master/formula"),
-      // getItem("Formula Table Reference", "22", <CalculatorOutlined />, "/master/formula-table-ref"),
-      // getItem("Zona", "23", <BorderOuterOutlined />, "/master/zona"),
-      // getItem("Sub Zona", "24", <BorderInnerOutlined />, "/master/sub-zona"),
-      // getItem("Price List M", "25", <TagOutlined />, "/master/price-list-m"),
-      // getItem("Price List D", "26", <TagsOutlined />, "/master/price-list-d"),
     ]),
 
-    getItem("Transaction", "Transaction", <ContainerOutlined />, null, [
-      getItem("Taking Sample", "27", null, "/transaction/taking-sample"),
-      getItem("Sample Registration", "28", null, "/transaction/sample-registration"),
-      getItem("Sample Handling", "29", null, "/transaction/sample-handling"),
-      getItem("Testing Result", "30", null, "/transaction/testing-result"),
-      getItem("Maintenance Request", "31", null, "/transaction/maintenance-request"),
-      getItem("Maintenance Process", "32", null, "/transaction/maintenance-process"),
-      getItem("Testing Order", "33", null, "/transaction/testing-order"),
-      getItem("Planning Taking Sample", "34", null, "/transaction/planning-taking-sample"),
-      getItem("Testing process", "35", null, "/transaction/testing-process"),
-      getItem("Adjustment", "36", null, "/transaction/adjustment"),
+    getItem("SAMPLE HANDLING", "Sample_Handling", <ExperimentOutlined />, null, [
+      ...TranSample.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
     ]),
+
+    getItem("INVENTORY", "Inventory", <InboxOutlined />, null, [
+      ...TranInventory.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
+    ]),
+
+    getItem("EQUIPMENT MAINTENANCE", "Equipment_Maintenance", <ReconciliationOutlined />, null, [
+      ...TranEquipmentMaintenance.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
+    ]),
+
+    getItem("SETUP", "Setup", <SettingOutlined />, null, [
+      ...TranSetup.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
+    ]),
+
+    getItem("APPROVAL", "Approval", <FileProtectOutlined />, null, [
+      ...Approval.map((item) =>
+        getItem(item.tranname, item.tranidx, '', `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}`)
+      ),
+    ]),
+
+    // getItem("Transaction", "Transaction", <ContainerOutlined />, null, [
+    //   getItem("Taking Sample", "27", null, "/transaction/taking-sample"),
+    //   getItem("Sample Registration", "28", null, "/transaction/sample-registration"),
+    //   getItem("Sample Handling", "29", null, "/transaction/sample-handling"),
+    //   getItem("Testing Result", "30", null, "/transaction/testing-result"),
+    //   getItem("Maintenance Request", "31", null, "/transaction/maintenance-request"),
+    //   getItem("Maintenance Process", "32", null, "/transaction/maintenance-process"),
+    //   getItem("Testing Order", "33", null, "/transaction/testing-order"),
+    //   getItem("Planning Taking Sample", "34", null, "/transaction/planning-taking-sample"),
+    //   getItem("Testing process", "35", null, "/transaction/testing-process"),
+    //   getItem("Adjustment", "36", null, "/transaction/adjustment"),
+    // ]),
     // getItem("Team", "sub2", <TeamOutlined />, null, [
     //   getItem("Team 1", "6", null, "/team/team1"),
     //   getItem("Team 2", "8", null, "/team/team2"),
@@ -160,6 +157,60 @@ const MySidebar = ({ children }) => {
     // getItem("Files", "9", <FileOutlined />, "/files"),
   ];
 
+  const flattenItems = (items) => {
+    return items.reduce((acc, item) => {
+      if (item.children) {
+        return [...acc, item, ...flattenItems(item.children)];
+      }
+      return [...acc, item];
+    }, []);
+  };
+
+  const filteredItems = useMemo(() => {
+    const flatItems = flattenItems(items);
+    if (!searchValue) return items;
+
+    const filtered = flatItems.filter(item =>
+      item.label.props?.children.toLowerCase().includes(searchValue.toLowerCase())
+    );
+
+    // console.log(filtered);
+
+    if (filtered.length === 0) {
+      // console.log("not found");
+      return [
+        {
+          label: <div className="flex w-full justify-center font-semibold text-xl">Menu Not Found!</div>
+        }
+      ]
+    }
+
+    return filtered.map(item => ({
+      ...item,
+      children: undefined // Remove children to avoid nested results
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, searchValue]);
+
+
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleMenuClick = (e) => {
     // Save the clicked menu key to localStorage
@@ -199,6 +250,7 @@ const MySidebar = ({ children }) => {
     },
   ];
 
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       {!mobile || (mobile && !collapsed) ? (
@@ -226,12 +278,25 @@ const MySidebar = ({ children }) => {
               <p className="text-xl font-bold">SA</p>
             )}
           </div> */}
+
+          <div className="p-4">
+            <Input
+              ref={searchInputRef}
+              allowClear
+              size="large"
+              placeholder="Search Menu.. (Ctrl+F)"
+              prefix={<SearchOutlined />}
+              onChange={handleSearch}
+              value={searchValue}
+            />
+          </div>
+
           <Menu
             theme="dark"
             mode="inline"
             selectedKeys={selectedKeys}
             openKeys={openKeys}
-            items={items}
+            items={filteredItems}
             onClick={handleMenuClick}
             onOpenChange={handleOpenChange}
             style={{

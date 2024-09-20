@@ -7,7 +7,6 @@ import { updateBuilding } from "../../../../Api/Master/updateData";
 import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditBuilding = ({ dataSource, onEdit }) => {
-  console.log(dataSource);
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
