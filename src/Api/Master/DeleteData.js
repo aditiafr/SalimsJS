@@ -59,6 +59,34 @@ export const deleteLocation = async (WarehouseCode, LocationCode) => {
     return response;
 }
 
+export const deleteSampleLocation = async (BuildingCode, SampleLocationCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/location/set-suspend/${BuildingCode}/${SampleLocationCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
+export const deleteManufacture = async (ManufactureCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/manufacture/set-suspend/${ManufactureCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
 export const deleteDepartment = async (DepartmentCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.delete(`${baseUrl}/department/delete/${DepartmentCode}`, {

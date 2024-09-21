@@ -1,154 +1,153 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import React from "react";
-import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import EditParameter from "./edit";
 import DeleteParameter from "./delete";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-  },
-  {
-    title: "Category",
-    dataIndex: "Category",
-    key: "Category",
-  },
-  {
-    title: "Procedure No",
-    dataIndex: "ProcedureNo",
-    key: "ProcedureNo",
-  },
-  {
-    title: "Procedure Name",
-    dataIndex: "ProcedureName",
-    key: "ProcedureName",
-  },
-  {
-    title: "Std Lead Time",
-    dataIndex: "StdLeadTime",
-    key: "StdLeadTime",
-  },
-  {
-    title: "Price",
-    dataIndex: "Price",
-    key: "Price",
-    render: (text) => {
-      const value = text ?? 0;
-
-      return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR"
-      }).format(value);
-    },
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditParameter />
-        <DeleteParameter name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Code: "BBIA-01",
-    Name: "Penetapan Kadar Gula",
-    Category: "Solid",
-    ProcedureNo: "SNI-01-2892-1992",
-    ProcedureName: "KADAR GULA METODE LUFF SCHOORL",
-    StdLeadTime: "08:00",
-    Price: 10000000,
-    Description: "Penetapan kadar gula dalam air",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Code: "BBIA-02",
-    Name: "Penetapan Kadar Lemak",
-    Category: "Solid",
-    ProcedureNo: "SNI-01-2892-1992",
-    ProcedureName: "KADAR LEMAK METODE SOXHLET",
-    StdLeadTime: "08:00",
-    Price: 90000,
-    Description: "Penetapan kadar lemak dalam air",
-    Suspended: false,
-  },
-  {
-    key: 3,
-    Code: "BBIA-03",
-    Name: "Penetapan Kadar Protein",
-    Category: "Solid",
-    ProcedureNo: "SNI-01-2892-1992",
-    ProcedureName: "KADAR PROTEIN METODE KJELDAHL",
-    StdLeadTime: "08:00",
-    Price: 1000000,
-    Description: "Penetapan kadar protein dalam air",
-    Suspended: true,
-  },
-  {
-    key: 4,
-    Code: "BBIA-04",
-    Name: "Penetapan Kadar Air",
-    Category: "Solid",
-    ProcedureNo: "SNI-01-2892-1992",
-    ProcedureName: "KADAR AIR METODE KARL FISCHER",
-    StdLeadTime: "08:00",
-    Price: 1000000,
-    Description: null,
-    Suspended: false,
-  },
-  {
-    key: 5,
-    Code: "BBIA-05",
-    Name: "Penetapan Kadar Abu",
-    Category: "Solid",
-    ProcedureNo: "SNI-01-2892-1992",
-    ProcedureName: "KADAR ABU METODE TUNGGAKAN",
-    StdLeadTime: "08:00",
-    Price: 1000000,
-    Description: "Penetapan kadar abu dalam air",
-    Suspended: false,
-  }
-];
+import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
+import { getParameter } from "../../../../Api/Master/getData";
 
 const Parameter = () => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getParameter();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "Parameter Code",
+      dataIndex: "parcode",
+      key: "parcode",
+      fixed: "left",
+    },
+    {
+      title: "Parameter Name",
+      dataIndex: "parname",
+      key: "parname",
+    },
+    {
+      title: "Method Id",
+      dataIndex: "methodid",
+      key: "methodid",
+    },
+    {
+      title: "Preservation",
+      dataIndex: "preservation",
+      key: "preservation",
+    },
+    {
+      title: "Storage Time Limit",
+      dataIndex: "storagetimelimit",
+      key: "storagetimelimit",
+    },
+    {
+      title: "Product Category Code",
+      dataIndex: "prodcatcode",
+      key: "prodcatcode",
+    },
+    {
+      title: "product Category Name",
+      dataIndex: "prodcatname",
+      key: "prodcatname",
+    },
+    {
+      title: "Unit Code",
+      dataIndex: "unitcode",
+      key: "unitcode",
+    },
+    {
+      title: "Unit Name",
+      dataIndex: "unitname",
+      key: "unitname",
+    },
+    {
+      title: "Alias Name",
+      dataIndex: "aliasname",
+      key: "aliasname",
+    },
+    {
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+    },
+    {
+      title: "Akreditasi",
+      dataIndex: "akreditasi",
+      key: "akreditasi",
+    },
+    {
+      title: "Result Unit Code",
+      dataIndex: "resultunitcode",
+      key: "resultunitcode",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditParameter dataSource={record} onEdit={fetchData} />
+          {record.issuspend === false && (
+            <DeleteParameter dataSource={record} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle
-          title="Parameter"
-          subtitle="All data parameter"
-        />
+        <HeaderTitle title="Parameter" subtitle="All data Parameter" />
         <div>
           <Link to="/master/parameter/form">
             <Button type="primary">+ Add New</Button>
@@ -157,25 +156,19 @@ const Parameter = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1800,
+            x: 3500,
           }}
         />
       </div>

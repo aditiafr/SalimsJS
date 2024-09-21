@@ -1,10 +1,11 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import EditTimePoint from "./edit";
 import DeleteTimePoint from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { getTimePoint } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const TimePoint = () => {
   const [data, setData] = useState([]);
@@ -41,91 +42,87 @@ const TimePoint = () => {
       title: "No",
       dataIndex: "key",
       key: "key",
-      width: 80,
+      width: 60,
+      fixed: "left",
     },
     {
-      title: "TimePointCode",
-      dataIndex: "TimePointCode",
-      key: "TimePointCode",
-      width: 150,
+      title: "TimePoint Code",
+      dataIndex: "timepointcode",
+      key: "TimePointcode",
+      fixed: "left",
     },
     {
-      title: "TimePointName",
-      dataIndex: "TimePointName",
-      key: "TimePointName",
-      width: 150,
+      title: "Time Point Name",
+      dataIndex: "timepointname",
+      key: "timepointname",
     },
     {
       title: "Monthly",
-      dataIndex: "Monthly",
-      key: "Monthly",
-      width: 150,
+      dataIndex: "monthly",
+      key: "monthly",
     },
     {
-      title: "IntervalDay",
-      dataIndex: "IntervalDay",
-      key: "IntervalDay",
-      width: 150,
+      title: "Interval Day",
+      dataIndex: "intervalday",
+      key: "intervalday",
     },
     {
-      title: "IntervalTime",
-      dataIndex: "IntervalTime",
-      key: "IntervalTime",
-      width: 150,
+      title: "Interval Time",
+      dataIndex: "intervaltime",
+      key: "intervaltime",
     },
     {
-      title: "TWMinDay",
-      dataIndex: "TWMinDay",
-      key: "TWMinDay",
-      width: 150,
+      title: "TW Min Day",
+      dataIndex: "twminday",
+      key: "twminday",
     },
     {
-      title: "TWMinTime",
-      dataIndex: "TWMinTime",
-      key: "TWMinTime",
-      width: 150,
+      title: "TW Min Time",
+      dataIndex: "twmintime",
+      key: "twmintime",
     },
     {
-      title: "TWMaxDay",
-      dataIndex: "TWMaxDay",
-      key: "TWMaxDay",
-      width: 150,
+      title: "TW Max Day",
+      dataIndex: "twmaxday",
+      key: "twmaxday",
     },
     {
-      title: "TWMaxTime",
-      dataIndex: "TWMaxTime",
-      key: "TWMaxTime",
-      width: 150,
+      title: "TW Max Time",
+      dataIndex: "twmaxtime",
+      key: "twmaxtime",
     },
     {
-      title: "POWMinDay",
-      dataIndex: "POWMinDay",
-      key: "POWMinDay",
-      width: 150,
+      title: "POW Min Day",
+      dataIndex: "powminday",
+      key: "powminday",
     },
     {
-      title: "POWMinTime",
-      dataIndex: "POWMinTime",
-      key: "POWMinTime",
-      width: 150,
+      title: "POW Min Time",
+      dataIndex: "powmintime",
+      key: "powmintime",
     },
     {
-      title: "POWMaxDay",
-      dataIndex: "POWMaxDay",
-      key: "POWMaxDay",
-      width: 150,
+      title: "POW Max Day",
+      dataIndex: "powmaxday",
+      key: "powmaxday",
     },
     {
-      title: "POWMaxTime",
-      dataIndex: "POWMaxTime",
-      key: "POWMaxTime",
-      width: 150,
+      title: "POW Max Time",
+      dataIndex: "powmaxtime",
+      key: "powmaxtime",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 150,
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Action",
@@ -134,7 +131,9 @@ const TimePoint = () => {
       render: (_, record) => (
         <Space>
           <EditTimePoint dataSource={record} onEdit={fetchData} />
-          <DeleteTimePoint />
+          {record.issuspend === false && (
+            <DeleteTimePoint dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },
@@ -143,25 +142,16 @@ const TimePoint = () => {
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle
-          title="TIME POINT"
-          subtitle="All data time point"
-        />
+        <HeaderTitle title="TIME POINT" subtitle="All data time point" />
         <div>
-          <Link to="/master/time-point/form">
+          <Link to="/master/time_point/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
@@ -173,7 +163,7 @@ const TimePoint = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 2500,
           }}
         />
       </div>

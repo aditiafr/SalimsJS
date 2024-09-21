@@ -9,9 +9,9 @@ import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
 const baseURL = process.env.REACT_APP_BASEURL;
 
 
-export const getBuilding = async () => {
+export const getBuilding = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/building/list`, {
+    const response = await axios.get(`${baseURL}/building/list?sortParam=buildingcode&sortOrder=asc${Suspend ? `&isSuspend=${Suspend}` : ''}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -97,15 +97,70 @@ export const getLocationNextCode = async (WarehouseCode) => {
     return response.data.data
 }
 
-export const getSampleSLocation = async () => {
+export const getSampleLocation = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/samplelocation`, {
+    const response = await axios.get(`${baseURL}/sampleloc/list?sortParam=locationcode&sortOrder=asc`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getSampleLocationNextCode = async (BuildingCode) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/sampleloc/next-code?tranidx=${selectedTranIdx}&buildingcode=${BuildingCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
+}
+
+export const getManufacture = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/manufacture/list?sortParam=manufacturecode&sortOrder=desc`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getParameter = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/parameter/list?sortParam=parcode&sortOrder=desc`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getParameterNextCode = async (WarehouseCode) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/parameter/next-code?tranidx=${selectedTranIdx}&warehousecode=${WarehouseCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
+}
+
+export const getManufactureNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/manufacture/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
 }
 
 export const getTestMethode = async () => {
@@ -128,6 +183,17 @@ export const getTimePoint = async () => {
     });
 
     return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getTimePointNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/timepoint/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
 }
 
 export const getCustomer = async () => {

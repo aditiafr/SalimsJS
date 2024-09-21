@@ -1,15 +1,46 @@
 import { Form, Input, Col, Row, InputNumber, TimePicker } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
+import { useEffect, useState } from "react";
+import { getTimePointNextCode } from "../../../../Api/Master/getData";
 
 const FormTimePoint = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const prefix = PrefixGlobal();
+  const [TimePointCode, setTimePointCode] = useState("");
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+  useEffect(() => {
+    const fetchNextCode = async () => {
+      try {
+        const res = await getTimePointNextCode();
+        setTimePointCode(res.timepointcode);
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchNextCode();
+  }, []);
+
+
+  const handleSubmit = (values) => {
+    try {
+      setLoading(true);
+      let payload = values;
+      if (!values.timepointcode) {
+        form.setFieldsValue({ timepointcode: TimePointCode })
+        payload = {
+          ...payload,
+          timepointcode: TimePointCode
+        }
+        console.log(payload);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const onReset = () => {
@@ -25,20 +56,18 @@ const FormTimePoint = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Code"
-                name="Code"
+                label="Time Point Code"
+                name="timepointcode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your Code!",
+                    validator: prefix,
                   },
                 ]}
               >
@@ -48,12 +77,12 @@ const FormTimePoint = () => {
 
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name"
-                name="Name"
+                label="Time Point Name"
+                name="timepointname"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input your Time Point Name!",
                   },
                 ]}
               >
@@ -65,12 +94,6 @@ const FormTimePoint = () => {
               <Form.Item
                 label="Interval"
                 name="Interval"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Interval!",
-                  },
-                ]}
               >
                 <div className="flex justify-around border p-2 rounded-md">
                   <Form.Item
@@ -88,9 +111,9 @@ const FormTimePoint = () => {
                     label="Day"
                     name="Day"
                     rules={[
-                        {
-                            required: true,
-                        },
+                      {
+                        required: true,
+                      },
                     ]}
                   >
                     <InputNumber />
@@ -116,7 +139,7 @@ const FormTimePoint = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

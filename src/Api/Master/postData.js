@@ -44,9 +44,19 @@ export const postLocation = async (LocationData) => {
     return response;
 }
 
-export const postSampleSLocation = async (SampleSLocationData) => {
+export const postSampleLocation = async (SampleLocationData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/sampleLocation`, SampleSLocationData, {
+    const response = await axios.post(`${baseUrl}/sampleloc/store`, SampleLocationData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postManufacture = async (ManufactureData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/manufacture/store`, ManufactureData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

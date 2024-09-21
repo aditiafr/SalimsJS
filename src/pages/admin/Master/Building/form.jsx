@@ -22,7 +22,7 @@ const FormBuilding = () => {
         setBuildingCode(res.buildingcode);
 
       } catch (error) {
-        console.log();
+        console.log(error);
       }
     }
     fetchNextCode();

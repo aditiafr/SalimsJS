@@ -1,15 +1,16 @@
 import { Button, Form, Input, Modal, Table } from 'antd';
 import React, { useState } from 'react';
-import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle';
-import SearchInput from '../../../../components/Dashboard/Global/Table/SearchInput';
+import HeaderTitle from './HeaderTitle';
+import SearchInput from './Table/SearchInput';
 
-const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
+const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const showModal = () => {
         setIsModalOpen(true);
+        onOpenModal(true);
     };
 
     const handleSearch = (e) => {
@@ -51,12 +52,12 @@ const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
                     },
                 ]}
             >
-                <Input onClick={showModal} />
+                <Input onClick={showModal} readOnly />
             </Form.Item>
 
             <Modal
                 centered
-                title={<HeaderTitle title="WAREHOUSE" subtitle="" />}
+                title={<HeaderTitle title={title} subtitle="" />}
                 open={isModalOpen}
                 closable={false}
                 width={1000}

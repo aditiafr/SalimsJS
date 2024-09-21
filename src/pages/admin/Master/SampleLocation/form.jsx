@@ -1,203 +1,152 @@
-import { Col, DatePicker, Form, Input, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { Form, Input, message } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { useEffect, useState } from "react";
+import { getLocationNextCode, getBuilding, getSampleLocationNextCode } from "../../../../Api/Master/getData";
+import { postSampleLocation } from "../../../../Api/Master/postData";
 import { useNavigate } from "react-router-dom";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { useCallback, useEffect, useState } from "react";
-import InputModal from "./InputModal";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
-import { postSampleSLocation } from "../../../../Api/Master/postData";
-import { getSampleSLocation } from "../../../../Api/Master/getData";
+import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
 
 const FormSampleLocation = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [dataModal, setDataModal] = useState([]);
-  const buildingCode = dataModal.BuildingCode;
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [sampleSLocationCode, setSampleSLocationCode] = useState("");
+  const [dataBuilding, setDataBuilding] = useState([]);
+  const [selectBuilding, setSelectBuilding] = useState("");
+  const [openBuilding, setOpenBuilding] = useState(null);
+  const BuildingName = selectBuilding ? selectBuilding.buildingname : '';
+  const BuildingCode = selectBuilding ? selectBuilding.buildingcode : '';
 
-  const fetchSampleSLocation = useCallback(async () => {
-    try {
-      const response = await getSampleSLocation(buildingCode);
-      if (response.length > 0) {
-        const BCode = response.filter(
-          (item) => item.LocationCode && item.LocationCode.startsWith("LOC")
-        );
-        if (BCode.length > 0) {
-          const lastCode = BCode[BCode.length - 1].LocationCode;
-          const nextNumber = parseInt(lastCode.substr(3)) + 1;
-          setSampleSLocationCode(`LOC${nextNumber.toString().padStart(2, "0")}`);
-        } else {
-          setSampleSLocationCode("LOC01");
-        }
-      } else {
-        setSampleSLocationCode("LOC01");
+  const prefix = PrefixGlobal();
+  const [locationCode, setLocationCode] = useState("");
+
+  useEffect(() => {
+    const fetchBuilding = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getBuilding(false);
+        setDataBuilding(response);
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      setSampleSLocationCode("LOC01");
-      console.log(error.response.statusText);
+      setIsLoading(false);
+    };
+    if (openBuilding) {
+      fetchBuilding();
+      setOpenBuilding(false);
     }
-  }, [buildingCode]);
+  }, [openBuilding]);
+
 
   useEffect(() => {
-    if (buildingCode) {
-      fetchSampleSLocation();
+    const fetchNextCode = async () => {
+      try {
+        const res = await getSampleLocationNextCode(BuildingCode);
+        setLocationCode(res.locationcode);
+
+      } catch (error) {
+        console.log();
+      }
     }
-  }, [buildingCode, fetchSampleSLocation]);
+    if (BuildingCode) {
+      fetchNextCode();
+    }
+  }, [BuildingCode]);
 
-  useEffect(() => {
-    form.setFieldsValue({
-      LocationCode: sampleSLocationCode,
-      BuildingCode: buildingCode
-    });
-  }, [sampleSLocationCode, form, buildingCode]);
 
-  const onFinish = async (values) => {
-    console.log("Success:", values);
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const modifiedValues = {
+      let payload = {
         ...values,
-        ...JsonCreateModif
+        buildingcode: BuildingCode
       }
-      const response = await postSampleSLocation(modifiedValues);
-      messageApi.open({
-        type: 'success',
-        content: response.data.statusMessage,
-      });
-      navigate("/master/sample-storage-location");
+      if (!values.locationcode) {
+        form.setFieldsValue({ locationcode: locationCode });
+        payload = {
+          ...payload,
+          locationcode: locationCode
+        }
+      }
+      console.log(payload);
+      const response = await postSampleLocation(payload);
+      message.success(response.data.message);
+      navigate("/master/sample_location");
     } catch (error) {
       console.log(error);
-
     }
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    setLoading(false);
   };
 
   const onReset = () => {
     form.resetFields();
   };
 
-  // const onChange = (date, dateString) => {
-  //   console.log(date, dateString);
-  // };
+  useEffect(() => {
+    form.setFieldsValue({ buildingname: BuildingName });
+  }, [BuildingName, form, locationCode]);
 
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="SAMPLE STORAGE LOCATION"
-          subtitle="form data a sample storage location"
+          title="SAMPLE LOCATION"
+          subtitle="form data a sample location"
         />
       </div>
       <div className="w-full bg-white rounded-lg">
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
+            <InputModal
+              title="Building"
+              label="Building Name"
+              name="buildingname"
+              dataSource={dataBuilding}
+              loading={isLoading}
+              columns={columns}
+              onData={(values) => setSelectBuilding(values)}
+              onOpenModal={(values) => setOpenBuilding(values)}
+            />
 
-              <Form.Item
-                label="Building Code"
-                name="BuildingCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Code!",
-                  },
-                ]}
-              >
-                <Input
-                  onClick={() => setOpenModal(true)}
-                  readOnly
-                />
-              </Form.Item>
+            <Form.Item
+              label="Location Code"
+              name="locationcode"
+              rules={[
+                {
+                  validator: prefix,
+                },
+              ]}
+            >
+              <Input maxLength={6} />
+            </Form.Item>
 
-              <InputModal
-                setOpenModals={openModal}
-                setValues={(values) => setDataModal(values)}
-                setIsModalOpen={() => setOpenModal(false)}
-              />
+            <Form.Item
+              label="Location Name"
+              name="locationname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Location Name!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Code"
-                name="LocationCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Location Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Name"
-                name="LocationName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Location Name!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Date Of Use"
-                name="DateOfUse"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Date Of Use!",
-                  },
-                ]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Date Of Available"
-                name="DateOfAvailable"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Date Of Available!",
-                  },
-                ]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item label="Description" name="description">
+              <Input.TextArea />
+            </Form.Item>
+          </div>
           <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
@@ -206,3 +155,65 @@ const FormSampleLocation = () => {
 };
 
 export default FormSampleLocation;
+
+const columns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: 60,
+    fixed: "left",
+  },
+  {
+    title: "Building Code",
+    dataIndex: "buildingcode",
+    key: "buildingcode",
+    fixed: "left",
+  },
+  {
+    title: "Building Name",
+    dataIndex: "buildingname",
+    key: "buildingname",
+  },
+  {
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
+    width: 350,
+  },
+  {
+    title: "Phone Number",
+    dataIndex: "phone",
+    key: "phone",
+  },
+  {
+    title: "Fax",
+    dataIndex: "fax",
+    key: "fax",
+  },
+  {
+    title: "Contact Name",
+    dataIndex: "contact",
+    key: "contact",
+  },
+  {
+    title: "Zip Code",
+    dataIndex: "zipcode",
+    key: "zipcode",
+  },
+  {
+    title: "City",
+    dataIndex: "city",
+    key: "city",
+  },
+  {
+    title: "Country",
+    dataIndex: "country",
+    key: "country",
+  },
+  {
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
+  },
+];

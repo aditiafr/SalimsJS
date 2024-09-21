@@ -1,50 +1,44 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, DatePicker, Form, Input, Modal, Row, Tooltip } from "antd";
-import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { Button, Form, Input, message, Modal, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
-import { updateSampleSLocation } from "../../../../Api/Master/updateData";
+import { updateSampleLocation } from "../../../../Api/Master/updateData";
+import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditSampleLocation = ({ dataSource, onEdit }) => {
+
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const [isSuspend, setIsSuspend] = useState();
 
-  const formatDataSource = useCallback(() => {
-    form.setFieldsValue({
-      ...dataSource,
-      DateOfUse: dataSource.DateOfUse ? dayjs(dataSource.DateOfUse) : null,
-      DateOfAvailable: dataSource.DateOfAvailable ? dayjs(dataSource.DateOfAvailable) : null,
-    });
-  }, [dataSource, form]);
+  const handleSwitchChange = (checked) => {
+    setIsSuspend(checked);
+    form.setFieldsValue(dataSource);
+  };
 
   useEffect(() => {
-    formatDataSource();
-  }, [form, formatDataSource]);
+    form.setFieldsValue(dataSource);
+  }, [dataSource, form])
 
   const showModal = () => {
     setIsModalOpen(true);
+    setIsSuspend(dataSource.issuspend)
   };
 
-  const onFinish = async (values) => {
-    console.log("Success:", values);
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const modifiedValues = {
-        ...values,
-        // DateOfUse: values.DateOfUse ? values.DateOfUse.format("YYYY-MM-DD") : null,
-        // DateOfAvailable: values.DateOfAvailable ? values.DateOfAvailable.format("YYYY-MM-DD") : null,
-        ...JsonCreateModif
+      const { buildingname, ...filterValues } = values;
+      const payload = {
+        ...filterValues,
+        issuspend: isSuspend
       }
-      const response = await updateSampleSLocation(dataSource.BuildingCode, dataSource.LocationCode, modifiedValues);
-      messageApi.open({
-        type: 'success',
-        content: response.data.statusMessage,
-      });
+      console.log(payload);
+      
+      const response = await updateSampleLocation(dataSource.buildingcode, dataSource.locationcode, payload);
+      message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
     } catch (error) {
@@ -53,12 +47,9 @@ const EditSampleLocation = ({ dataSource, onEdit }) => {
     setLoading(false);
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const onReset = () => {
-    formatDataSource();
+    form.setFieldsValue(dataSource);
+    setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
 
@@ -70,16 +61,22 @@ const EditSampleLocation = ({ dataSource, onEdit }) => {
 
       <Modal
         title={
-          <HeaderTitle
-            title="SAMPLE STORAGE LOCATION"
-            subtitle="Edit data a sample storage location"
-          />
+          <div className="flex justify-between items-center">
+            <HeaderTitle
+              title="SAMPLE LOCATION"
+              subtitle="Edit data a Sample Location"
+            />
+            <SwitchComponent
+              isSuspend={isSuspend}
+              handleSwitchChange={handleSwitchChange}
+            />
+          </div>
         }
         centered
         open={isModalOpen}
         closable={false}
         width={1000}
-        style={{
+        styles={{
           body: {
             maxHeight: "70vh",
             overflow: "auto",
@@ -88,102 +85,49 @@ const EditSampleLocation = ({ dataSource, onEdit }) => {
         footer={false}
       >
         <Form
-          name="basic"
+          name="form"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
-            <Col xs={24} sm={12}>
 
-              <Form.Item
-                label="Building Code"
-                name="BuildingCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Building Code!",
-                  },
-                ]}
-              >
-                <Input
-                  readOnly
-                />
-              </Form.Item>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
+            <Form.Item
+              label="Building Name"
+              name="buildingname"
+            >
+              <Input disabled />
+            </Form.Item>
 
-            </Col>
+            <Form.Item
+              label="Location Code"
+              name="locationcode"
+            >
+              <Input readOnly />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Code"
-                name="LocationCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Location Code!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Location Name"
+              name="locationname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Location Name!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Name"
-                name="LocationName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Location Name!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
+            <Form.Item label="Description" name="description">
+              <Input.TextArea />
+            </Form.Item>
+          </div>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Date Of Use"
-                name="DateOfUse"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Date Of Use!",
-                  },
-                ]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Date Of Available"
-                name="DateOfAvailable"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Date Of Available!",
-                  },
-                ]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
-      </Modal>
+      </Modal >
     </>
   );
 };

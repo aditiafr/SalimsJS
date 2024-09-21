@@ -1,12 +1,14 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import EditSampleLocation from "./edit";
 import DeleteSampleLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getSampleSLocation } from "../../../../Api/Master/getData";
+import { getSampleLocation } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const SampleLocation = () => {
+
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ const SampleLocation = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getSampleSLocation();
+      const response = await getSampleLocation();
       setData(response);
     } catch (error) {
       console.log(error);
@@ -41,43 +43,38 @@ const SampleLocation = () => {
       title: "No",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
       width: 80,
     },
     {
-      title: "Building Code",
-      dataIndex: "BuildingCode",
-      key: "BuildingCode",
-      width: 150,
-    },
-    {
       title: "Location Code",
-      dataIndex: "LocationCode",
+      dataIndex: "locationcode",
       key: "LocationCode",
-      width: 150,
+      fixed: "left",
     },
     {
       title: "Location Name",
-      dataIndex: "LocationName",
+      dataIndex: "locationname",
       key: "LocationName",
-      width: 150,
+    },
+    {
+      title: "Building Name",
+      dataIndex: "buildingname",
+      key: "buildingName",
     },
     {
       title: "Description",
-      dataIndex: "Description",
+      dataIndex: "description",
       key: "Description",
-      width: 150,
     },
     {
-      title: "Date Of Use",
-      dataIndex: "DateOfUse",
-      key: "DateOfUse",
-      width: 150,
-    },
-    {
-      title: "Date Of Available",
-      dataIndex: "DateOfAvailable",
-      key: "DateOfAvailable",
-      width: 150,
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "Suspended",
+      width: 120,
+      render: (suspended) => (
+        <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
+      ),
     },
     {
       title: "Action",
@@ -86,7 +83,9 @@ const SampleLocation = () => {
       render: (_, record) => (
         <Space>
           <EditSampleLocation dataSource={record} onEdit={fetchData} />
-          <DeleteSampleLocation />
+          {record.issuspend !== true && (
+            <DeleteSampleLocation dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },
@@ -96,24 +95,18 @@ const SampleLocation = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="SAMPLE STORAGE LOCATION"
-          subtitle="All data sample storage location"
+          title="SAMPLE LOCATION"
+          subtitle="All data sample location"
         />
         <div>
-          <Link to="/master/sample-storage-location/form">
+          <Link to="/master/sample_location/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
@@ -125,7 +118,7 @@ const SampleLocation = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 1200,
           }}
         />
       </div>

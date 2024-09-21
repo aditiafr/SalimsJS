@@ -1,12 +1,12 @@
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-import { Col, Form, Input, message, Row } from "antd";
+import { Form, Input, message } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import InputModal from "./InputModal";
 import { useEffect, useState } from "react";
 import { getLocationNextCode, getWarehouse } from "../../../../Api/Master/getData";
 import { postLocation } from "../../../../Api/Master/postData";
 import { useNavigate } from "react-router-dom";
 import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
 
 const FormLocation = () => {
   const [form] = Form.useForm();
@@ -102,6 +102,7 @@ const FormLocation = () => {
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
             <InputModal
+              title="WAREHOUSE"
               label="Warehouse Name"
               name="warehousename"
               dataSource={dataWarehouse}

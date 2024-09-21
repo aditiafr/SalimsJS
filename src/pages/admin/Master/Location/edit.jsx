@@ -1,10 +1,9 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, message, Modal, Row, Tooltip } from "antd";
+import { Button, Form, Input, message, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { updateBuilding, updateLocation } from "../../../../Api/Master/updateData";
+import { updateLocation } from "../../../../Api/Master/updateData";
 import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
 const EditLocation = ({ dataSource, onEdit }) => {
@@ -35,6 +34,8 @@ const EditLocation = ({ dataSource, onEdit }) => {
         ...values,
         issuspend: isSuspend
       }
+      console.log(payload);
+      
       const response = await updateLocation(dataSource.warehousecode, dataSource.locationcode, payload);
       message.success(response.data.message);
       onEdit(true);
@@ -60,7 +61,7 @@ const EditLocation = ({ dataSource, onEdit }) => {
       <Modal
         title={
           <div className="flex justify-between items-center">
-            <HeaderTitle title="STORAGE LOCATION" subtitle="Edit data a Location" />
+            <HeaderTitle title="LOCATION" subtitle="Edit data a Location" />
             <SwitchComponent
               isSuspend={isSuspend}
               handleSwitchChange={handleSwitchChange}
@@ -89,17 +90,17 @@ const EditLocation = ({ dataSource, onEdit }) => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
             <Form.Item
-              label="Warehousename"
+              label="Warehouse Name"
               name="warehousename"
             >
-              <Input maxLength={6} disabled />
+              <Input disabled />
             </Form.Item>
 
             <Form.Item
               label="Location Code"
               name="locationcode"
             >
-              <Input maxLength={6} disabled />
+              <Input disabled />
             </Form.Item>
 
             <Form.Item
