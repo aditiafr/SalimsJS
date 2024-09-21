@@ -1,61 +1,34 @@
-import { Col, DatePicker, Form, Input, Row } from "antd";
-import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { useNavigate } from "react-router-dom";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { EditFilled } from "@ant-design/icons";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Tooltip } from "antd";
+import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
-import InputModal from "./InputModal";
+import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { JsonCreateModif } from "../../../../Api/Master/Json";
-import { postSampleSLocation } from "../../../../Api/Master/postData";
-import { getSampleSLocation } from "../../../../Api/Master/getData";
+import { updateSampleSLocation } from "../../../../Api/Master/updateData";
 
-const FormSampleStorageLocation = () => {
+const EditSampleLocation = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [dataModal, setDataModal] = useState([]);
-  const buildingCode = dataModal.BuildingCode;
-
-  const [sampleSLocationCode, setSampleSLocationCode] = useState("");
-
-  const fetchSampleSLocation = useCallback(async () => {
-    try {
-      const response = await getSampleSLocation(buildingCode);
-      if (response.length > 0) {
-        const BCode = response.filter(
-          (item) => item.LocationCode && item.LocationCode.startsWith("LOC")
-        );
-        if (BCode.length > 0) {
-          const lastCode = BCode[BCode.length - 1].LocationCode;
-          const nextNumber = parseInt(lastCode.substr(3)) + 1;
-          setSampleSLocationCode(`LOC${nextNumber.toString().padStart(2, "0")}`);
-        } else {
-          setSampleSLocationCode("LOC01");
-        }
-      } else {
-        setSampleSLocationCode("LOC01");
-      }
-    } catch (error) {
-      setSampleSLocationCode("LOC01");
-      console.log(error.response.statusText);
-    }
-  }, [buildingCode]);
-
-  useEffect(() => {
-    if (buildingCode) {
-      fetchSampleSLocation();
-    }
-  }, [buildingCode, fetchSampleSLocation]);
-
-  useEffect(() => {
+  const formatDataSource = useCallback(() => {
     form.setFieldsValue({
-      LocationCode: sampleSLocationCode,
-      BuildingCode: buildingCode
+      ...dataSource,
+      DateOfUse: dataSource.DateOfUse ? dayjs(dataSource.DateOfUse) : null,
+      DateOfAvailable: dataSource.DateOfAvailable ? dayjs(dataSource.DateOfAvailable) : null,
     });
-  }, [sampleSLocationCode, form, buildingCode]);
+  }, [dataSource, form]);
+
+  useEffect(() => {
+    formatDataSource();
+  }, [form, formatDataSource]);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
   const onFinish = async (values) => {
     console.log("Success:", values);
@@ -63,40 +36,57 @@ const FormSampleStorageLocation = () => {
       setLoading(true);
       const modifiedValues = {
         ...values,
+        // DateOfUse: values.DateOfUse ? values.DateOfUse.format("YYYY-MM-DD") : null,
+        // DateOfAvailable: values.DateOfAvailable ? values.DateOfAvailable.format("YYYY-MM-DD") : null,
         ...JsonCreateModif
       }
-      const response = await postSampleSLocation(modifiedValues);
+      const response = await updateSampleSLocation(dataSource.BuildingCode, dataSource.LocationCode, modifiedValues);
       messageApi.open({
         type: 'success',
         content: response.data.statusMessage,
       });
-      navigate("/master/sample-storage-location");
+      onEdit(true);
+      setIsModalOpen(false);
     } catch (error) {
       console.log(error);
-
     }
+    setLoading(false);
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
-    form.resetFields();
+    formatDataSource();
+    setIsModalOpen(false);
   };
-
-  // const onChange = (date, dateString) => {
-  //   console.log(date, dateString);
-  // };
 
   return (
     <>
-      <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle
-          title="SAMPLE STORAGE LOCATION"
-          subtitle="form data a sample storage location"
-        />
-      </div>
-      <div className="w-full bg-white rounded-lg">
+      <Tooltip title="Edit">
+        <Button icon={<EditFilled />} type="text" onClick={showModal} />
+      </Tooltip>
+
+      <Modal
+        title={
+          <HeaderTitle
+            title="SAMPLE STORAGE LOCATION"
+            subtitle="Edit data a sample storage location"
+          />
+        }
+        centered
+        open={isModalOpen}
+        closable={false}
+        width={1000}
+        style={{
+          body: {
+            maxHeight: "70vh",
+            overflow: "auto",
+          },
+        }}
+        footer={false}
+      >
         <Form
           name="basic"
           layout="vertical"
@@ -105,7 +95,7 @@ const FormSampleStorageLocation = () => {
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
+          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
             <Col xs={24} sm={12}>
 
               <Form.Item
@@ -119,16 +109,9 @@ const FormSampleStorageLocation = () => {
                 ]}
               >
                 <Input
-                  onClick={() => setOpenModal(true)}
                   readOnly
                 />
               </Form.Item>
-
-              <InputModal
-                setOpenModals={openModal}
-                setValues={(values) => setDataModal(values)}
-                setIsModalOpen={() => setOpenModal(false)}
-              />
 
             </Col>
 
@@ -198,11 +181,11 @@ const FormSampleStorageLocation = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} onLoading={loading} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
-      </div>
+      </Modal>
     </>
   );
 };
 
-export default FormSampleStorageLocation;
+export default EditSampleLocation;

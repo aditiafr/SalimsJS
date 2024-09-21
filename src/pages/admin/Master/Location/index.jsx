@@ -1,13 +1,13 @@
-import { Button, Space, Table } from "antd";
-import EditStorageLocation from "./edit";
-import DeleteStorageLocation from "./delete";
+import { Button, Space, Table, Tag } from "antd";
+import EditLocation from "./edit";
+import DeleteLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getStorageLocation } from "../../../../Api/Master/getData";
+import { getLocation } from "../../../../Api/Master/getData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const StorageLocation = () => {
+const Location = () => {
 
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -16,7 +16,7 @@ const StorageLocation = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getStorageLocation();
+      const response = await getLocation();
       setData(response);
     } catch (error) {
       console.log(error);
@@ -40,25 +40,25 @@ const StorageLocation = () => {
 
   const columns = [
     {
-      title: "key",
+      title: "No",
       dataIndex: "key",
       key: "key",
       fixed: "left",
       width: 80,
     },
     {
-      title: "LocationCode",
+      title: "Location Code",
       dataIndex: "locationcode",
       key: "LocationCode",
       fixed: "left",
     },
     {
-      title: "LocationName",
+      title: "Location Name",
       dataIndex: "locationname",
       key: "LocationName",
     },
     {
-      title: "WarehouseName",
+      title: "Warehouse Name",
       dataIndex: "warehousename",
       key: "WarehouseName",
     },
@@ -67,23 +67,25 @@ const StorageLocation = () => {
       dataIndex: "description",
       key: "Description",
     },
-    // {
-    //   title: "Suspended",
-    //   dataIndex: "Suspended",
-    //   key: "Suspended",
-    //   width: 120,
-    //   render: (suspended) => (
-    //     <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
-    //   ),
-    // },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "Suspended",
+      width: 120,
+      render: (suspended) => (
+        <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
+      ),
+    },
     {
       title: "Action",
       fixed: "right",
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditStorageLocation dataSource={record} onEdit={fetchData} />
-          <DeleteStorageLocation />
+          <EditLocation dataSource={record} onEdit={fetchData} />
+          {record.issuspend !== true && (
+            <DeleteLocation dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },
@@ -93,11 +95,11 @@ const StorageLocation = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="STORAGE LOCATION"
-          subtitle="All data storage location"
+          title="LOCATION"
+          subtitle="All data location"
         />
         <div>
-          <Link to="/master/storage-location/form">
+          <Link to="/master/location/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
@@ -124,4 +126,4 @@ const StorageLocation = () => {
   );
 };
 
-export default StorageLocation;
+export default Location;

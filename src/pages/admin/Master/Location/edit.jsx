@@ -1,20 +1,18 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip } from "antd";
+import { Button, Col, Form, Input, message, Modal, Row, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { updateBuilding } from "../../../../Api/Master/updateData";
+import { updateBuilding, updateLocation } from "../../../../Api/Master/updateData";
 import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
-const EditStorageLocation = ({ dataSource, onEdit }) => {
-  console.log(dataSource);
+const EditLocation = ({ dataSource, onEdit }) => {
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
-  const [isSuspend, setIsSuspend] = useState(dataSource.issuspend);
+  const [isSuspend, setIsSuspend] = useState();
 
   const handleSwitchChange = (checked) => {
     setIsSuspend(checked);
@@ -27,6 +25,7 @@ const EditStorageLocation = ({ dataSource, onEdit }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
+    setIsSuspend(dataSource.issuspend)
   };
 
   const handleSubmit = async (values) => {
@@ -36,22 +35,14 @@ const EditStorageLocation = ({ dataSource, onEdit }) => {
         ...values,
         issuspend: isSuspend
       }
-      console.log(payload);
-      const response = await updateBuilding(dataSource.buildingcode, payload);
-      messageApi.open({
-        type: 'success',
-        content: response.data.msg,
-      });
+      const response = await updateLocation(dataSource.warehousecode, dataSource.locationcode, payload);
+      message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
@@ -89,65 +80,45 @@ const EditStorageLocation = ({ dataSource, onEdit }) => {
         footer={false}
       >
         <Form
-          name="basic"
+          name="form"
           layout="vertical"
           onFinish={handleSubmit}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Warehouse Name"
-                name="warehousename"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Warehouse Name!",
-                  },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
-            </Col>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Code"
-                name="locationcode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Code!",
-                  },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
+            <Form.Item
+              label="Warehousename"
+              name="warehousename"
+            >
+              <Input maxLength={6} disabled />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Location Name"
-                name="locationname"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Location Name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Location Code"
+              name="locationcode"
+            >
+              <Input maxLength={6} disabled />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Location Name"
+              name="locationname"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Location Name!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea />
+            </Form.Item>
+          </div>
 
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
@@ -156,4 +127,4 @@ const EditStorageLocation = ({ dataSource, onEdit }) => {
   );
 };
 
-export default EditStorageLocation;
+export default EditLocation;

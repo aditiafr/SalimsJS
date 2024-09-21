@@ -75,7 +75,7 @@ export const getVendorNextCode = async () => {
     return response.data.data
 }
 
-export const getStorageLocation = async () => {
+export const getLocation = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/location/list`, {
         headers: {
@@ -84,6 +84,17 @@ export const getStorageLocation = async () => {
     });
 
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getLocationNextCode = async (WarehouseCode) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/location/next-code?tranidx=${selectedTranIdx}&warehousecode=${WarehouseCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
 }
 
 export const getSampleSLocation = async () => {

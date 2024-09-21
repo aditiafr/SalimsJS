@@ -1,12 +1,12 @@
 import { Button, Input, Space, Table } from "antd";
-import EditSampleStorageLocation from "./edit";
-import DeleteSampleStorageLocation from "./delete";
+import EditSampleLocation from "./edit";
+import DeleteSampleLocation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSampleSLocation } from "../../../../Api/Master/getData";
 
-const SampleStorageLocation = () => {
+const SampleLocation = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -85,8 +85,8 @@ const SampleStorageLocation = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditSampleStorageLocation dataSource={record} onEdit={fetchData} />
-          <DeleteSampleStorageLocation />
+          <EditSampleLocation dataSource={record} onEdit={fetchData} />
+          <DeleteSampleLocation />
         </Space>
       ),
     },
@@ -133,4 +133,4 @@ const SampleStorageLocation = () => {
   );
 };
 
-export default SampleStorageLocation;
+export default SampleLocation;

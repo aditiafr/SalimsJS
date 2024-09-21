@@ -132,7 +132,9 @@ const Vendor = () => {
       render: (_, record) => (
         <Space>
           <EditVendor dataSource={record} onEdit={fetchData} />
-          <DeleteVendor />
+          {record.issuspend === false && (
+            <DeleteVendor dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },

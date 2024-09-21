@@ -44,10 +44,6 @@ const EditBuilding = ({ dataSource, onEdit }) => {
     setLoading(false);
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const onReset = () => {
     form.setFieldsValue(dataSource);
     setIsSuspend(dataSource.Issuspend);
@@ -92,7 +88,6 @@ const EditBuilding = ({ dataSource, onEdit }) => {
           name="basic"
           layout="vertical"
           onFinish={handleSubmit}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
         >

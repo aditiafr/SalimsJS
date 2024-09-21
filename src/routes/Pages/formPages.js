@@ -16,8 +16,8 @@ import FormProductCategory from "../../pages/ADMIN/MASTER/ProductCategory/form";
 import FormProductType from "../../pages/ADMIN/MASTER/ProductType/form";
 import FormQualityRefference from "../../pages/ADMIN/MASTER/QualityRefference/form";
 import FormSample from "../../pages/ADMIN/MASTER/Sample/form";
-import FormSampleStorageLocation from "../../pages/ADMIN/MASTER/SampleStorageLocation/form";
-import FormStorageLocation from "../../pages/ADMIN/MASTER/StorageLocation/form";
+import FormSampleLocation from "../../pages/ADMIN/MASTER/SampleLocation/form";
+import FormLocation from "../../pages/ADMIN/MASTER/Location/form";
 import FormTempCondition from "../../pages/ADMIN/MASTER/TempCondition/form";
 import FormTestMethode from "../../pages/ADMIN/MASTER/TestMethode/form";
 import FormTestPreparation from "../../pages/ADMIN/MASTER/TestPreparation/form";
@@ -32,7 +32,7 @@ export const FormPages = {
     1103: <FormEquipmentType />,
     1104: <FormEquipment />,
     1105: <FormBuilding />,
-    1106: <FormSampleStorageLocation />,
+    1106: <FormSampleLocation />,
     1108: <FormPackingType />,
     1109: <FormProductType />,
     1110: <FormProductCategory />,
@@ -45,7 +45,7 @@ export const FormPages = {
     1117: <FormTempCondition />,
     1118: <FormVendor />,
     1119: <FormWarehouse />,
-    1120: <FormStorageLocation />,
+    1120: <FormLocation />,
     1121: <FormFormulaTableRef />,
     1122: <FormCustomer />,
     1123: <FormParameterCategory />,

@@ -24,6 +24,16 @@ export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
     return response;
 }
 
+export const updateLocation = async (WarehouseCode, LocationCode, LocationData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/location/update/${WarehouseCode}/${LocationCode}`, LocationData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const updateDepartment = async (DepartmentCode, DepartmentData) => {
     const token = Cookies.get('access_token');
     const response = await axios.put(`${baseUrl}/department/update/${DepartmentCode}`, DepartmentData, {
@@ -46,7 +56,7 @@ export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, S
 
 export const updateVendor = async (BranchCode, VendorCode, VendorData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}vendor/update/${BranchCode}/${VendorCode}`, VendorData, {
+    const response = await axios.put(`${baseUrl}/vendor/update/${BranchCode}/${VendorCode}`, VendorData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

@@ -25,8 +25,8 @@ import ProductCategory from "../../pages/ADMIN/MASTER/ProductCategory";
 import ProductType from "../../pages/ADMIN/MASTER/ProductType";
 import QualityRefference from "../../pages/ADMIN/MASTER/QualityRefference";
 import Sample from "../../pages/ADMIN/MASTER/Sample";
-import SampleStorageLocation from "../../pages/ADMIN/MASTER/SampleStorageLocation";
-import StorageLocation from "../../pages/ADMIN/MASTER/StorageLocation";
+import SampleLocation from "../../pages/ADMIN/MASTER/SampleLocation";
+import Location from "../../pages/ADMIN/MASTER/Location";
 import TempCondition from "../../pages/ADMIN/MASTER/TempCondition";
 import TestMethode from "../../pages/ADMIN/MASTER/TestMethode";
 import TestPreparation from "../../pages/ADMIN/MASTER/TestPreparation";
@@ -53,7 +53,7 @@ export const ViewPages = {
     1103: <EquipmentType />,
     1104: <Equipment />,
     1105: <Building />,
-    1106: <SampleStorageLocation />,
+    1106: <SampleLocation />,
     1108: <PackingType />,
     1109: <ProductType />,
     1110: <ProductCategory />,
@@ -66,7 +66,7 @@ export const ViewPages = {
     1117: <TempCondition />,
     1118: <Vendor />,
     1119: <Warehouse />,
-    1120: <StorageLocation />,
+    1120: <Location />,
     1121: <FormulaTableRef />,
     1122: <Customer />,
     1123: <ParameterCategory />,

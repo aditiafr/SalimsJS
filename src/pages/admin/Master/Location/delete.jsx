@@ -2,15 +2,15 @@ import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Tooltip } from "antd";
 import React from "react";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { deleteVendor } from "../../../../Api/Master/DeleteData";
+import { deleteLocation } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 
-const DeleteVendor = ({ dataSource, onDelete }) => {
+const DeleteLocation = ({ dataSource, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      const res = await deleteVendor(dataSource.branchcode, dataSource.vendorcode);
+      const res = await deleteLocation(dataSource.warehousecode, dataSource.locationcode);
       message.success(res.data.message);
       onDelete(true);
       Modal.destroyAll();
@@ -19,7 +19,7 @@ const DeleteVendor = ({ dataSource, onDelete }) => {
     }
   };
 
-  const content = `Data Vendor Code ${dataSource.vendorcode} & Vendor Name ${dataSource.vendorname} ..`;
+  const content = `Data Warehouse Name ${dataSource.warehousename} Location Code ${dataSource.locationcode}, Location Name ${dataSource.locationname}...`;
 
   const showConfirm = () => {
     confirm({
@@ -40,4 +40,4 @@ const DeleteVendor = ({ dataSource, onDelete }) => {
   );
 };
 
-export default DeleteVendor;
+export default DeleteLocation;

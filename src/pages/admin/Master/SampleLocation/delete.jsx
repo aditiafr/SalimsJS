@@ -4,13 +4,13 @@ import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonD
 
 const { confirm } = Modal;
 
-const DeleteSampleStorageLocation = () => {
+const DeleteSampleLocation = () => {
   const handleDelete = () => {
     Modal.destroyAll();
     console.log("Delete Data!");
   };
 
-  const content = "Data Sample Storage Location..";
+  const content = "Data Sample Location..";
 
   const showConfirm = () => {
     confirm({
@@ -31,4 +31,4 @@ const DeleteSampleStorageLocation = () => {
   );
 };
 
-export default DeleteSampleStorageLocation;
+export default DeleteSampleLocation;

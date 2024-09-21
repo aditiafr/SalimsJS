@@ -51,7 +51,7 @@ const InputModal = ({ label, name, dataSource, loading, columns, onData }) => {
                     },
                 ]}
             >
-                <Input onClick={showModal} />
+                <Input onClick={showModal} readOnly />
             </Form.Item>
 
             <Modal

@@ -3,7 +3,6 @@ import Cookies from "js-cookie";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 
-
 // MASTER DATA
 export const postBuilding = async (BuildingData) => {
     const token = Cookies.get('access_token');
@@ -35,9 +34,9 @@ export const postWarehouse = async (WarehouseData) => {
     return response;
 }
 
-export const postStorageLocation = async (StorageLocationData) => {
+export const postLocation = async (LocationData) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/location/store`, StorageLocationData, {
+    const response = await axios.post(`${baseUrl}/location/store`, LocationData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

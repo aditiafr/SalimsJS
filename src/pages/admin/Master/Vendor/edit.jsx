@@ -35,12 +35,11 @@ const EditVendor = ({ dataSource, onEdit }) => {
         ...values,
         issuspend: isSuspend
       }
-      console.log(payload);
 
-      // const response = await updateVendor(dataSource.branchcode ,dataSource.vendorcode, payload);
-      // message.success(response.data.message);
-      // onEdit(true);
-      // setIsModalOpen(false);
+      const response = await updateVendor(dataSource.branchcode ,dataSource.vendorcode, payload);
+      message.success(response.data.message);
+      onEdit(true);
+      setIsModalOpen(false);
     } catch (error) {
       console.log(error);
     }
