@@ -1,6 +1,6 @@
 import { Button, Input, Space, Table, Tag } from "antd";
-import EditPriceListM from "./edit";
-import DeletePriceListM from "./delete";
+import EditPriceList from "./edit";
+import DeletePriceList from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 const { Search } = Input;
@@ -48,8 +48,8 @@ const columns = [
     width: 100,
     render: (_, record) => (
       <Space>
-        <EditPriceListM />
-        <DeletePriceListM name={record.PriceName} />
+        <EditPriceList />
+        <DeletePriceList name={record.PriceName} />
       </Space>
     ),
   },
@@ -73,7 +73,7 @@ const data = [
   }
 ];
 
-const PriceListM = () => {
+const PriceList = () => {
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -115,4 +115,4 @@ const PriceListM = () => {
   );
 };
 
-export default PriceListM;
+export default PriceList;

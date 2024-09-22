@@ -176,13 +176,13 @@ export const getTestMethode = async () => {
 
 export const getTimePoint = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/timepoint`, {
+    const response = await axios.get(`${baseURL}/timepoint/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
 export const getTimePointNextCode = async () => {

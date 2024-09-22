@@ -3,10 +3,10 @@ import Cookies from "js-cookie";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 
-// MASTER DATA
-export const postBuilding = async (BuildingData) => {
+// DATA
+export const postBuilding = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/building/store`, BuildingData, {
+    const response = await axios.post(`${baseUrl}/building/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -14,9 +14,9 @@ export const postBuilding = async (BuildingData) => {
     return response;
 }
 
-export const postDepartment = async (DepartmentData) => {
+export const postDepartment = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/department/store`, DepartmentData, {
+    const response = await axios.post(`${baseUrl}/department/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -24,9 +24,9 @@ export const postDepartment = async (DepartmentData) => {
     return response;
 }
 
-export const postWarehouse = async (WarehouseData) => {
+export const postWarehouse = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/warehouse/store`, WarehouseData, {
+    const response = await axios.post(`${baseUrl}/warehouse/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -34,9 +34,9 @@ export const postWarehouse = async (WarehouseData) => {
     return response;
 }
 
-export const postLocation = async (LocationData) => {
+export const postLocation = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/location/store`, LocationData, {
+    const response = await axios.post(`${baseUrl}/location/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -44,9 +44,9 @@ export const postLocation = async (LocationData) => {
     return response;
 }
 
-export const postSampleLocation = async (SampleLocationData) => {
+export const postSampleLocation = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/sampleloc/store`, SampleLocationData, {
+    const response = await axios.post(`${baseUrl}/sampleloc/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -54,9 +54,9 @@ export const postSampleLocation = async (SampleLocationData) => {
     return response;
 }
 
-export const postManufacture = async (ManufactureData) => {
+export const postManufacture = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/manufacture/store`, ManufactureData, {
+    const response = await axios.post(`${baseUrl}/manufacture/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -64,9 +64,9 @@ export const postManufacture = async (ManufactureData) => {
     return response;
 }
 
-export const postVendor = async (VendorData) => {
+export const postVendor = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/vendor/store`, VendorData, {
+    const response = await axios.post(`${baseUrl}/vendor/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -74,9 +74,9 @@ export const postVendor = async (VendorData) => {
     return response;
 }
 
-export const postTestMethode = async (TestMethodeData) => {
+export const postTimePoint = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/testMethode`, TestMethodeData, {
+    const response = await axios.post(`${baseUrl}/timepoint/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -84,9 +84,11 @@ export const postTestMethode = async (TestMethodeData) => {
     return response;
 }
 
-export const postCustomer = async (CustomerData) => {
+
+
+export const postTestMethode = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/customer`, CustomerData, {
+    const response = await axios.post(`${baseUrl}/post/testMethode`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -94,9 +96,9 @@ export const postCustomer = async (CustomerData) => {
     return response;
 }
 
-export const postEquipmentType = async (EquipmentTypeData) => {
+export const postCustomer = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/equipment/type/store`, EquipmentTypeData, {
+    const response = await axios.post(`${baseUrl}/post/customer`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -104,9 +106,9 @@ export const postEquipmentType = async (EquipmentTypeData) => {
     return response;
 }
 
-export const postPackingType = async (PackingTypeData) => {
+export const postEquipmentType = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/unit/store`, PackingTypeData, {
+    const response = await axios.post(`${baseUrl}/equipment/type/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -114,9 +116,9 @@ export const postPackingType = async (PackingTypeData) => {
     return response;
 }
 
-export const postProductCategory = async (ProductCategoryData) => {
+export const postPackingType = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/product-category/store`, ProductCategoryData, {
+    const response = await axios.post(`${baseUrl}/unit/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -124,9 +126,19 @@ export const postProductCategory = async (ProductCategoryData) => {
     return response;
 }
 
-export const postProductType = async (ProductTypeData) => {
+export const postProductCategory = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/product-type/store`, ProductTypeData, {
+    const response = await axios.post(`${baseUrl}/product-category/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postProductType = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/product-type/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }

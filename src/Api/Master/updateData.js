@@ -4,9 +4,9 @@ import Cookies from "js-cookie";
 const baseUrl = process.env.REACT_APP_BASEURL;
 
 
-export const updateBuilding = async (BuildingCode, BuildingData) => {
+export const updateBuilding = async (BuildingCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/building/update/${BuildingCode}`, BuildingData, {
+    const response = await axios.put(`${baseUrl}/building/update/${BuildingCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -14,9 +14,9 @@ export const updateBuilding = async (BuildingCode, BuildingData) => {
     return response;
 }
 
-export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
+export const updateTimePoint = async (TimePointCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/warehouse/update/${WarehouseCode}`, WarehouseData, {
+    const response = await axios.put(`${baseUrl}/timepoint/update/${TimePointCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -24,9 +24,9 @@ export const updateWarehouse = async (WarehouseCode, WarehouseData) => {
     return response;
 }
 
-export const updateLocation = async (WarehouseCode, LocationCode, LocationData) => {
+export const updateWarehouse = async (WarehouseCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/location/update/${WarehouseCode}/${LocationCode}`, LocationData, {
+    const response = await axios.put(`${baseUrl}/warehouse/update/${WarehouseCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -34,9 +34,9 @@ export const updateLocation = async (WarehouseCode, LocationCode, LocationData) 
     return response;
 }
 
-export const updateSampleLocation = async (BuildingCode, SampleLocationCode, SampleLocationData) => {
+export const updateLocation = async (WarehouseCode, LocationCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/sampleloc/update/${BuildingCode}/${SampleLocationCode}`, SampleLocationData, {
+    const response = await axios.put(`${baseUrl}/location/update/${WarehouseCode}/${LocationCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -44,9 +44,9 @@ export const updateSampleLocation = async (BuildingCode, SampleLocationCode, Sam
     return response;
 }
 
-export const updateDepartment = async (DepartmentCode, DepartmentData) => {
+export const updateSampleLocation = async (BuildingCode, SampleLocationCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/department/update/${DepartmentCode}`, DepartmentData, {
+    const response = await axios.put(`${baseUrl}/sampleloc/update/${BuildingCode}/${SampleLocationCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -54,9 +54,9 @@ export const updateDepartment = async (DepartmentCode, DepartmentData) => {
     return response;
 }
 
-export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, SampleSLocationData) => {
+export const updateDepartment = async (DepartmentCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/put/sampleLocation?BuildingCode=${BuildingCode}&LocationCode=${SampleSLocationCode}`, SampleSLocationData, {
+    const response = await axios.put(`${baseUrl}/department/update/${DepartmentCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -64,9 +64,9 @@ export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, S
     return response;
 }
 
-export const updateManufacture = async (ManufactureCode, ManufactureData) => {
+export const updateSampleSLocation = async (BuildingCode, SampleSLocationCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/manufacture/update/${ManufactureCode}`, ManufactureData, {
+    const response = await axios.put(`${baseUrl}/put/sampleLocation?BuildingCode=${BuildingCode}&LocationCode=${SampleSLocationCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -74,9 +74,9 @@ export const updateManufacture = async (ManufactureCode, ManufactureData) => {
     return response;
 }
 
-export const updateVendor = async (BranchCode, VendorCode, VendorData) => {
+export const updateManufacture = async (ManufactureCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/vendor/update/${BranchCode}/${VendorCode}`, VendorData, {
+    const response = await axios.put(`${baseUrl}/manufacture/update/${ManufactureCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -84,9 +84,9 @@ export const updateVendor = async (BranchCode, VendorCode, VendorData) => {
     return response;
 }
 
-export const updateTestMethode = async (MethodId, TestMethodeData) => {
+export const updateVendor = async (BranchCode, VendorCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/put/testMethode?methodId=${MethodId}`, TestMethodeData, {
+    const response = await axios.put(`${baseUrl}/vendor/update/${BranchCode}/${VendorCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -94,9 +94,9 @@ export const updateTestMethode = async (MethodId, TestMethodeData) => {
     return response;
 }
 
-export const updateCustomer = async (CustomerCode, CustomerData) => {
+export const updateTestMethode = async (MethodId, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/put/customer?CustomerCode=${CustomerCode}`, CustomerData, {
+    const response = await axios.put(`${baseUrl}/put/testMethode?methodId=${MethodId}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -104,9 +104,9 @@ export const updateCustomer = async (CustomerCode, CustomerData) => {
     return response;
 }
 
-export const updateEquipmentType = async (EquipmentTypeData) => {
+export const updateCustomer = async (CustomerCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/equipment/type/update`, EquipmentTypeData, {
+    const response = await axios.put(`${baseUrl}/put/customer?CustomerCode=${CustomerCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -114,9 +114,9 @@ export const updateEquipmentType = async (EquipmentTypeData) => {
     return response;
 }
 
-export const updatePackingType = async (PackingTypeCode, PackingTypeData) => {
+export const updateEquipmentType = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/unit/update/${PackingTypeCode}`, PackingTypeData, {
+    const response = await axios.put(`${baseUrl}/equipment/type/update`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -124,9 +124,9 @@ export const updatePackingType = async (PackingTypeCode, PackingTypeData) => {
     return response;
 }
 
-export const updateProductCategory = async (ProductCategoryCode, ProductCategoryData) => {
+export const updatePackingType = async (PackingTypeCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/product-category/update/${ProductCategoryCode}`, ProductCategoryData, {
+    const response = await axios.put(`${baseUrl}/unit/update/${PackingTypeCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -134,9 +134,19 @@ export const updateProductCategory = async (ProductCategoryCode, ProductCategory
     return response;
 }
 
-export const updateProductType = async (ProductTypeCode, ProductTypeData) => {
+export const updateProductCategory = async (ProductCategoryCode, Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/product-type/update/${ProductTypeCode}`, ProductTypeData, {
+    const response = await axios.put(`${baseUrl}/product-category/update/${ProductCategoryCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateProductType = async (ProductTypeCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/product-type/update/${ProductTypeCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }

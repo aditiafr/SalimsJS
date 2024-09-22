@@ -4,7 +4,7 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 
 const FormTakingSample = () => {
   const [form] = Form.useForm();
-  console.log('---------------------------------------------------------------------')
+ 
   const onFinish = (values) => {
     console.log("Success:", values);
   };

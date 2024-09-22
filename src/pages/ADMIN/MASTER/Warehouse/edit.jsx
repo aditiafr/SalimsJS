@@ -26,12 +26,11 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
     setIsSuspend(dataSource.issuspend);
   };
 
-  const onFinish = async (values) => {
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
       const payload = {
         ...values,
-        city: 'CM001',
         issuspend: isSuspend
       }
       const response = await updateWarehouse(dataSource.warehousecode, payload);
@@ -42,9 +41,6 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
       console.log(error);
     }
     setLoading(false);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
@@ -90,8 +86,7 @@ const EditWarehouse = ({ dataSource, onEdit }) => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >

@@ -30,12 +30,11 @@ const EditLocation = ({ dataSource, onEdit }) => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
+      const { warehousename, ...filtervalues } = values;
       const payload = {
-        ...values,
+        ...filtervalues,
         issuspend: isSuspend
       }
-      console.log(payload);
-      
       const response = await updateLocation(dataSource.warehousecode, dataSource.locationcode, payload);
       message.success(response.data.message);
       onEdit(true);

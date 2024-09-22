@@ -1,8 +1,16 @@
-import { Form, Input, Col, Row, Checkbox } from "antd";
+import React, { useState } from "react";
+import { EditFilled } from "@ant-design/icons";
+import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 
-const FormPriceListM = () => {
+const EditPriceList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -14,17 +22,34 @@ const FormPriceListM = () => {
 
   const onReset = () => {
     form.resetFields();
+    setIsModalOpen(false);
   };
 
   return (
     <>
-      <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle
-          title="PRICE LIST M"
-          subtitle="form data a sub price list M"
-        />
-      </div>
-      <div className="w-full bg-white rounded-lg">
+      <Tooltip title="Edit">
+        <Button icon={<EditFilled />} type="text" onClick={showModal} />
+      </Tooltip>
+
+      <Modal
+        title={
+          <HeaderTitle
+            title="PRICE LIST M"
+            subtitle="Edit data a price list m"
+          />
+        }
+        centered
+        open={isModalOpen}
+        closable={false}
+        width={1000}
+        styles={{
+          body: {
+            maxHeight: "70vh",
+            overflow: "auto",
+          },
+        }}
+        footer={false}
+      >
         <Form
           name="basic"
           layout="vertical"
@@ -33,7 +58,7 @@ const FormPriceListM = () => {
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
+          <Row gutter={30} style={{ margin: "0px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
                 label="BranchCode"
@@ -85,11 +110,11 @@ const FormPriceListM = () => {
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonEdit onReset={onReset} />
         </Form>
-      </div>
+      </Modal>
     </>
   );
 };
 
-export default FormPriceListM;
+export default EditPriceList;

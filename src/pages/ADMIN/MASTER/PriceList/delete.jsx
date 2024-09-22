@@ -5,7 +5,7 @@ import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonD
 
 const { confirm } = Modal;
 
-const DeletePriceListM = ({ name }) => {
+const DeletePriceList = ({ name }) => {
   const handleDelete = () => {
     Modal.destroyAll();
     console.log("Delete Data!");
@@ -30,4 +30,4 @@ const DeletePriceListM = ({ name }) => {
   );
 };
 
-export default DeletePriceListM;
+export default DeletePriceList;
