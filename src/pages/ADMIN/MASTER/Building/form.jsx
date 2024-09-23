@@ -20,7 +20,7 @@ const FormBuilding = () => {
       let payload = values;
       if (!values.buildingcode) {
         const nextCode = await getBuildingNextCode();
-        const buildingCode = nextCode.methodid;
+        const buildingCode = nextCode.buildingcode;
         form.setFieldsValue({ buildingcode: buildingCode });
         payload = {
           ...payload,
@@ -126,7 +126,7 @@ const FormBuilding = () => {
             </Form.Item>
 
             <Form.Item
-              label="Fax Number"
+              label="Fax"
               name="fax"
               rules={[
                 {

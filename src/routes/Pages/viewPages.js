@@ -78,9 +78,9 @@ export const ViewPages = {
     1126: <TestMethode />,
     1127: <OtherExpense />,
     1128: <Sample />,
-    1130: <Zona />,
-    1131: <SubZona />,
-    1132: <PriceList />,
+    1129: <Zona />,
+    1130: <SubZona />,
+    1131: <PriceList />,
 
     // SAMPLE HANDLING
     1201: <TestingOrder />,
