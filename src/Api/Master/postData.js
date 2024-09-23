@@ -84,11 +84,9 @@ export const postTimePoint = async (Data) => {
     return response;
 }
 
-
-
-export const postTestMethode = async (Data) => {
+export const postTestMethod = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/testMethode`, Data, {
+    const response = await axios.post(`${baseUrl}/method/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }

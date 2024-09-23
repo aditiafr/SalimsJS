@@ -1,10 +1,11 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditTestMethode from "./edit";
 import DeleteTestMethode from "./delete";
 import { useEffect, useState } from "react";
-import { getTestMethode } from "../../../../Api/Master/getData";
+import { getTestMethod } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const TestMethode = () => {
   const [data, setData] = useState([]);
@@ -14,7 +15,7 @@ const TestMethode = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getTestMethode();
+      const response = await getTestMethod();
       setData(response);
     } catch (error) {
       console.log(error);
@@ -45,37 +46,37 @@ const TestMethode = () => {
     },
     {
       title: "Method Id",
-      dataIndex: "MethodId",
-      key: "MethodId",
+      dataIndex: "methodid",
+      key: "methodid",
       width: 150,
     },
     {
       title: "Preservation",
-      dataIndex: "Preservation",
-      key: "Preservation",
+      dataIndex: "preservation",
+      key: "preservation",
       width: 150,
     },
     {
       title: "Storage Time Limit",
-      dataIndex: "StorageTimeLimit",
-      key: "StorageTimeLimit",
+      dataIndex: "storagetimelimit",
+      key: "storagetimelimit",
       width: 150,
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
+      dataIndex: "description",
+      key: "description",
       width: 150,
     },
-    // {
-    //   title: "Suspended",
-    //   dataIndex: "Suspended",
-    //   key: "Suspended",
-    //   width: 120,
-    //   render: (suspended) => (
-    //     <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
-    //   ),
-    // },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      width: 120,
+      render: (suspended) => (
+        <Tag color={suspended ? "red" : "green"}>{suspended ? "Yes" : "No"}</Tag>
+      ),
+    },
     {
       title: "Action",
       fixed: "right",
@@ -83,7 +84,9 @@ const TestMethode = () => {
       render: (_, record) => (
         <Space>
           <EditTestMethode dataSource={record} onEdit={fetchData} />
-          <DeleteTestMethode />
+          {record.issuspend === false && (
+            <DeleteTestMethode dataSource={record} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },
@@ -94,20 +97,14 @@ const TestMethode = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TEST METHODE" subtitle="All data test methode" />
         <div>
-          <Link to="/master/test-methode/form">
+          <Link to="/master/test_methode/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}

@@ -14,6 +14,16 @@ export const updateBuilding = async (BuildingCode, Data) => {
     return response;
 }
 
+export const updateTestMethod = async (MethodCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/method/update/${MethodCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const updateTimePoint = async (TimePointCode, Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.put(`${baseUrl}/timepoint/update/${TimePointCode}`, Data, {

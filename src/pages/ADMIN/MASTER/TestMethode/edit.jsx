@@ -1,18 +1,22 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Form, Input, message, Modal, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
-import { updateTestMethode } from "../../../../Api/Master/updateData";
+import { updateTestMethod } from "../../../../Api/Master/updateData";
+import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
 
-const EditTestMethode = ({ dataSource, onEdit }) => {
+const EditMethod = ({ dataSource, onEdit }) => {
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const [isSuspend, setIsSuspend] = useState(false);
+
+  const handleSwitchChange = (checked) => {
+    setIsSuspend(checked);
+    form.setFieldsValue(dataSource);
+  };
 
   useEffect(() => {
     form.setFieldsValue(dataSource);
@@ -20,21 +24,18 @@ const EditTestMethode = ({ dataSource, onEdit }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
+    setIsSuspend(dataSource.issuspend);
   };
 
-  const onFinish = async (values) => {
-    console.log("Success:", values);
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const modifiedValues = {
+      const payload = {
         ...values,
-        ...JsonCreateModif
-      }
-      const response = await updateTestMethode(dataSource.MethodId, modifiedValues);
-      messageApi.open({
-        type: 'success',
-        content: response.data.statusMessage,
-      });
+        issuspend: isSuspend
+      }      
+      const response = await updateTestMethod(dataSource.methodid, payload);
+      message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
     } catch (error) {
@@ -42,14 +43,18 @@ const EditTestMethode = ({ dataSource, onEdit }) => {
     }
     setLoading(false);
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
 
   const onReset = () => {
-    form.resetFields();
+    form.setFieldsValue(dataSource);
+    setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
+
+  const handleOnKeyPress = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
 
   return (
     <>
@@ -59,10 +64,13 @@ const EditTestMethode = ({ dataSource, onEdit }) => {
 
       <Modal
         title={
-          <HeaderTitle
-            title="TEST METHODE"
-            subtitle="Edit data a test methode"
-          />
+          <div className="flex justify-between items-center">
+            <HeaderTitle title="TEST METHODE" subtitle="Edit data a Test Methode" />
+            <SwitchComponent
+              isSuspend={isSuspend}
+              handleSwitchChange={handleSwitchChange}
+            />
+          </div>
         }
         centered
         open={isModalOpen}
@@ -79,68 +87,58 @@ const EditTestMethode = ({ dataSource, onEdit }) => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ margin: "0px", paddingTop: "14px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Method Id"
-                name="MethodId"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Method Id!",
-                  },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
-            </Col>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Preservation"
-                name="Preservation"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Preservation!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Storage Time Limit"
-                name="StorageTimeLimit"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Storage Time Limit!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Method Id"
+              name="methodid"
+            >
+              <Input placeholder="Input Method Id" disabled />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Preservation"
+              name="preservation"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Preservation!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Preservation" />
+            </Form.Item>
+
+            <Form.Item
+              label="Storage Time Limit"
+              name="storagetimelimit"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Storage Time Limit!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Storage Time Limit" onKeyPress={handleOnKeyPress} />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
+
+          </div>
+
+
           <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
-      </Modal>
+      </Modal >
     </>
   );
 };
 
-export default EditTestMethode;
+export default EditMethod;

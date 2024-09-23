@@ -163,15 +163,48 @@ export const getManufactureNextCode = async () => {
     return response.data.data
 }
 
-export const getTestMethode = async () => {
+export const getTestMethod = async () => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/get/testmethode`, {
+    const response = await axios.get(`${baseURL}/method/list`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
+    
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
 
-    return response.data.map((row, index) => ({ ...row, key: index + 1 }));
+export const getTestMethodNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/method/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
+}
+
+export const getTestPreparation = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/testpreparation/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getTestPreparationNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/testpreparation/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data.data
 }
 
 export const getTimePoint = async () => {

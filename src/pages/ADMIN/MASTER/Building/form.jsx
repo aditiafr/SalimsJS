@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
@@ -13,30 +13,14 @@ const FormBuilding = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
-  const [buildingCode, setBuildingCode] = useState("");
-
-  useEffect(() => {
-    const fetchNextCode = async () => {
-      try {
-        const res = await getBuildingNextCode();
-        setBuildingCode(res.buildingcode);
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchNextCode();
-  }, []);
-
-  // useEffect(() => {
-  //   form.setFieldsValue({ buildingcode: buildingCode });
-  // }, [buildingCode, form]);
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
       let payload = values;
       if (!values.buildingcode) {
+        const nextCode = await getBuildingNextCode();
+        const buildingCode = nextCode.methodid;
         form.setFieldsValue({ buildingcode: buildingCode });
         payload = {
           ...payload,
