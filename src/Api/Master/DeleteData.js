@@ -31,6 +31,20 @@ export const deleteTestMethod = async (MethodCode) => {
     return response;
 }
 
+export const deleteTestTestPreparation = async (TestPreparationCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/testpreparation/set-suspend/${TestPreparationCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
 export const deleteTimePoint = async (TimePointCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/timepoint/set-suspend/${TimePointCode}`,

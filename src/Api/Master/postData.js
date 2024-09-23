@@ -94,6 +94,16 @@ export const postTestMethod = async (Data) => {
     return response;
 }
 
+export const postTestPreparation = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/testpreparation/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const postCustomer = async (Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/post/customer`, Data, {

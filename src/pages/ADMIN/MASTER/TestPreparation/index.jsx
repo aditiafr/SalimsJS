@@ -46,13 +46,13 @@ const TestPreparation = () => {
       fixed: "left",
     },
     {
-      title: "TestPreparation Id",
+      title: "Test Preparation Id",
       dataIndex: "testpreparationid",
       key: "testpreparationid",
       fixed: "left",
     },
     {
-      title: "TestPreparation Name",
+      title: "Test Preparation Name",
       dataIndex: "testpreparationname",
       key: "testpreparationname",
     },

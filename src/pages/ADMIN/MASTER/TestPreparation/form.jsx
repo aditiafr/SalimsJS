@@ -5,6 +5,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import { getTestPreparationNextCode } from '../../../../Api/Master/getData';
+import { postTestPreparation } from '../../../../Api/Master/postData';
 
 const FormTestPreparation = () => {
     const [form] = Form.useForm();
@@ -26,6 +27,9 @@ const FormTestPreparation = () => {
                 }
             }
             console.log(payload);
+            const res = await postTestPreparation(payload);
+            message.success(res.data.message);
+            navigate('/master/test_preparation')
         } catch (error) {
             message.error(error.response.data.message);
             console.log(error);
@@ -66,7 +70,7 @@ const FormTestPreparation = () => {
 
                         <Form.Item
                             label="Test Preparation Name"
-                            name="testpraparationnname"
+                            name="testpreparationname"
                             rules={[
                                 {
                                     required: true,
@@ -77,20 +81,7 @@ const FormTestPreparation = () => {
                             <Input placeholder="Input Test Preparation Name" autoFocus />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Address"
-                            name="address"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Address!",
-                                },
-                            ]}
-                        >
-                            <Input.TextArea placeholder="Input Address" />
-                        </Form.Item>
-
-                        <Form.Item label="Description" name="description">
+                        <Form.Item label="Description" name="description" className="col-span-2">
                             <Input.TextArea placeholder="Input Description" />
                         </Form.Item>
 

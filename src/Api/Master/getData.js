@@ -20,6 +20,17 @@ export const getBuilding = async (Suspend) => {
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
+export const getProduct = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/product/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
 export const getBuildingNextCode = async () => {
     const token = Cookies.get('access_token');
     const selectedTranIdx = localStorage.getItem('selectedMenuKey');
