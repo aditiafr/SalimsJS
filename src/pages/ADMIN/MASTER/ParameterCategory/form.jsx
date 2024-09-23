@@ -4,13 +4,60 @@ import { Form, Input, Col, Row } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import Checkbox from "antd/es/checkbox/Checkbox";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { useEffect, useState } from "react";
+import { getParameterCategoryNextCode } from "../../../../Api/Master/getData";
+import { ParameterCategoryMapToHttp } from "../../../../mapper/ParameterCategory";
+import { postParameterCategory } from "../../../../Api/Master/postData";
 
 const FormParameterCategory = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);  
+  const [parameterCategoryCode, setParameterCategoryCode] = useState("");
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const fetchParameterCategoryNextCode = async () => {
+    try {
+      setLoading(true);
+      const nextParameterCategoryCode = await getParameterCategoryNextCode();
+
+      setParameterCategoryCode(nextParameterCategoryCode);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchParameterCategoryNextCode();
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ ParameterCategoryCode: parameterCategoryCode });
+  }, [parameterCategoryCode, form]);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = ParameterCategoryMapToHttp(values);
+
+      const response = await postParameterCategory(payload);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+
+      navigate("/master/parameter_category");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -31,7 +78,7 @@ const FormParameterCategory = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -40,24 +87,24 @@ const FormParameterCategory = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Code"
-                name="Code"
+                name="ParameterCategoryCode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your Code!",
+                    required: false,
+                    message: "Please input Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={5} />
               </Form.Item>
 
               <Form.Item
                 label="Name"
-                name="Name"
+                name="ParameterCategoryName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input Name!",
                   },
                 ]}
               >
@@ -70,12 +117,12 @@ const FormParameterCategory = () => {
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
+              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

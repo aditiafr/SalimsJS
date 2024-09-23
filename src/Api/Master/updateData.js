@@ -143,3 +143,13 @@ export const updateProductType = async (ProductTypeCode, ProductTypeData) => {
     });
     return response;
 }
+
+export const updateParameterCategory = async (ParameterCategoryCode, ParameterCategoryData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/parameter-category/update/${ParameterCategoryCode}`, ParameterCategoryData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

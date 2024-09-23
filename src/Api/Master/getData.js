@@ -5,6 +5,7 @@ import { DepartmentMapFromHttp } from "../../mapper/Department";
 import { PackingTypeMapFromHttp } from "../../mapper/PackingType";
 import { ProductCategoryMapFromHttp } from "../../mapper/ProductCategory";
 import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
+import { ParameterCategoryMapFromHttp } from "../../mapper/ParameterCategory";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
@@ -308,4 +309,27 @@ export const getProductTypeNextCode = async () => {
     });
 
     return response.data.data.productTypeCode;
+}
+
+export const getParameterCategory = async (params) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/parameter-category/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+
+    return ParameterCategoryMapFromHttp(response.data.data);
+}
+
+export const getParameterCategoryNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/parameter-category/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.parameterCategoryCode;
 }

@@ -136,3 +136,13 @@ export const deleteProductType = async (ProductTypeCode) => {
     });
     return response;
 }
+
+export const deleteParameterCategory = async (ParameterCategoryCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/parameter-category/delete/${ParameterCategoryCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

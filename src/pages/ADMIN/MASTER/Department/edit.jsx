@@ -96,7 +96,7 @@ const EditDepartment = ({ dataSource, onEdit }) => {
                   },
                 ]}
               >
-                <Input maxLength={20} disabled />
+                <Input maxLength={5} disabled />
               </Form.Item>
               
               <Form.Item
