@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import HeaderTitle from './HeaderTitle';
 import SearchInput from './Table/SearchInput';
 
-const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal }) => {
+const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal, onDetail }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -42,18 +42,32 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
 
     return (
         <div>
-            <Form.Item
-                label={label}
-                name={name}
-                rules={[
-                    {
-                        required: true,
-                        message: `Please input your ${label}!`,
-                    },
-                ]}
-            >
-                <Input onClick={showModal} readOnly />
-            </Form.Item>
+            {onDetail ? (
+                <Form.Item
+                    name={name}
+                    rules={[
+                        {
+                            required: true,
+                            message: `Please input your ${label}!`,
+                        },
+                    ]}
+                >
+                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
+                </Form.Item>
+            ) : (
+                <Form.Item
+                    label={label}
+                    name={name}
+                    rules={[
+                        {
+                            required: true,
+                            message: `Please input your ${label}!`,
+                        },
+                    ]}
+                >
+                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
+                </Form.Item>
+            )}
 
             <Modal
                 centered

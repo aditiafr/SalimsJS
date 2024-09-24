@@ -34,6 +34,8 @@ const Login = () => {
       const response = await axios.post(`${process.env.REACT_APP_BASEURL}/auth/login`, formData);
       console.log(response.data);
 
+      localStorage.clear();
+
       Cookies.set('access_token', response.data.access_token, { expires: 7 });
 
       navigate("/dashboard");

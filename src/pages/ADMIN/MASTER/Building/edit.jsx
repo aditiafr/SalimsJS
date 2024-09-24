@@ -128,31 +128,33 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             </Form.Item>
 
             <Form.Item
-              label="Phone Number"
-              name="phone"
+              label="City"
+              name="city"
               rules={[
-                { required: true, message: "Please input your Phone Number!" },
                 {
-                  pattern: /^[0-9]+$/,
-                  message: "Please input numbers only!",
+                  required: true,
+                  message: "Please input your City!",
                 },
-                // {
-                //   min: 10,
-                //   max: 13,
-                //   message: "Phone number must be between 10 and 13 digits!",
-                // },
               ]}
             >
-              <Input
-                type="tel"
-                placeholder="Input Phone Number Example(08123456789)"
-                maxLength={13}
-                onKeyPress={handleOnKeyPress}
-              />
+              <Input placeholder="Input City" />
             </Form.Item>
 
             <Form.Item
-              label="Fax Number"
+              label="Country"
+              name="country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Country!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Country" />
+            </Form.Item>
+
+            <Form.Item
+              label="Fax"
               name="fax"
               rules={[
                 {
@@ -163,6 +165,24 @@ const EditBuilding = ({ dataSource, onEdit }) => {
             >
               <Input
                 placeholder="Input Fax"
+                onKeyPress={handleOnKeyPress}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Phone Number!"
+                }
+              ]}
+            >
+              <Input
+                type="tel"
+                placeholder="Input Phone Number Example(08123456789)"
+                maxLength={13}
                 onKeyPress={handleOnKeyPress}
               />
             </Form.Item>
@@ -195,32 +215,6 @@ const EditBuilding = ({ dataSource, onEdit }) => {
                 maxLength={5}
                 onKeyPress={handleOnKeyPress}
               />
-            </Form.Item>
-
-            <Form.Item
-              label="City"
-              name="city"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your City!",
-                },
-              ]}
-            >
-              <Input placeholder="Input City" />
-            </Form.Item>
-
-            <Form.Item
-              label="Country"
-              name="country"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Country!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Country" />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
