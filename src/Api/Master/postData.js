@@ -106,11 +106,17 @@ export const postTestPreparation = async (Data) => {
 
 export const postCustomer = async (Data) => {
     const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/post/customer`, Data, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.post(`${baseUrl}/customer/store`,
+        {
+            ...Data,
+            tranidx: selectedTranIdx
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     return response;
 }
 

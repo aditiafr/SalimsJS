@@ -17,6 +17,20 @@ export const deleteBuilding = async (BuildingCode) => {
     return response;
 }
 
+export const deleteCustomer = async (CustomerCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/customer/set-suspend/${CustomerCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
 export const deleteTestMethod = async (MethodCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/method/set-suspend/${MethodCode}`,

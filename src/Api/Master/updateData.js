@@ -14,6 +14,16 @@ export const updateBuilding = async (BuildingCode, Data) => {
     return response;
 }
 
+export const updateCustomer = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/customer/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const updateTestMethod = async (MethodCode, Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.put(`${baseUrl}/method/update/${MethodCode}`, Data, {
@@ -117,16 +127,6 @@ export const updateVendor = async (BranchCode, VendorCode, Data) => {
 export const updateTestMethode = async (MethodId, Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.put(`${baseUrl}/put/testMethode?methodId=${MethodId}`, Data, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response;
-}
-
-export const updateCustomer = async (CustomerCode, Data) => {
-    const token = Cookies.get('access_token');
-    const response = await axios.put(`${baseUrl}/put/customer?CustomerCode=${CustomerCode}`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
