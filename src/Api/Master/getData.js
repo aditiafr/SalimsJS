@@ -6,6 +6,7 @@ import { PackingTypeMapFromHttp } from "../../mapper/PackingType";
 import { ProductCategoryMapFromHttp } from "../../mapper/ProductCategory";
 import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
 import { ParameterCategoryMapFromHttp } from "../../mapper/ParameterCategory";
+import { OtherExpenseMapFromHttp } from "../../mapper/OtherExpense";
 
 const baseURL = process.env.REACT_APP_BASEURL;
 
@@ -332,4 +333,26 @@ export const getParameterCategoryNextCode = async () => {
     });
 
     return response.data.data.parameterCategoryCode;
+}
+
+export const getOtherExpense = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/expense/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return OtherExpenseMapFromHttp(response.data.data);
+}
+
+export const getOtherExpenseNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/expense/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.expenseCode;
 }

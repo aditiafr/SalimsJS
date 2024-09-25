@@ -143,3 +143,13 @@ export const postParameterCategory = async (ParameterCategoryData) => {
     });
     return response;
 }
+
+export const postOtherExpense = async (OtherExpenseData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/expense/store`, OtherExpenseData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

@@ -2,20 +2,46 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { EditFilled } from "@ant-design/icons";
 import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { OtherExpenseMapToHttp } from "../../../../mapper/OtherExpense";
+import { updateOtherExpense } from "../../../../Api/Master/updateData";
 
-const EditOtherExpense = () => {
+const EditOtherExpense = ({ dataSource, onEdit }) => {
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    form.setFieldsValue(dataSource);
+  }, [dataSource, form]);
 
   const showModal = () => {
+    form.setFieldsValue(dataSource);
     setIsModalOpen(true);
   };
 
-  const [form] = Form.useForm();
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = OtherExpenseMapToHttp(values);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+      const response = await updateOtherExpense(dataSource.OtherExpenseCode, payload);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+
+      onEdit(true);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -64,7 +90,7 @@ const EditOtherExpense = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -73,24 +99,24 @@ const EditOtherExpense = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Code"
-                name="Code"
+                name="OtherExpenseCode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your Code!",
+                    required: false,
+                    message: "Please input Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={5} disabled />
               </Form.Item>
               
               <Form.Item
                 label="Name"
-                name="Name"
+                name="OtherExpenseName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input Name!",
                   },
                 ]}
               >
@@ -124,7 +150,7 @@ const EditOtherExpense = () => {
                 </Col>
 
                 <Col xs={24} sm={12}>
-                  <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
+                  <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
                     <Checkbox>Suspended</Checkbox>
                   </Form.Item>
                 </Col>

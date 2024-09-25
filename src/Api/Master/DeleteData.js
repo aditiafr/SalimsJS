@@ -146,3 +146,13 @@ export const deleteParameterCategory = async (ParameterCategoryCode) => {
     });
     return response;
 }
+
+export const deleteOtherExpense = async (OtherExpenseCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/expense/delete/${OtherExpenseCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
