@@ -18,15 +18,10 @@ export const OtherExpenseMapToHttp = (data) => {
     isDefaultTakingSample: data.IsDefaultTakingSample,
     isSuspend: data.IsSuspend
   }
-  console.log('adadadwad aaa', result.defaultValue)
 
   if (!!result.defaultValue) {
-  console.log('adadadwad dadadada', result.defaultValue)
-
     result.defaultValue = result.defaultValue.replace(/\./g, '');
   }
-
-  console.log('adadadwad dddd', result.defaultValue)
 
   if (!!data.OtherExpenseCode) {
     result.expenseCode = data.OtherExpenseCode;
