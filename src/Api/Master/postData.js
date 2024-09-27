@@ -153,3 +153,17 @@ export const postOtherExpense = async (OtherExpenseData) => {
     });
     return response;
 }
+
+export const postParameter = async (ParameterData) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        ParameterData.tranidx = selectedTranIdx;
+    }
+    const response = await axios.post(`${baseUrl}/parameter/store`, ParameterData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

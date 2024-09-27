@@ -1,20 +1,104 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Checkbox, Form, Input, message } from 'antd';
+import { useFetcher, useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getParameterNextCode } from '../../../../Api/Master/getData';
+import { getPackingTypes, getParameterCategory, getParameterNextCode, getTestMethode } from '../../../../Api/Master/getData';
 import { postParameter } from '../../../../Api/Master/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
 
 const FormParameter = () => {
-
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
   const [ParameterCode, setParameterCode] = useState("");
 
+  const [isTestMethodLoading, setIsTestMethodLoading] = useState(false);
+  const [dataTestMethod, setDataTestMethod] = useState([]);
+  const [selectTestMethod, setSelectTestMethod] = useState("");
+  const [openTestMethod, setOpenTestMethod] = useState(null);
+  const TestMethodId = selectTestMethod ? selectTestMethod.methodid : '';
+
+  const [isParameterCategoryLoading, setIsParameterCategoryLoading] = useState(false);
+  const [dataParameterCategory, setDataParameterCategory] = useState([]);
+  const [selectParameterCategory, setSelectParameterCategory] = useState("");
+  const [openParameterCategory, setOpenParameterCategory] = useState(null);
+  const ParameterCategoryName = selectParameterCategory ? selectParameterCategory.ParameterCategoryName : '';
+  const ParameterCategoryCode = selectParameterCategory ? selectParameterCategory.ParameterCategoryCode : '';
+
+  const [isResultUnitLoading, setIsResultUnitLoading] = useState(false);
+  const [dataResultUnit, setDataResultUnit] = useState([]);
+  const [selectResultUnit, setSelectResultUnit] = useState("");
+  const [openResultUnit, setOpenResultUnit] = useState(null);
+const ResultUnitName = selectResultUnit ? selectResultUnit.PackingTypeName : '';
+  const ResultUnitCode = selectResultUnit ? selectResultUnit.PackingTypeCode : '';
+
+  useEffect(() => {
+    const fetchTestMethod = async () => {
+      try {
+        setIsTestMethodLoading(true);
+        const response = await getTestMethode(false);
+        setDataTestMethod(response);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsTestMethodLoading(false);
+    };
+    if (openTestMethod) {
+      fetchTestMethod();
+      setOpenTestMethod(false);
+    }
+  }, [openTestMethod]);
+
+  useEffect(() => {
+    form.setFieldsValue({ methodid: TestMethodId });
+  }, [TestMethodId, form, ParameterCode]);
+
+  useEffect(() => {
+    const fetchParameterCategory = async () => {
+      try {
+        setIsParameterCategoryLoading(true);
+        const response = await getParameterCategory(false);
+        setDataParameterCategory(response);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsParameterCategoryLoading(false);
+    };
+    if (openParameterCategory) {
+      fetchParameterCategory();
+      setOpenParameterCategory(false);
+    }
+  }, [openParameterCategory]);
+
+  useEffect(() => {
+    form.setFieldsValue({ parametercategoryname: ParameterCategoryName });
+  }, [ParameterCategoryName, form, ParameterCode]);
+
+  useEffect(() => {
+    const fetchResultUnit = async () => {
+      try {
+        setIsResultUnitLoading(true);
+        const response = await getPackingTypes(false);
+        setDataResultUnit(response);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsResultUnitLoading(false);
+    };
+    if (openResultUnit) {
+      fetchResultUnit();
+      setOpenResultUnit(false);
+    }
+  }, [openResultUnit]);
+
+
+  useEffect(() => {
+    form.setFieldsValue({ resultunitname: ResultUnitName });
+  }, [ResultUnitName, form, ParameterCode]);
+  
   useEffect(() => {
     const fetchNextCode = async () => {
       try {
@@ -28,10 +112,19 @@ const FormParameter = () => {
     fetchNextCode();
   }, []);
 
+  useEffect(() => {
+    form.setFieldsValue({ parcode: ParameterCode });
+  }, [ParameterCode, form]);
+
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = values;
+      let payload = {
+        ...values,
+        methodid: TestMethodId,
+        parcatcode: ParameterCategoryCode,
+        resultunitcode: ResultUnitCode
+      }
       if (!values.parcode) {
         form.setFieldsValue({ parcode: ParameterCode });
         payload = {
@@ -40,9 +133,9 @@ const FormParameter = () => {
         }
       }
       console.log(payload);
-      // const response = await postParameter(payload);
-      // message.success(response.data.message);
-      // navigate("/master/parameter");
+      const response = await postParameter(payload);
+      message.success(response.data.message);
+      navigate("/master/parameter");
     } catch (error) {
       message.error(error.response.data.message);
       console.log(error);
@@ -100,96 +193,27 @@ const FormParameter = () => {
               <Input placeholder="Input Parameter Name" />
             </Form.Item>
 
-            <Form.Item
+            <InputModal
+              title="Test Method"
               label="Method Id"
               name="methodid"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Method Id!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Method Id" />
-            </Form.Item>
+              dataSource={dataTestMethod}
+              loading={isTestMethodLoading}
+              columns={testMethodColumns}
+              onData={(values) => setSelectTestMethod(values)}
+              onOpenModal={(values) => setOpenTestMethod(values)}
+            />
 
-            <Form.Item
-              label="Preservation"
-              name="preservation"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Preservation!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Preservation" />
-            </Form.Item>
-
-            <Form.Item
-              label="Storage Time Limit"
-              name="storagetimelimit"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Storage Time Limit!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Storage Time Limit" />
-            </Form.Item>
-
-            <Form.Item
-              label="Product Code"
-              name="prodcatcode"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Product Code!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Product Code" />
-            </Form.Item>
-
-            <Form.Item
-              label="Product Name"
-              name="prodcatname"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Product Name!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Product Name" />
-            </Form.Item>
-
-            <Form.Item
-              label="Unit Code"
-              name="unitcode"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Unit Code!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Unit Code" />
-            </Form.Item>
-
-            <Form.Item
-              label="Unit Name"
-              name="unitname"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Unit Name!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Unit Name" />
-            </Form.Item>
+            <InputModal
+              title="Parameter Category"
+              label="Parameter Category Name"
+              name="parametercategoryname"
+              dataSource={dataParameterCategory}
+              loading={isParameterCategoryLoading}
+              columns={parameterCategoryColumns}
+              onData={(values) => setSelectParameterCategory(values)}
+              onOpenModal={(values) => setOpenParameterCategory(values)}
+            />
 
             <Form.Item
               label="Alias Name"
@@ -217,31 +241,16 @@ const FormParameter = () => {
               <Input placeholder="Input Duration" />
             </Form.Item>
 
-            <Form.Item
-              label="Akreditasi"
-              name="akreditasi"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Akreditasi!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Akreditasi" />
-            </Form.Item>
-
-            <Form.Item
-              label="Result Unit Code"
-              name="resultunitcode"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Result Unit Code!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Result Unit Code" />
-            </Form.Item>
+            <InputModal
+              title="Result Unit"
+              label="Result Unit Name"
+              name="resultunitname"
+              dataSource={dataResultUnit}
+              loading={isResultUnitLoading}
+              columns={resultUnitColumns}
+              onData={(values) => setSelectResultUnit(values)}
+              onOpenModal={(values) => setOpenResultUnit(values)}
+            />
 
             <Form.Item
               label="Price"
@@ -260,6 +269,13 @@ const FormParameter = () => {
               <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 
+            <Form.Item name="akreditasi" valuePropName="checked" initialValue={false}>
+              <Checkbox>Akreditasi</Checkbox>
+            </Form.Item>
+
+            <Form.Item name="issuspend" valuePropName="checked" initialValue={false}>
+              <Checkbox>Suspended</Checkbox>
+            </Form.Item>
           </div>
 
           <ButtonSubmit onReset={onReset} onLoading={loading} />
@@ -271,3 +287,100 @@ const FormParameter = () => {
 };
 
 export default FormParameter;
+
+const testMethodColumns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: 50,
+    fixed: "left",
+  },
+  {
+    title: "Method Id",
+    dataIndex: "methodid",
+    key: "methodid",
+    width: 50,
+    fixed: "left",
+  },
+  {
+    title: "Preservation",
+    dataIndex: "preservation",
+    key: "preservation",
+    width: 150,
+  },
+  {
+    title: "Storage Time Limit",
+    dataIndex: "storagetimelimit",
+    key: "storagetimelimit",
+    width: 150,
+  },
+  {
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
+    width: 150,
+  }
+];
+
+const parameterCategoryColumns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: 80,
+    fixed: "left",
+  },
+  {
+    title: "Code",
+    dataIndex: "ParameterCategoryCode",
+    key: "ParameterCategoryCode",
+    width: 80,
+    fixed: "left",
+  },
+  {
+    title: "Name",
+    dataIndex: "ParameterCategoryName",
+    key: "ParameterCategoryName",
+    width: 100,
+    fixed: "left",
+  },
+  {
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
+    width: 200,
+    render: (text) => (text ?? "N/A"),
+  },
+];
+
+const resultUnitColumns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: 80,
+    fixed: "left",
+  },
+  {
+    title: "Result Unit Code",
+    dataIndex: "PackingTypeCode",
+    key: "PackingTypeCode",
+    width: 80,
+    fixed: "left",
+  },
+  {
+    title: "Result Unit Name",
+    dataIndex: "PackingTypeName",
+    key: "PackingTypeName",
+    width: 100,
+    fixed: "left",
+  },
+  {
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
+    width: 200,
+    render: (text) => (text ?? "N/A"),
+  },
+];

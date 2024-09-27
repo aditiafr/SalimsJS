@@ -163,3 +163,13 @@ export const updateOtherExpense = async (OtherExpenseCode, OtherExpenseData) => 
     });
     return response;
 }
+
+export const updateParameter = async (ParameterCode, ParameterData) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/parameter/update/${ParameterCode}`, ParameterData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

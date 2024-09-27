@@ -156,3 +156,18 @@ export const deleteOtherExpense = async (OtherExpenseCode) => {
     });
     return response;
 }
+
+export const deleteParameter = async (ParameterCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/parameter/set-suspend/${ParameterCode}`, 
+        {
+            issuspend: true
+        }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+    return response;
+}
