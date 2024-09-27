@@ -159,3 +159,13 @@ export const postProductType = async (Data) => {
     });
     return response;
 }
+
+export const postProduct = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/product/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

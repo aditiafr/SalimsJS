@@ -47,14 +47,94 @@ const Product = () => {
     },
     {
       title: "Product Code",
-      dataIndex: "productcode",
-      key: "productcode",
+      dataIndex: "prodcode",
+      key: "prodcode",
       fixed: "left",
     },
     {
       title: "Product Name",
-      dataIndex: "productname",
-      key: "productname",
+      dataIndex: "prodname",
+      key: "prodname",
+    },
+    {
+      title: "Product Type Name",
+      dataIndex: "prodtypename",
+      key: "prodtypename",
+    },
+    {
+      title: "Product Category Name",
+      dataIndex: "prodcatname",
+      key: "prodcatname",
+    },
+    {
+      title: "Unit name",
+      dataIndex: "unitname",
+      key: "unitname",
+    },
+    {
+      title: "Formula QTY",
+      dataIndex: "formulaqty",
+      key: "formulaqty",
+    },
+    // {
+    //   title: "tempcode",
+    //   dataIndex: "tempcode",
+    //   key: "tempcode",
+    // },
+    // {
+    //   title: "tempname",
+    //   dataIndex: "tempname",
+    //   key: "tempname",
+    // },
+    {
+      title: "Warehouse Name",
+      dataIndex: "warehousename",
+      key: "warehousename",
+    },
+    {
+      title: "Alias Name",
+      dataIndex: "aliasname",
+      key: "aliasname",
+    },
+    {
+      title: "Shelf Life",
+      dataIndex: "shelflife",
+      key: "shelflife",
+    },
+    {
+      title: "Use In Batch No",
+      dataIndex: "useintbatchno",
+      key: "useintbatchno",
+    },
+    {
+      title: "Use Ext BatchNo",
+      dataIndex: "useextbatchno",
+      key: "useextbatchno",
+    },
+    {
+      title: "Manufacture Name",
+      dataIndex: "manufacturename",
+      key: "manufacturename",
+    },
+    {
+      title: "Building Name",
+      dataIndex: "buildingname",
+      key: "buildingname",
+    },
+    {
+      title: "Min Stock",
+      dataIndex: "minstock",
+      key: "minstock",
+    },
+    {
+      title: "Unit Code Pack",
+      dataIndex: "unitcodepack",
+      key: "unitcodepack",
+    },
+    {
+      title: "Formula QTY Pack",
+      dataIndex: "formulaqtypack",
+      key: "formulaqtypack",
     },
     {
       title: "Description",
@@ -108,7 +188,7 @@ const Product = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 2500,
+            x: 4000,
           }}
         />
       </div>
