@@ -1,13 +1,60 @@
-import { Form, Input, Col, Row, Checkbox } from "antd";
+import { Form, Input, Col, Row, Checkbox, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { useEffect, useState } from "react";
+import { getZonaNextCode } from "../../../../Api/Master/getData";
+import { postZona } from "../../../../Api/Master/postData";
 
 const FormZona = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
+  const [zonaCode, setZonaCode] = useState("");
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const fetchZonaNextCode = async () => {
+    try {
+      setLoading(true);
+      const nextZonaCode = await getZonaNextCode();
+
+      setZonaCode(nextZonaCode);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchZonaNextCode();
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ zonacode: zonaCode });
+  }, [zonaCode, form]);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      let payload = values;
+
+      if (!payload.zonacode) {
+        payload = { ...payload, zonacode: zonaCode };
+      }
+
+      const response = await postZona(payload);
+      message.success(response.data.message);
+
+      navigate("/master/zona");
+    } catch (error) {
+      message.error(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -28,7 +75,7 @@ const FormZona = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -36,25 +83,25 @@ const FormZona = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="ZonaCode"
-                name="ZonaCode"
+                label="Zona Code"
+                name="zonacode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your ZonaCode!",
+                    required: false,
+                    message: "Please input Zona Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={5} />
               </Form.Item>
 
               <Form.Item
-                label="ZonaName"
-                name="ZonaName"
+                label="Zona Name"
+                name="zonaname"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your ZonaName!",
+                    message: "Please input Zona Name!",
                   },
                 ]}
               >
@@ -63,44 +110,44 @@ const FormZona = () => {
 
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
               >
-                <Input />
+                <Input.TextArea rows={3} />
               </Form.Item>
 
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
               >
                 <Input />
               </Form.Item>
 
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
               >
                 <Input />
               </Form.Item>
 
               <Form.Item
-                label="LatLong"
-                name="LatLong"
+                label="Lat Long"
+                name="latlong"
               >
                 <Input />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
-                <Checkbox>IsSuspend</Checkbox>
+              <Form.Item name="issuspend" valuePropName="checked" initialValue={false}>
+                <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

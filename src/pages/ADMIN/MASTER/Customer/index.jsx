@@ -1,10 +1,13 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Space, Table, Tabs, Tag } from "antd";
 import EditCustomer from "./edit";
 import DeleteCustomer from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCustomer } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
+import CustomerUser from "./User";
+import CustomerZona from "./Zona";
 
 const Customer = () => {
   const [data, setData] = useState([]);
@@ -42,67 +45,63 @@ const Customer = () => {
       title: "No",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
       width: 80,
     },
     {
       title: "Customer Code",
-      dataIndex: "CustomerCode",
-      key: "CustomerCode",
-      width: 150,
+      dataIndex: "customercode",
+      key: "customercode",
+      fixed: "left",
     },
     {
       title: "Customer Name",
-      dataIndex: "CustomerName",
-      key: "CustomerName",
-      width: 150,
+      dataIndex: "customername",
+      key: "customername",
     },
     {
       title: "Address",
-      dataIndex: "Address",
-      key: "Address",
-      width: 150,
-    },
-    {
-      title: "Phone",
-      dataIndex: "Phone",
-      key: "Phone",
-      width: 150,
-    },
-    {
-      title: "Email",
-      dataIndex: "Email",
-      key: "Email",
-      width: 150,
-    },
-    {
-      title: "Contact",
-      dataIndex: "Contact",
-      key: "Contact",
-      width: 150,
-    },
-    {
-      title: "ZIP Code",
-      dataIndex: "ZIPCode",
-      key: "ZIPCode",
-      width: 150,
+      dataIndex: "address",
+      key: "address",
+      width: 200,
     },
     {
       title: "City",
-      dataIndex: "City",
-      key: "City",
-      width: 150,
+      dataIndex: "city",
+      key: "city",
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Contact",
+      dataIndex: "contact",
+      key: "contact",
+    },
+    {
+      title: "ZIP Code",
+      dataIndex: "zipcode",
+      key: "zipcode",
     },
     {
       title: "Country",
-      dataIndex: "Country",
-      key: "Country",
-      width: 150,
+      dataIndex: "country",
+      key: "country",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 150,
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Action",
@@ -111,7 +110,7 @@ const Customer = () => {
       render: (_, record) => (
         <Space>
           <EditCustomer dataSource={record} onEdit={fetchData} />
-          <DeleteCustomer />
+          <DeleteCustomer dataSource={record} onDelete={fetchData} />
         </Space>
       ),
     },
@@ -132,25 +131,22 @@ const Customer = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
           dataSource={filteredData}
+          expandable={{
+            expandedRowRender
+          }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 2000,
           }}
         />
       </div>
@@ -159,3 +155,24 @@ const Customer = () => {
 };
 
 export default Customer;
+
+
+const expandedRowRender = (record) => {
+
+  const items = [
+    {
+      key: '1',
+      label: 'User',
+      children: <CustomerUser dataSource={record.user} />,
+    },
+    {
+      key: '2',
+      label: 'Zona',
+      children: <CustomerZona dataSource={record.zona} />,
+    },
+  ];
+
+  return (
+    <Tabs defaultActiveKey="1" items={items} />
+  )
+}

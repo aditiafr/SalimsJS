@@ -3,7 +3,7 @@ import { Checkbox, Form, Input, message } from 'antd';
 import { useFetcher, useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getPackingTypes, getParameterCategory, getParameterNextCode, getTestMethode } from '../../../../Api/Master/getData';
+import { getPackingTypes, getParameterCategory, getParameterNextCode, getTestMethod } from '../../../../Api/Master/getData';
 import { postParameter } from '../../../../Api/Master/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import InputModal from "../../../../components/Dashboard/Global/InputModal";
@@ -39,7 +39,7 @@ const ResultUnitName = selectResultUnit ? selectResultUnit.PackingTypeName : '';
     const fetchTestMethod = async () => {
       try {
         setIsTestMethodLoading(true);
-        const response = await getTestMethode(false);
+        const response = await getTestMethod(false);
         setDataTestMethod(response);
       } catch (error) {
         console.log(error);

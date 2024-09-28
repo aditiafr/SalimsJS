@@ -1,19 +1,32 @@
 import React from "react";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { DeleteFilled, ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, Modal, Tooltip } from "antd";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { setSuspendZona } from "../../../../Api/Master/updateData";
 
 const { confirm } = Modal;
 
-const DeleteZona = ({ name }) => {
-  const handleDelete = () => {
-    Modal.destroyAll();
-    console.log("Delete Data!");
+const DeleteZona = ({ zonaCode, name, onDelete }) => {
+  const { messageApi } = useMessageContext();
+
+  const handleDelete = async () => {
+    try {
+      const response = await setSuspendZona(zonaCode);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to delete these items?",
+      title: "Do you want to suspend this item?",
       icon: <ExclamationCircleFilled />,
       content: `Zona ${name}`,
       centered: true,
@@ -23,8 +36,8 @@ const DeleteZona = ({ name }) => {
 
   return (
     <>
-      <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+      <Tooltip title="suspend">
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

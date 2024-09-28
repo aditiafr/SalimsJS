@@ -17,6 +17,62 @@ export const deleteBuilding = async (BuildingCode) => {
     return response;
 }
 
+export const deleteCustomer = async (CustomerCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/customer/set-suspend/${CustomerCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
+export const deleteTestMethod = async (MethodCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/method/set-suspend/${MethodCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
+export const deleteTestTestPreparation = async (TestPreparationCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/testpreparation/set-suspend/${TestPreparationCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
+export const deleteTimePoint = async (TimePointCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/timepoint/set-suspend/${TimePointCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
 export const deleteWarehouse = async (WarehouseCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/warehouse/set-suspend/${WarehouseCode}`,

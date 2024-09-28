@@ -1,150 +1,118 @@
-import { Col, Form, Input, Row } from "antd";
+import React, { useState } from 'react';
+import { Form, Input, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { useNavigate } from "react-router-dom";
-import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
-import { useState } from "react";
-import { JsonCreateModif } from "../../../../Api/Master/Json";
-import { postTestMethode } from "../../../../Api/Master/postData";
+import { getTestMethodNextCode } from '../../../../Api/Master/getData';
+import { postTestMethod } from '../../../../Api/Master/postData';
+import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 
-const FormTestMethode = () => {
+const FormTestMethod = () => {
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { messageApi } = useMessageContext();
   const [loading, setLoading] = useState(false);
+  const prefix = PrefixGlobal();
 
-  // const [testMethode, setTestMethode] = useState("");
-
-  // const fetchTestMethode = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await getTestMethode();
-  //     if (response.length > 0) {
-  //       const BCode = response.filter(
-  //         (item) => item.MethodId && item.MethodId.startsWith("BLD")
-  //       );
-  //       if (BCode.length > 0) {
-  //         const lastCode = BCode[BCode.length - 1].MethodId;
-  //         const nextNumber = parseInt(lastCode.substr(3)) + 1;
-  //         setTestMethode(`BLD${nextNumber.toString().padStart(2, "0")}`);
-  //       } else {
-  //         setTestMethode("BLD01");
-  //       }
-  //     } else {
-  //       setTestMethode("BLD01");
-  //     }
-  //   } catch (error) {
-  //     setTestMethode("BLD01");
-  //     console.log(error.response.statusText);
-  //   }
-  //   setLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   fetchTestMethode();
-  // }, []);
-
-  const onFinish = async (values) => {
-    console.log("Success:", values);
+  const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const modifiedValues = {
-        ...values,
-        ...JsonCreateModif
+      let payload = values;
+      if (!values.methodid) {
+        const nextCode = await getTestMethodNextCode();
+        const methodId = nextCode.methodid;
+        form.setFieldsValue({ methodid: methodId });
+        payload = {
+          ...payload,
+          methodid: methodId
+        }
       }
-      const response = await postTestMethode(modifiedValues);
-      messageApi.open({
-        type: 'success',
-        content: response.data.statusMessage,
-      });
-      navigate("/master/test-methode");
+      // console.log(payload);
+      const response = await postTestMethod(payload);
+      message.success(response.data.message);
+      navigate("/master/test_methode");
     } catch (error) {
+      message.error(error.response.data.message);
       console.log(error);
     }
     setLoading(false);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
     form.resetFields();
   };
 
+  const handleOnKeyPress = (event) => {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle
-          title="TEST METHODE"
-          subtitle="form data a test methode"
-        />
+        <HeaderTitle title="BUILDING" subtitle="form data a building" />
       </div>
       <div className="w-full bg-white rounded-lg">
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Method Id"
-                name="MethodId"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Method Id!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Preservation"
-                name="Preservation"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Preservation!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Method Id"
+              name="methodid"
+              rules={[
+                {
+                  validator: prefix,
+                },
+              ]}
+            >
+              <Input placeholder="Input Method Id" maxLength={6} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Storage Time Limit"
-                name="StorageTimeLimit"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Storage Time Limit!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Preservation"
+              name="preservation"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Preservation!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Preservation" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item
+              label="Storage Time Limit"
+              name="storagetimelimit"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Storage Time Limit!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Storage Time Limit" onKeyPress={handleOnKeyPress} />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
+
+          </div>
+
           <ButtonSubmit onReset={onReset} onLoading={loading} />
+
         </Form>
       </div>
     </>
   );
 };
 
-export default FormTestMethode;
+export default FormTestMethod;

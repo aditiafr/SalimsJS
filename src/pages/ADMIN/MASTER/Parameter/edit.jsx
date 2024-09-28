@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
 import { updateParameter } from "../../../../Api/Master/updateData";
 import InputModal from "../../../../components/Dashboard/Global/InputModal";
-import { getPackingTypes, getParameterCategory, getTestMethode } from "../../../../Api/Master/getData";
+import { getPackingTypes, getParameterCategory, getTestMethod } from "../../../../Api/Master/getData";
 
 const EditParameter = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
@@ -38,7 +38,7 @@ const EditParameter = ({ dataSource, onEdit }) => {
     const fetchTestMethod = async () => {
       try {
         setIsTestMethodLoading(true);
-        const response = await getTestMethode(false);
+        const response = await getTestMethod(false);
         setDataTestMethod(response);
       } catch (error) {
         console.log(error);

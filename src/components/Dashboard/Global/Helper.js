@@ -28,3 +28,5 @@ export const PrefixGlobal = () => {
     return validateBuildingCode;
 
 }
+
+export const selectedTranIdx = localStorage.getItem('selectedMenuKey');

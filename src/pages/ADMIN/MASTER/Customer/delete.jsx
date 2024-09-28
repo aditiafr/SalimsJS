@@ -1,21 +1,29 @@
+import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Tooltip } from "antd";
 import React from "react";
-import { Button, Modal, Tooltip } from "antd";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
+import { deleteCustomer } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 
-const DeleteCustomer = () => {
-  const handleDelete = () => {
-    Modal.destroyAll();
-    console.log("Delete Data!");
+const DeleteCustomer = ({ dataSource, onDelete }) => {
+
+  const handleDelete = async () => {
+    try {
+      const res = await deleteCustomer(dataSource.customercode);
+      message.success(res.data.message);
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const content = "Data Customer..";
+  const content = `Data Customer Code ${dataSource.customercode} & Customer Name ${dataSource.customername}...`;
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to delete these items?",
+      title: "Do you want to suspend these items?",
       icon: <ExclamationCircleFilled />,
       content: content,
       centered: true,
@@ -25,8 +33,8 @@ const DeleteCustomer = () => {
 
   return (
     <>
-      <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+      <Tooltip title="Suspend">
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

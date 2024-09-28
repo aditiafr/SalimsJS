@@ -24,6 +24,20 @@ import FormTestPreparation from "../../pages/ADMIN/MASTER/TestPreparation/form";
 import FormTimePoint from "../../pages/ADMIN/MASTER/TimePoint/form";
 import FormVendor from "../../pages/ADMIN/MASTER/Vendor/form";
 import FormWarehouse from "../../pages/ADMIN/MASTER/Warehouse/form";
+import FormTestingOrder from "../../pages/ADMIN/SAMPLE_HANDLING/TestingOrder/form";
+import FormPlanningTakingSample from "../../pages/ADMIN/SAMPLE_HANDLING/PlanningTakingSample/form";
+import FormTakingSample from "../../pages/ADMIN/SAMPLE_HANDLING/TakingSample/form";
+import FormSampleRegistration from "../../pages/ADMIN/SAMPLE_HANDLING/SampleRegistration/form";
+import FormSampleHandling from "../../pages/ADMIN/SAMPLE_HANDLING/SampleHandling/form";
+import FormSampleProcess from "../../pages/ADMIN/SAMPLE_HANDLING/SampleProses/form";
+import FormSampleAutorize from "../../pages/ADMIN/SAMPLE_HANDLING/SampleAutorize/form";
+import FormAdjustment from "../../pages/ADMIN/INVENTORY/Adjustment/form";
+import FormTransferWarehouse from "../../pages/ADMIN/INVENTORY/TransferWarehouse/form";
+import FormAssembly from "../../pages/ADMIN/INVENTORY/Assembly/form";
+import FormProductInformation from "../../pages/ADMIN/INVENTORY/ProductInformation/form";
+import FormZona from "../../pages/ADMIN/MASTER/Zona/form";
+import FormSubZona from "../../pages/ADMIN/MASTER/SubZona/form";
+import FormPriceList from "../../pages/ADMIN/MASTER/PriceList/form";
 
 export const FormPages = {
 
@@ -54,4 +68,39 @@ export const FormPages = {
     1126: <FormTestMethode />,
     1127: <FormOtherExpense />,
     1128: <FormSample />,
+    1129: <FormZona />,
+    1130: <FormSubZona />,
+    1131: <FormPriceList />,
+
+    // SAMPLE HANDLING
+    1201: <FormTestingOrder />,
+    1202: <FormPlanningTakingSample />,
+    1203: <FormTakingSample />,
+    1204: <FormSampleRegistration />,
+    1205: <FormSampleHandling />,
+    1206: <FormSampleProcess />,
+    1207: <FormSampleAutorize />,
+
+    // INVENTORY
+    1301: <FormAdjustment />,
+    1302: <FormTransferWarehouse />,
+    1303: <FormAssembly />,
+    1304: <FormProductInformation />,
+
+    // EQUIPMENT MAINTENANCE
+    // 1401: <MaintenanceRequest />,
+    // 1402: <MaintenanceProcess />,
+
+    // // SETUP
+    // 1501: <UserTrustee />,
+    // 1502: <SetupApprovalDM />,
+    // 1503: <SetupApprovalLS />,
+    // 1504: <SetupApprovalIV />,
+    // 1505: <ResetPassword />,
+    // 1506: <UserLog />,
+
+    // // APPROVAL
+    // 1601: <ApprovalDM />,
+    // 1602: <ApprovalLS />,
+    // 1603: <ApprovalIV />,
 }

@@ -1,21 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditFilled } from "@ant-design/icons";
 import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { updateZona } from "../../../../Api/Master/updateData";
 
-const EditZona = () => {
+const EditZona = ({ dataSource, onEdit }) => {
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    form.setFieldsValue(dataSource);
+  }, [dataSource, form]);
 
   const showModal = () => {
+    form.setFieldsValue(dataSource);
     setIsModalOpen(true);
   };
 
-  const [form] = Form.useForm();
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = values;
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+      const response = await updateZona(dataSource.zonacode, payload);
+      messageApi.open({
+        type: "success",
+        message: response.data.message,
+      });
+
+      onEdit(true);
+      setIsModalOpen(false);
+    } catch (error) {
+      messageApi.open({
+        type: "error",
+        message: error.response.data.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -53,7 +81,7 @@ const EditZona = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -61,12 +89,12 @@ const EditZona = () => {
           <Row gutter={30} style={{ margin: "0px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="ZonaCode"
-                name="ZonaCode"
+                label="Zona Code"
+                name="zonacode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your ZonaCode!",
+                    message: "Please input Code!",
                   },
                 ]}
               >
@@ -74,12 +102,12 @@ const EditZona = () => {
               </Form.Item>
 
               <Form.Item
-                label="ZonaName"
-                name="ZonaName"
+                label="Zona Name"
+                name="zonaname"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your ZonaName!",
+                    message: "Please input Name!",
                   },
                 ]}
               >
@@ -88,44 +116,44 @@ const EditZona = () => {
 
               <Form.Item
                 label="Address"
-                name="Address"
+                name="address"
               >
-                <Input />
+                <Input.TextArea rows={3} />
               </Form.Item>
 
               <Form.Item
                 label="ZIP Code"
-                name="ZIPCode"
+                name="zipcode"
               >
                 <Input />
               </Form.Item>
 
               <Form.Item
                 label="City"
-                name="City"
+                name="city"
               >
                 <Input />
               </Form.Item>
 
               <Form.Item
-                label="LatLong"
-                name="LatLong"
+                label="Lat Long"
+                name="latlong"
               >
                 <Input />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item label="Description" name="description">
                 <Input.TextArea rows={3} />
               </Form.Item>
 
-              <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
+              <Form.Item name="issuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>IsSuspend</Checkbox>
               </Form.Item>
             </Col>
           </Row>
-          <ButtonEdit onReset={onReset} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>
     </>

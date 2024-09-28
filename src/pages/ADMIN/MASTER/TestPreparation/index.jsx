@@ -1,33 +1,31 @@
-import { Button, Input, Space, Table, Tag } from "antd";
-import React, { useState } from "react";
+import { Button, Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import EditTestPreparation from "./edit";
+import DeleteTestPreparation from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-
-const data = [
-  {
-    testpreparationid: "TP001",
-    testpreparationname: "Sample Dilution",
-    description: "Process of diluting a sample to achieve the desired concentration for accurate testing",
-    issuspend: false
-  },
-  {
-    testpreparationid: "TP002",
-    testpreparationname: "Heat Treatment",
-    description: "Applying controlled heat to a sample to prepare it for specific chemical or biological tests",
-    issuspend: false
-  },
-  {
-    testpreparationid: "TP003",
-    testpreparationname: "Filtration",
-    description: "Removing impurities or separating components of a sample through a filter medium",
-    issuspend: true
-  }
-];
+import { getTestPreparation } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const TestPreparation = () => {
-  // const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getTestPreparation();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
@@ -48,12 +46,13 @@ const TestPreparation = () => {
       fixed: "left",
     },
     {
-      title: "testpreparationid",
+      title: "Test Preparation Id",
       dataIndex: "testpreparationid",
       key: "testpreparationid",
+      fixed: "left",
     },
     {
-      title: "testpreparationname",
+      title: "Test Preparation Name",
       dataIndex: "testpreparationname",
       key: "testpreparationname",
     },
@@ -70,12 +69,25 @@ const TestPreparation = () => {
         <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditTestPreparation dataSource={record} onEdit={fetchData} />
+          {record.issuspend === false && (
+            <DeleteTestPreparation dataSource={record} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
   ];
 
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle title="TEST PREPARATION" subtitle="All data Test Preparation" />
+        <HeaderTitle title="TEST PREPERATION" subtitle="All data Test Preperation" />
         <div>
           <Link to="/master/test_preparation/form">
             <Button type="primary">+ Add New</Button>
@@ -84,16 +96,10 @@ const TestPreparation = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={loading}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={filteredData}

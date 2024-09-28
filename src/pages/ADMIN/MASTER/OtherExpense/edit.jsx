@@ -157,7 +157,7 @@ const EditOtherExpense = ({ dataSource, onEdit }) => {
              </Row>
             </Col>
           </Row>
-          <ButtonEdit onReset={onReset} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>
     </>

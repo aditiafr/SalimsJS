@@ -2,15 +2,15 @@ import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Tooltip } from "antd";
 import React from "react";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { deleteTestMethod } from "../../../../Api/Master/DeleteData";
+import { deleteTestTestPreparation } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 
-const DeleteTestMethod = ({ dataSource, onDelete }) => {
+const DeleteTestPreparation = ({ dataSource, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      const res = await deleteTestMethod(dataSource.methodid);
+      const res = await deleteTestTestPreparation(dataSource.testpreparationid);
       message.success(res.data.message);
       onDelete(true);
       Modal.destroyAll();
@@ -19,7 +19,7 @@ const DeleteTestMethod = ({ dataSource, onDelete }) => {
     }
   };
 
-  const content = `Data Building Code ${dataSource.methodid}...`;
+  const content = `Data Test Preparation Code ${dataSource.testpreparationid} & Test Preparation Name ${dataSource.testpreparationname}...`;
 
   const showConfirm = () => {
     confirm({
@@ -40,4 +40,4 @@ const DeleteTestMethod = ({ dataSource, onDelete }) => {
   );
 };
 
-export default DeleteTestMethod;
+export default DeleteTestPreparation;

@@ -19,7 +19,7 @@ const DeleteBuilding = ({ dataSource, onDelete }) => {
     }
   };
 
-  const content = `Data Building Code ${dataSource.buildingcode} & Building Name ${dataSource.buildingname} ..`;
+  const content = `Data Building Code ${dataSource.buildingcode} & Building Name ${dataSource.buildingname}...`;
 
   const showConfirm = () => {
     confirm({

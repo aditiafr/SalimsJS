@@ -46,6 +46,9 @@ import SetupApprovalIV from "../../pages/ADMIN/SETUP/SetupApprovalIV";
 import SetupApprovalLS from "../../pages/ADMIN/SETUP/SetupApprovalLS";
 import UserLog from "../../pages/ADMIN/SETUP/UserLog";
 import UserTrustee from "../../pages/ADMIN/SETUP/UserTrustee";
+import Zona from "../../pages/ADMIN/MASTER/Zona";
+import SubZona from "../../pages/ADMIN/MASTER/SubZona";
+import PriceList from "../../pages/ADMIN/MASTER/PriceList";
 
 export const ViewPages = {
     // MASTER DATA
@@ -75,6 +78,9 @@ export const ViewPages = {
     1126: <TestMethode />,
     1127: <OtherExpense />,
     1128: <Sample />,
+    1129: <Zona />,
+    1130: <SubZona />,
+    1131: <PriceList />,
 
     // SAMPLE HANDLING
     1201: <TestingOrder />,
