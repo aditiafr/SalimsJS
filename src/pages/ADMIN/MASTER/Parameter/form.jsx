@@ -32,7 +32,7 @@ const FormParameter = () => {
   const [dataResultUnit, setDataResultUnit] = useState([]);
   const [selectResultUnit, setSelectResultUnit] = useState("");
   const [openResultUnit, setOpenResultUnit] = useState(null);
-const ResultUnitName = selectResultUnit ? selectResultUnit.PackingTypeName : '';
+  const ResultUnitName = selectResultUnit ? selectResultUnit.PackingTypeName : '';
   const ResultUnitCode = selectResultUnit ? selectResultUnit.PackingTypeCode : '';
 
   useEffect(() => {
@@ -93,7 +93,6 @@ const ResultUnitName = selectResultUnit ? selectResultUnit.PackingTypeName : '';
       setOpenResultUnit(false);
     }
   }, [openResultUnit]);
-
 
   useEffect(() => {
     form.setFieldsValue({ resultunitname: ResultUnitName });

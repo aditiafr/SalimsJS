@@ -92,7 +92,7 @@ const FormZona = () => {
                   },
                 ]}
               >
-                <Input maxLength={5} />
+                <Input maxLength={6} />
               </Form.Item>
 
               <Form.Item

@@ -225,3 +225,29 @@ export const setSuspendZona = async (ZonaCode) => {
     });
     return response;
 }
+
+export const updateSubZona = async (SubZonaCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/subzona/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendSubZona = async (SubZonaCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/subzona/set-suspend/${SubZonaCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

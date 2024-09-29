@@ -91,7 +91,9 @@ const Zona = () => {
       render: (_, record) => (
         <Space>
           <EditZona dataSource={record} onEdit={fetchData} />
-          <DeleteZona name={record.zonaname} zonaCode={record.zonacode} onDelete={fetchData} />
+          {!!!record.issuspend && (
+            <DeleteZona name={record.zonaname} zonaCode={record.zonacode} onDelete={fetchData} />
+          )}
         </Space>
       ),
     },

@@ -206,7 +206,25 @@ export const postProduct = async (Data) => {
 
 export const postZona = async (Data) => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
     const response = await axios.post(`${baseUrl}/zona/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postSubZona = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.post(`${baseUrl}/subzona/store`, Data, {
         headers: {
             Authorization: `Bearer ${token}`
         }

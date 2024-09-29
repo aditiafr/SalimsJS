@@ -89,6 +89,18 @@ export const getSubZona = async (Suspend) => {
     return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
 }
 
+export const getSubZonaNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/subzona/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.subzonacode;
+}
+
 export const getWarehouseNextCode = async () => {
     const token = Cookies.get('access_token');
     const selectedTranIdx = localStorage.getItem('selectedMenuKey');
