@@ -1,14 +1,27 @@
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { DeleteFilled, ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, Modal, Tooltip } from "antd";
 import React from "react";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { setSuspendEquipment } from "../../../../Api/Master/updateData";
 
 const { confirm } = Modal;
 
-const DeleteEquipment = ({ name }) => {
-  const handleDelete = () => {
-    Modal.destroyAll();
-    console.log("Delete Data!");
+const DeleteEquipment = ({ equipmentCode, name, onDelete }) => {
+  const { messageApi } = useMessageContext();
+
+  const handleDelete = async () => {
+    try {
+      const response = await setSuspendEquipment(equipmentCode);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showConfirm = () => {
@@ -24,7 +37,7 @@ const DeleteEquipment = ({ name }) => {
   return (
     <>
       <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

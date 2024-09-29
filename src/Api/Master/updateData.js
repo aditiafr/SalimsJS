@@ -217,7 +217,7 @@ export const updateZona = async (ZonaCode, Data) => {
 export const setSuspendZona = async (ZonaCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/zona/set-suspend/${ZonaCode}`, {
-        issuspend: true
+        isSuspend: true
     }, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -244,6 +244,33 @@ export const setSuspendSubZona = async (SubZonaCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/subzona/set-suspend/${SubZonaCode}`, {
         issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateEquipment = async (EquipmentCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/equipment/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendEquipment = async (EquipmentCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/equipment/set-suspend/${EquipmentCode}`, {
+        issuspend: true,
+        branchcode: '0001' // dont know what is this
     }, {
         headers: {
             Authorization: `Bearer ${token}`
