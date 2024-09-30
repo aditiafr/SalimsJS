@@ -278,3 +278,30 @@ export const setSuspendEquipment = async (EquipmentCode) => {
     });
     return response;
 }
+
+export const updatePriceList = async (PriceCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.put(`${baseUrl}/pricelist/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendPriceList = async (PriceCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/pricelist/set-suspend/0001/${PriceCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

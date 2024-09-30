@@ -1,21 +1,34 @@
 import React from "react";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { DeleteFilled, ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, Modal, Tooltip } from "antd";
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { setSuspendPriceList } from "../../../../Api/Master/updateData";
 
 const { confirm } = Modal;
 
-const DeletePriceList = ({ name }) => {
-  const handleDelete = () => {
-    Modal.destroyAll();
-    console.log("Delete Data!");
+const DeletePriceList = ({ priceListCode, name, onDelete }) => {
+  const { messageApi } = useMessageContext();
+
+  const handleDelete = async () => {
+    try {
+      const response = await setSuspendPriceList(priceListCode);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to delete these items?",
+      title: "Do you want to suspend this items?",
       icon: <ExclamationCircleFilled />,
-      content: `Price List M ${name}`,
+      content: `Price List ${name}`,
       centered: true,
       footer: <ButtonDelete onDelete={handleDelete} />,
     });
@@ -24,7 +37,7 @@ const DeletePriceList = ({ name }) => {
   return (
     <>
       <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

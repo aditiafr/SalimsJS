@@ -471,3 +471,30 @@ export const getEquipmentNextCode = async () => {
 
     return response.data.data.equipment;
 }
+
+export const getPriceList = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/pricelist/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getPriceListNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/pricelist/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: {
+            tranidx: selectedTranIdx,
+            branchcode: '0001' // dont know what is this
+        }
+    });
+
+    return response.data.data.pricecode;
+}
