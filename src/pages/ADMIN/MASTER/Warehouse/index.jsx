@@ -15,9 +15,7 @@ const Warehouse = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getWarehouse();
-      console.log("DATA", response);
-      
+      const response = await getWarehouse();      
       setData(response);
     } catch (error) {
       console.log(error);
@@ -49,7 +47,7 @@ const Warehouse = () => {
       width: 80,
     },
     {
-      title: "warehousecode",
+      title: "Warehouse Code",
       dataIndex: "warehousecode",
       key: "warehousecode",
       fixed: "left",

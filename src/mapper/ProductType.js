@@ -3,7 +3,7 @@ export const ProductTypeMapFromHttp = (data) => {
     ProductTypeCode: row.productTypeCode,
     ProductTypeName: row.productTypeName,
     Description: row.description,
-    IsSuspend: row.isSuspend,
+    IsSuspend: row.issuspend,
     key: index + 1 
   }));
 }

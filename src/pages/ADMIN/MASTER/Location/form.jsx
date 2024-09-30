@@ -13,44 +13,33 @@ const FormLocation = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const [dataWarehouse, setDataWarehouse] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [dataWarehouse, setDataWarehouse] = useState([]);
   const [selectWarehouse, setSelectWarehouse] = useState("");
+  const [openWarehouse, setOpenWarehouse] = useState(null);
   const WarehouseName = selectWarehouse ? selectWarehouse.warehousename : '';
   const WarehouseCode = selectWarehouse ? selectWarehouse.warehousecode : '';
 
   const prefix = PrefixGlobal();
-  const [locationCode, setLocationCode] = useState("");
 
   useEffect(() => {
     const fetchWarehouse = async () => {
       try {
         setIsLoading(true);
-        const response = await getWarehouse();
-        const filter = response.filter((item) => item.issuspend !== true).map((item, row) => ({ ...item, key: row + 1 }));
+        const response = await getWarehouse(0);
+        const filter = response.map((item, row) => ({ ...item, key: row + 1 }));
         setDataWarehouse(filter);
       } catch (error) {
         console.log(error);
       }
       setIsLoading(false);
     };
-    fetchWarehouse();
-  }, []);
-
-
-  useEffect(() => {
-    const fetchNextCode = async () => {
-      try {
-        const res = await getLocationNextCode(WarehouseCode);
-        setLocationCode(res.locationcode);
-
-      } catch (error) {
-        console.log();
-      }
+    if (openWarehouse) {
+      fetchWarehouse();
+      setOpenWarehouse(false);
     }
-    fetchNextCode();
-  }, [WarehouseCode]);
-
+  }, [openWarehouse]);
 
   const handleSubmit = async (values) => {
     try {
@@ -60,13 +49,15 @@ const FormLocation = () => {
         warehousecode: WarehouseCode
       }
       if (!values.locationcode) {
-        form.setFieldsValue({ locationcode: locationCode });
+        const res = await getLocationNextCode(WarehouseCode);
+        const nextCode = res.locationcode
+        form.setFieldsValue({ locationcode: nextCode });
         payload = {
           ...payload,
-          locationcode: locationCode
+          locationcode: nextCode
         }
       }
-
+      // console.log(payload);
       const response = await postLocation(payload);
       message.success(response.data.message);
       navigate("/master/location");
@@ -82,7 +73,7 @@ const FormLocation = () => {
 
   useEffect(() => {
     form.setFieldsValue({ warehousename: WarehouseName });
-  }, [WarehouseName, form, locationCode]);
+  }, [WarehouseName, form]);
 
   return (
     <>
@@ -109,6 +100,7 @@ const FormLocation = () => {
               loading={isLoading}
               columns={columns}
               onData={(values) => setSelectWarehouse(values)}
+              onOpenModal={(values) => setOpenWarehouse(values)}
             />
 
             <Form.Item
@@ -120,7 +112,7 @@ const FormLocation = () => {
                 },
               ]}
             >
-              <Input maxLength={6} />
+              <Input maxLength={6} placeholder="Input Location Code" />
             </Form.Item>
 
             <Form.Item
@@ -133,11 +125,11 @@ const FormLocation = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Location Name" />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Description" />
             </Form.Item>
           </div>
           <ButtonSubmit onReset={onReset} onLoading={loading} />

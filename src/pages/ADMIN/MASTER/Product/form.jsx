@@ -5,6 +5,8 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal, selectedTranIdx } from '../../../../components/Dashboard/Global/Helper';
 import { postProduct } from '../../../../Api/Master/postData';
+import InputModal from '../../../../components/Dashboard/Global/InputModal';
+import { getBuilding, getManufacture, getproductCat, getproductType, getUnit, getWarehouse } from '../../../../Api/Master/getData';
 
 const FormProduct = () => {
     const [form] = Form.useForm();
@@ -12,20 +14,192 @@ const FormProduct = () => {
     const [loading, setLoading] = useState(false);
     const prefix = PrefixGlobal();
 
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [dataProdType, setDataProdType] = useState([]);
+    const [selectProdType, setSelectProdType] = useState("");
+    const [openProdType, setOpenProdType] = useState(null);
+    const ProdTypeName = selectProdType ? selectProdType.producttypename : '';
+    const ProdTypeCode = selectProdType ? selectProdType.producttypecode : '';
+
+    const [dataUnit, setDataUnit] = useState([]);
+    const [selectUnit, setSelectUnit] = useState("");
+    const [openUnit, setOpenUnit] = useState(null);
+    const UnitName = selectUnit ? selectUnit.unitName : '';
+    const UnitCode = selectUnit ? selectUnit.unitCode : '';
+
+    const [dataWarehouse, setDataWarehouse] = useState([]);
+    const [selectWarehouse, setSelectWarehouse] = useState("");
+    const [openWarehouse, setOpenWarehouse] = useState(null);
+    const WarehouseName = selectWarehouse ? selectWarehouse.warehousename : '';
+    const WarehouseCode = selectWarehouse ? selectWarehouse.warehousecode : '';
+
+    const [dataProdCat, setDataProdCat] = useState([]);
+    const [selectProdCat, setSelectProdCat] = useState("");
+    const [openProdCat, setOpenProdCat] = useState(null);
+    const ProdCatName = selectProdCat ? selectProdCat.productcategoryname : '';
+    const ProdCatCode = selectProdCat ? selectProdCat.productcategorycode : '';
+
+    const [dataManufacture, setDataManufacture] = useState([]);
+    const [selectManufacture, setSelectManufacture] = useState("");
+    const [openManufacture, setOpenManufacture] = useState(null);
+    const ManufactureName = selectManufacture ? selectManufacture.manufacturename : '';
+    const ManufactureCode = selectManufacture ? selectManufacture.manufacturecode : '';
+
+    const [dataBuilding, setDataBuilding] = useState([]);
+    const [selectBuilding, setSelectBuilding] = useState("");
+    const [openBuilding, setOpenBuilding] = useState(null);
+    const BuildingName = selectBuilding ? selectBuilding.buildingname : '';
+    const BuildingCode = selectBuilding ? selectBuilding.buildingcode : '';
+
+    // PRODUCT TYPE
+    useEffect(() => {
+        const fetchProdType = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getproductType(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataProdType(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+
+        if (openProdType) {
+            fetchProdType();
+            setOpenProdType(false);
+        }
+
+    }, [openProdType]);
+
+    // UNIT
+    useEffect(() => {
+        const fetchUnit = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getUnit();
+                setDataUnit(res);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openUnit) {
+            fetchUnit()
+            setOpenUnit(false);
+        }
+    }, [openUnit]);
+
+
+
+    // WAREHOUSE
+    useEffect(() => {
+        const fetchWarehouse = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getWarehouse(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataWarehouse(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        };
+        if (openWarehouse) {
+            fetchWarehouse();
+            setOpenWarehouse(false);
+        }
+    }, [openWarehouse]);
+
+    // PRODUCT CATEGORY
+    useEffect(() => {
+        const fetchProdCat = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getproductCat(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataProdCat(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openProdCat) {
+            fetchProdCat();
+            setOpenProdCat(false);
+        }
+    }, [openProdCat]);
+
+    // MANUFACTURE
+    useEffect(() => {
+        const fetchManufacture = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getManufacture(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataManufacture(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openManufacture) {
+            fetchManufacture();
+            setOpenManufacture(false);
+        }
+    }, [openManufacture]);
+
+    // BUILDING
+    useEffect(() => {
+        const fetchBuilding = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getBuilding(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataBuilding(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openBuilding) {
+            fetchBuilding();
+            setOpenBuilding(false);
+        }
+    }, [openBuilding]);
+
+
+    useEffect(() => {
+        form.setFieldsValue({ producttypename: ProdTypeName });
+        form.setFieldsValue({ unitname: UnitName });
+        form.setFieldsValue({ warehousename: WarehouseName });
+        form.setFieldsValue({ productcategoryname: ProdCatName });
+        form.setFieldsValue({ manufacturename: ManufactureName });
+        form.setFieldsValue({ buildingname: BuildingName });
+    }, [BuildingName, ManufactureName, ProdCatName, ProdTypeName, UnitName, WarehouseName, form]);
+
+
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
             const payload = {
                 ...values,
-                branchcode: "0001",
                 tranidx: selectedTranIdx,
-                tempcode: "MTE001"
+                branchcode: "0001",
+                prodtypecode: ProdTypeCode,
+                unitcode: UnitCode,
+                tempcode: "MTC001",
+                warehousecode: WarehouseCode,
+                prodcatcode: ProdCatCode,
+                manufacturecode: ManufactureCode,
+                buildingcode: BuildingCode,
+                unitcodepack: "",
             }
             console.log(payload);
             const res = await postProduct(payload);
             message.success(res.data.message);
         } catch (error) {
-            message.error(error.response.data.message);
             console.log(error);
         }
         setLoading(false);
@@ -75,34 +249,30 @@ const FormProduct = () => {
                             <Input placeholder="Input Product Name" autoFocus />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Product Type Code"
-                            name="prodtypecode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Product Type Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Product Type Code" />
-                        </Form.Item>
+                        <InputModal
+                            title="PRODUCT TYPE"
+                            label="Product Type"
+                            name="producttypename"
+                            dataSource={dataProdType}
+                            loading={isLoading}
+                            columns={columnsProdType}
+                            onData={(values) => setSelectProdType(values)}
+                            onOpenModal={(values) => setOpenProdType(values)}
+                        />
+
+                        <InputModal
+                            title="UNIT"
+                            label="Unit"
+                            name="unitname"
+                            dataSource={dataUnit}
+                            loading={isLoading}
+                            columns={columnsUnit}
+                            onData={(values) => setSelectUnit(values)}
+                            onOpenModal={(values) => setOpenUnit(values)}
+                        />
 
                         <Form.Item
-                            label="Unit Code"
-                            name="unitcode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Unit Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Unit Code" />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Formula QTY"
+                            label="Formula QTY (Num)"
                             name="formulaqty"
                             rules={[
                                 {
@@ -114,18 +284,16 @@ const FormProduct = () => {
                             <Input placeholder="Input Formula QTY" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Warehouse Code"
-                            name="warehousecode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Warehouse Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Warehouse Code" />
-                        </Form.Item>
+                        <InputModal
+                            title="WAREHOUSE"
+                            label="Warehouse"
+                            name="warehousename"
+                            dataSource={dataWarehouse}
+                            loading={isLoading}
+                            columns={columnsWarehouse}
+                            onData={(values) => setSelectWarehouse(values)}
+                            onOpenModal={(values) => setOpenWarehouse(values)}
+                        />
 
                         <Form.Item
                             label="Alias Name"
@@ -140,21 +308,19 @@ const FormProduct = () => {
                             <Input placeholder="Input Alias Name" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Product Category Code"
-                            name="prodcatcode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Product Category Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Product Category Code" />
-                        </Form.Item>
+                        <InputModal
+                            title="PRODUCT CATEGORY"
+                            label="Product Category"
+                            name="productcategoryname"
+                            dataSource={dataProdCat}
+                            loading={isLoading}
+                            columns={columnsProdCat}
+                            onData={(values) => setSelectProdCat(values)}
+                            onOpenModal={(values) => setOpenProdCat(values)}
+                        />
 
                         <Form.Item
-                            label="Shelf Life"
+                            label="Shelf Life (Num)"
                             name="shelflife"
                             rules={[
                                 {
@@ -166,7 +332,7 @@ const FormProduct = () => {
                             <Input placeholder="Input Shelf Life" />
                         </Form.Item>
 
-                        <Form.Item
+                        {/* <Form.Item
                             label="Use Int Batch No"
                             name="useintbatchno"
                             rules={[
@@ -190,33 +356,29 @@ const FormProduct = () => {
                             ]}
                         >
                             <Input placeholder="Input Use Ext Batch No" />
-                        </Form.Item>
+                        </Form.Item> */}
 
-                        <Form.Item
-                            label="Manufacture Code"
-                            name="manufacturecode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Manufacture Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Manufacture Code" />
-                        </Form.Item>
+                        <InputModal
+                            title="MANUFACTURE"
+                            label="Manufacture"
+                            name="manufacturename"
+                            dataSource={dataManufacture}
+                            loading={isLoading}
+                            columns={columnsManufacture}
+                            onData={(values) => setSelectManufacture(values)}
+                            onOpenModal={(values) => setOpenManufacture(values)}
+                        />
 
-                        <Form.Item
-                            label="Building Code"
-                            name="buildingcode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Building Code!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Building Code" />
-                        </Form.Item>
+                        <InputModal
+                            title="BUILDING"
+                            label="Building"
+                            name="buildingname"
+                            dataSource={dataBuilding}
+                            loading={isLoading}
+                            columns={columnsBuilding}
+                            onData={(values) => setSelectBuilding(values)}
+                            onOpenModal={(values) => setOpenBuilding(values)}
+                        />
 
                         <Form.Item
                             label="Min Stock"
@@ -245,7 +407,7 @@ const FormProduct = () => {
                         </Form.Item>
 
                         <Form.Item
-                            label="Formula QTY Pack"
+                            label="Formula QTY Pack (num)"
                             name="formulaqtypack"
                             rules={[
                                 {
@@ -257,7 +419,7 @@ const FormProduct = () => {
                             <Input placeholder="Input Formula QTY Pack" />
                         </Form.Item>
 
-                        <Form.Item label="Description" name="description">
+                        <Form.Item label="Description" name="description" className="lg:col-span-2">
                             <Input.TextArea placeholder="Input Description" />
                         </Form.Item>
 
@@ -272,3 +434,188 @@ const FormProduct = () => {
 };
 
 export default FormProduct;
+
+
+const columnsProdType = [
+    {
+        title: "Product Type Code",
+        dataIndex: "producttypecode",
+        key: "producttypecode",
+    },
+    {
+        title: "Product Type Name",
+        dataIndex: "producttypename",
+        key: "producttypename",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "Description",
+        render: (text) => (text ?? "N/A"),
+    }
+];
+
+const columnsUnit = [
+    {
+        title: "Unit Code",
+        dataIndex: "unitCode",
+        key: "unitCode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitName",
+        key: "unitName",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+]
+
+const columnsWarehouse = [
+    {
+        title: "Warehouse Code",
+        dataIndex: "warehousecode",
+        key: "warehousecode",
+        fixed: "left",
+    },
+    {
+        title: "Warehousen Name",
+        dataIndex: "warehousename",
+        key: "warehousename",
+    },
+    {
+        title: "Address",
+        dataIndex: "address",
+        key: "address",
+    },
+    {
+        title: "Phone",
+        dataIndex: "phone",
+        key: "phone",
+    },
+    {
+        title: "Fax",
+        dataIndex: "fax",
+        key: "fax",
+    },
+    {
+        title: "Contact",
+        dataIndex: "contact",
+        key: "contact",
+    },
+    {
+        title: "Zip Code",
+        dataIndex: "zipcode",
+        key: "zipcode",
+    },
+    {
+        title: "City",
+        dataIndex: "city",
+        key: "city",
+    },
+    {
+        title: "Country",
+        dataIndex: "country",
+        key: "country",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    },
+];
+
+const columnsProdCat = [
+    {
+        title: "Product Category Code",
+        dataIndex: "productcategorycode",
+        key: "productcategorycode",
+    },
+    {
+        title: "Product Category Name",
+        dataIndex: "productcategoryname",
+        key: "productcategoryname",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "Description",
+        render: (text) => (text ?? "N/A"),
+    }
+];
+
+
+const columnsManufacture = [
+    {
+        title: "Manufacture Code",
+        dataIndex: "manufacturecode",
+        key: "manufacturecode",
+    },
+    {
+        title: "Manufacture Name",
+        dataIndex: "manufacturename",
+        key: "manufacturename",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+];
+
+const columnsBuilding = [
+    {
+        title: "Building Code",
+        dataIndex: "buildingcode",
+        key: "buildingcode",
+        fixed: "left",
+    },
+    {
+        title: "Building Name",
+        dataIndex: "buildingname",
+        key: "buildingname",
+    },
+    {
+        title: "Address",
+        dataIndex: "address",
+        key: "address",
+        width: 350,
+    },
+    {
+        title: "Phone Number",
+        dataIndex: "phone",
+        key: "phone",
+    },
+    {
+        title: "Fax",
+        dataIndex: "fax",
+        key: "fax",
+    },
+    {
+        title: "Contact Name",
+        dataIndex: "contact",
+        key: "contact",
+    },
+    {
+        title: "Zip Code",
+        dataIndex: "zipcode",
+        key: "zipcode",
+    },
+    {
+        title: "City",
+        dataIndex: "city",
+        key: "city",
+    },
+    {
+        title: "Country",
+        dataIndex: "country",
+        key: "country",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+]

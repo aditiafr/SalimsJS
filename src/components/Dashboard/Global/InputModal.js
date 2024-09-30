@@ -40,41 +40,30 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
         setIsModalOpen(false);
     };
 
+    // console.log(columns);
+
+
     return (
         <div>
-            {onDetail ? (
-                <Form.Item
-                    name={name}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please input your ${label}!`,
-                        },
-                    ]}
-                >
-                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
-                </Form.Item>
-            ) : (
-                <Form.Item
-                    label={label}
-                    name={name}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please input your ${label}!`,
-                        },
-                    ]}
-                >
-                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
-                </Form.Item>
-            )}
+            <Form.Item
+                label={!onDetail ? label : ''}
+                name={name}
+                rules={[
+                    {
+                        required: true,
+                        message: `Please input your ${label}!`,
+                    },
+                ]}
+            >
+                <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
+            </Form.Item>
 
             <Modal
                 centered
                 title={<HeaderTitle title={title} subtitle="" />}
                 open={isModalOpen}
                 closable={false}
-                width={1000}
+                width={`80%`}
                 style={{
                     body: {
                         maxHeight: '70vh',
@@ -101,7 +90,9 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
                             handleRowClick(record, rowIndex);
                         },
                     })}
-                    scroll={{ x: 2000 }}
+                    scroll={
+                        columns.length > 5 && { x: 2000 }
+                    }
                 />
             </Modal>
         </div>
