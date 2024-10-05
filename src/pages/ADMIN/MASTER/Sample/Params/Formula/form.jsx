@@ -3,6 +3,8 @@ import { Form, Input, Popconfirm, Table, Typography, DatePicker, Button, message
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import InputModal from '../../../../../components/Dashboard/Global/InputModal';
+import { getFormula, getParameter } from '../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -12,21 +14,72 @@ const EditableCell = ({
     record,
     index,
     children,
+    onDataParams,
+    onDataFormula,
     ...restProps
 }) => {
 
-    const handleOnKeyPress = (event) => {
-        if (!/[0-9]/.test(event.key)) {
-            event.preventDefault();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [dataParams, setDataParams] = useState([]);
+    const [selectParams, setSelectParams] = useState("");
+    const [openParams, setOpenParams] = useState(null);
+
+    const [dataFormula, setDataFormula] = useState([]);
+    const [selectFormula, setSelectFormula] = useState("");
+    const [openFormula, setOpenFormula] = useState(null);
+
+    // PARAMETER
+    useEffect(() => {
+        const fetchParams = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getParameter();
+                setDataParams(res)
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
         }
-    }
+
+        if (openParams) {
+            fetchParams();
+            setDataParams(false);
+        }
+
+    }, [openParams]);
+
+    useEffect(() => {
+        if (selectParams) {
+            onDataParams(selectParams);
+        }
+    }, [onDataParams, selectParams]);
+
+    // FORMULA
+    useEffect(() => {
+        const fetchFormula = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getFormula();
+                setDataFormula(res);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openFormula) {
+            fetchFormula();
+            setOpenFormula(false);
+        }
+    }, [openFormula]);
+
 
     return (
         <td {...restProps}>
             {editing ? (
                 <div>
 
-                    {dataIndex === 'phone' ? (
+                    {dataIndex === 'description' ? (
                         <Form.Item
                             name={dataIndex}
                             style={{
@@ -39,33 +92,34 @@ const EditableCell = ({
                                 },
                             ]}
                         >
-                            <Input placeholder={title} onKeyPress={handleOnKeyPress} />
+                            <Input.TextArea rows={4} placeholder={title} />
                         </Form.Item>
 
-                    ) : (
-
-                        <Form.Item
+                    ) : dataIndex === "parcode" && (
+                        <InputModal
+                            title="PARAMETER"
+                            label="Parameter Name"
                             name={dataIndex}
-                            style={{
-                                margin: 0,
-                            }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: `Please Input ${title}!`,
-                                },
-                            ]}
-                        >
-                            {dataIndex === 'userpwd' && editing ? (
-
-                                <Input.Password placeholder={title} maxLength={50} />
-
-                            ) : (
-
-                                <Input placeholder={title} maxLength={50} />
-
-                            )}
-                        </Form.Item>
+                            dataSource={dataParams}
+                            loading={isLoading}
+                            columns={columnsParams}
+                            onData={(values) => setSelectParams(values)}
+                            onOpenModal={(values) => setOpenParams(values)}
+                            onDetail={true}
+                        />
+                    )}
+                    {dataIndex === "formulacode" && (
+                        <InputModal
+                            title="FORMULA"
+                            label="Formula Name"
+                            name="subzonaname"
+                            dataSource={dataFormula}
+                            loading={isLoading}
+                            columns={columnsFormula}
+                            onData={(values) => setSelectFormula(values)}
+                            onOpenModal={(values) => setOpenFormula(values)}
+                            onDetail={true}
+                        />
                     )}
 
                 </div>
@@ -78,7 +132,7 @@ const EditableCell = ({
 };
 
 
-const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
+const FormSampleFormula = ({ onSaveData, onEdit, onApproval }) => {
 
     console.log(onEdit);
 
@@ -90,6 +144,9 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
     const [editingKey, setEditingKey] = useState('');
     // const [loading, setLoading] = useState(false);
     // const [isDisable, setIsDisable] = useState(true);
+
+    const [dataParams, setDataParams] = useState(null);
+    const [dataFormula, setDataFormula] = useState(null);
 
     useEffect(() => {
         if (onEdit) {
@@ -193,7 +250,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
     const handleAdd = () => {
 
         const num = count + 1;
-        const code = (count + 1).toString().padStart(3, '0');
+        // const code = (count + 1).toString().padStart(3, '0');
 
         if (editingKey) {
             message.warning("Complete the input form !");
@@ -202,11 +259,11 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            // userid: "CUS" + code,
-            username: '',
-            userpwd: '',
-            phone: '',
-            position: '',
+            detailno: num,
+            parcode: '',
+            formulacode: '',
+            formulaversion: '',
+            description: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
@@ -241,29 +298,28 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
             width: 80,
         },
         // {
-        //     title: 'User Id',
-        //     dataIndex: 'userid',
+        //     title: 'detailno',
+        //     dataIndex: 'detailno',
         //     editable: true,
         // },
         {
-            title: 'Username',
-            dataIndex: 'username',
+            title: 'Parameter Code',
+            dataIndex: 'parcode',
             editable: true,
         },
         {
-            title: 'User Password',
-            dataIndex: 'userpwd',
-            editable: true,
-            render: (text) => '*******',
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone',
+            title: 'Formula Code',
+            dataIndex: 'formulacode',
             editable: true,
         },
         {
-            title: 'Position',
-            dataIndex: 'position',
+            title: 'Formula version',
+            dataIndex: 'formulaversion',
+            editable: true,
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
             editable: true,
         },
     ];
@@ -312,6 +368,8 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
+                onDataParams: (values) => setDataParams(values),
+                onDataFormula: (values) => setDataFormula(values)
             }),
             ...col,
         };
@@ -321,7 +379,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         <Form form={form} component={false}>
             <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    USER
+                    FORMULA
                 </p>
                 {!onApproval && (
                     <Button
@@ -349,27 +407,110 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                     x: 1000
                 }}
             />
-            {/* {!onApproval && (
-                <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                        type="primary"
-                        onClick={handleCancelAllData}
-                        disabled={!!editingKey || !!isDisable}
-                    >
-                        <span>Cancel</span>
-                    </Button>
-                    <Button
-                        color="primary"
-                        onClick={handleSaveAllData}
-                        variant="contained"
-                        disabled={!!editingKey || !!isDisable}
-                    >
-                        <span>Save</span>
-                    </Button>
-
-                </div>
-            )} */}
         </Form>
     );
 };
-export default FormCustomerUser;
+export default FormSampleFormula;
+
+
+const columnsParams = [
+    {
+        title: "Parameter Code",
+        dataIndex: "parcode",
+        key: "parcode",
+        fixed: "left",
+    },
+    {
+        title: "Parameter Name",
+        dataIndex: "parname",
+        key: "parname",
+    },
+    {
+        title: "Method Id",
+        dataIndex: "methodid",
+        key: "methodid",
+    },
+    {
+        title: "Preservation",
+        dataIndex: "preservation",
+        key: "preservation",
+    },
+    {
+        title: "Storage Time Limit",
+        dataIndex: "storagetimelimit",
+        key: "storagetimelimit",
+    },
+    {
+        title: "Product Category Code",
+        dataIndex: "prodcatcode",
+        key: "prodcatcode",
+    },
+    {
+        title: "product Category Name",
+        dataIndex: "prodcatname",
+        key: "prodcatname",
+    },
+    {
+        title: "Unit Code",
+        dataIndex: "unitcode",
+        key: "unitcode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Alias Name",
+        dataIndex: "aliasname",
+        key: "aliasname",
+    },
+    {
+        title: "Duration",
+        dataIndex: "duration",
+        key: "duration",
+    },
+    {
+        title: "Akreditasi",
+        dataIndex: "akreditasi",
+        key: "akreditasi",
+    },
+    {
+        title: "Result Unit Code",
+        dataIndex: "resultunitcode",
+        key: "resultunitcode",
+    },
+    {
+        title: "Price",
+        dataIndex: "price",
+        key: "price",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+];
+
+const columnsFormula = [
+    {
+        title: "Formula Code",
+        dataIndex: "formulacode",
+        key: "formulacode",
+    },
+    {
+        title: "Formula Name",
+        dataIndex: "formulaname",
+        key: "formulaname",
+    },
+    {
+        title: "Formula",
+        dataIndex: "formula",
+        key: "formula",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    },
+];

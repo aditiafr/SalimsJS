@@ -1,20 +1,148 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, message } from 'antd';
+import { Form, Input, InputNumber, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getBuildingNextCode } from '../../../../Api/Master/getData';
-import { postBuilding } from '../../../../Api/Master/postData';
+import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
+import InputModal from '../../../../components/Dashboard/Global/InputModal';
+import { getBuilding, getManufacture, getProductCat, getUnit } from '../../../../Api/Master/getData';
+import FormSampleParams from './Params/form';
 
 const FormSample = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const prefix = PrefixGlobal();
+
+    const [sampleFormula, setSampleFormula] = useState([]);
+    const [sampleParams, setSampleParams] = useState([]);
+    const [sampleProduct, setSampleProduct] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [dataProdCat, setDataProdCat] = useState([]);
+    const [selectProdCat, setSelectProdCat] = useState("");
+    const [openProdCat, setOpenProdCat] = useState(null);
+    const ProdCatName = selectProdCat ? selectProdCat.productcategoryname : '';
+    const ProdCatCode = selectProdCat ? selectProdCat.productcategorycode : '';
+
+    const [dataUnit, setDataUnit] = useState([]);
+    const [selectUnit, setSelectUnit] = useState("");
+    const [openUnit, setOpenUnit] = useState(null);
+    const UnitName = selectUnit ? selectUnit.unitname : '';
+    const UnitCode = selectUnit ? selectUnit.unitcode : '';
+
+    const [dataBuilding, setDataBuilding] = useState([]);
+    const [selectBuilding, setSelectBuilding] = useState("");
+    const [openBuilding, setOpenBuilding] = useState(null);
+    const BuildingName = selectBuilding ? selectBuilding.buildingname : '';
+    const BuildingCode = selectBuilding ? selectBuilding.buildingcode : '';
+
+    const [dataManufacture, setDataManufacture] = useState([]);
+    const [selectManufacture, setSelectManufacture] = useState("");
+    const [openManufacture, setOpenManufacture] = useState(null);
+    const ManufactureName = selectManufacture ? selectManufacture.manufacturename : '';
+    const ManufactureCode = selectManufacture ? selectManufacture.manufacturecode : '';
+
+
+    // PRODUCT CATEGORY
+    useEffect(() => {
+        const fetchProdCat = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getProductCat(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataProdCat(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openProdCat) {
+            fetchProdCat();
+            setOpenProdCat(false);
+        }
+    }, [openProdCat]);
+
+    useEffect(() => {
+        form.setFieldsValue(
+            {
+                productcatname: ProdCatName,
+                unitname: UnitName,
+                buildingname: BuildingName,
+                manufacturename: ManufactureName
+            }
+        )
+    }, [BuildingName, ManufactureName, ProdCatName, UnitName, form]);
+
+    // UNIT
+    useEffect(() => {
+        const fetchUnit = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getUnit();
+                setDataUnit(res);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openUnit) {
+            fetchUnit()
+            setOpenUnit(false);
+        }
+    }, [openUnit]);
+
+    // BUILDING
+    useEffect(() => {
+        const fetchBuilding = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getBuilding(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataBuilding(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openBuilding) {
+            fetchBuilding();
+            setOpenBuilding(false);
+        }
+    }, [openBuilding]);
+
+    // MANUFACTURE
+    useEffect(() => {
+        const fetchManufacture = async () => {
+            try {
+                setIsLoading(true);
+                const res = await getManufacture(false);
+                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
+                setDataManufacture(filter);
+            } catch (error) {
+                console.log(error);
+            }
+            setIsLoading(false);
+        }
+        if (openManufacture) {
+            fetchManufacture();
+            setOpenManufacture(false);
+        }
+    }, [openManufacture]);
 
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
-            console.log(values);
+            const payload = {
+                ...values,
+                prodcatcode: ProdCatCode,
+                unitcode: UnitCode,
+                buildingcode: BuildingCode,
+                manufacturecode: ManufactureCode,
+                tempcode: "MTC001",
+            }
+            console.log(payload);
         } catch (error) {
             message.error(error.response.data.message);
             console.log(error);
@@ -43,20 +171,19 @@ const FormSample = () => {
 
                         <Form.Item
                             label="Sample Code"
-                            name="Samplecode"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please input your Sample Code!",
-                        //   },
-                        // ]}
+                            name="samplecode"
+                            rules={[
+                                {
+                                    validator: prefix,
+                                },
+                            ]}
                         >
                             <Input placeholder="Input Sample Code" maxLength={6} />
                         </Form.Item>
 
                         <Form.Item
                             label="Sample Name"
-                            name="Samplename"
+                            name="samplename"
                             rules={[
                                 {
                                     required: true,
@@ -67,116 +194,162 @@ const FormSample = () => {
                             <Input placeholder="Input Sample Name" autoFocus />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Address"
-                            name="address"
+                        <InputModal
+                            title="PRODUCT CATEGORY"
+                            label="Product Category"
+                            name="productcatname"
+                            dataSource={dataProdCat}
+                            loading={isLoading}
+                            columns={columnsProdCat}
+                            onData={(values) => setSelectProdCat(values)}
+                            onOpenModal={(values) => setOpenProdCat(values)}
+                        />
+
+                        <InputModal
+                            title="UNIT"
+                            label="Unit"
+                            name="unitname"
+                            dataSource={dataUnit}
+                            loading={isLoading}
+                            columns={columnsUnit}
+                            onData={(values) => setSelectUnit(values)}
+                            onOpenModal={(values) => setOpenUnit(values)}
+                        />
+
+                        <InputModal
+                            title="BUILDING"
+                            label="Building"
+                            name="buildingname"
+                            dataSource={dataBuilding}
+                            loading={isLoading}
+                            columns={columnsBuilding}
+                            onData={(values) => setSelectBuilding(values)}
+                            onOpenModal={(values) => setOpenBuilding(values)}
+                        />
+
+                        <InputModal
+                            title="MANUFACTURE"
+                            label="Manufacture"
+                            name="manufacturename"
+                            dataSource={dataManufacture}
+                            loading={isLoading}
+                            columns={columnsManufacture}
+                            onData={(values) => setSelectManufacture(values)}
+                            onOpenModal={(values) => setOpenManufacture(values)}
+                        />
+
+                        {/* <Form.Item
+                            label="tempcode"
+                            name="tempcode"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Address!",
+                                    message: "Please input your tempcode!",
                                 },
                             ]}
                         >
-                            <Input.TextArea placeholder="Input Address" />
-                        </Form.Item>
+                            <Input placeholder="Input tempcode" />
+                        </Form.Item> */}
 
                         <Form.Item
-                            label="Phone Number"
-                            name="phone"
-                            rules={[
-                                { required: true, message: "Please input your Phone Number!" },
-                                {
-                                    pattern: /^[0-9]+$/,
-                                    message: "Please input numbers only!",
-                                },
-                                // {
-                                //   min: 10,
-                                //   max: 13,
-                                //   message: "Phone number must be between 10 and 13 digits!",
-                                // },
-                            ]}
-                        >
-                            <Input
-                                type="tel"
-                                placeholder="Input Phone Number Example(08123456789)"
-                                maxLength={13}
-                                onKeyPress={(event) => {
-                                    if (!/[0-9]/.test(event.key)) {
-                                        event.preventDefault();
-                                    }
-                                }}
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Fax"
-                            name="fax"
+                            label="Formula QTY"
+                            name="formulaqty"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Fax!",
+                                    message: "Please input your Formula QTY!",
                                 },
                             ]}
                         >
-                            <Input placeholder="Input Fax" />
+                            <InputNumber placeholder="Input Formula QTY" className="w-full" />
                         </Form.Item>
 
                         <Form.Item
-                            label="Contact Name"
-                            name="contact"
+                            label="Alias Name"
+                            name="aliasname"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Contact Name!",
+                                    message: "Please input your Alias Name!",
                                 },
                             ]}
                         >
-                            <Input placeholder="Input Contact Name" />
+                            <Input placeholder="Input Alias Name" />
                         </Form.Item>
 
                         <Form.Item
-                            label="ZIP Code"
-                            name="zipcode"
+                            label="Shelf Life"
+                            name="shelflife"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your ZIP Code!",
+                                    message: "Please input your Shelf Life!",
                                 },
                             ]}
                         >
-                            <Input placeholder="Input ZIP Code" maxLength={5} />
+                            <InputNumber placeholder="Input Shelf Life" className="w-full" />
+                        </Form.Item>
+
+                        {/* <Form.Item
+                            label="Use Int Batch No"
+                            name="useintbatchno"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your Use Int Batch No!",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Input Use Int Batch No" />
                         </Form.Item>
 
                         <Form.Item
-                            label="City"
-                            name="city"
+                            label="Use Ext Batch No"
+                            name="useextbatchno"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your City!",
+                                    message: "Please input your Use Ext Batch No!",
                                 },
                             ]}
                         >
-                            <Input placeholder="Input City" />
+                            <Input placeholder="Input Use Ext Batch No" />
+                        </Form.Item> */}
+
+                        <Form.Item
+                            label="Unit Code Pack"
+                            name="unitcodepack"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your Unit Code Pack!",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Input Unit Code Pack" />
                         </Form.Item>
 
                         <Form.Item
-                            label="Country"
-                            name="country"
+                            label="Formula QTY Pack"
+                            name="formulaqtypack"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Country!",
+                                    message: "Please input your Formula QTY Pack!",
                                 },
                             ]}
                         >
-                            <Input placeholder="Input Country" />
+                            <InputNumber placeholder="Input Formula QTY Pack" className="w-full" />
                         </Form.Item>
 
                         <Form.Item label="Description" name="description">
                             <Input.TextArea placeholder="Input Description" />
                         </Form.Item>
 
+                    </div>
+                    
+                    <div className="m-4 p-4 border rounded-md">
+                        <FormSampleParams onSaveData={(values) => setSampleParams(values)} />
                     </div>
 
                     <ButtonSubmit onReset={onReset} onLoading={loading} />
@@ -188,3 +361,114 @@ const FormSample = () => {
 };
 
 export default FormSample;
+
+export const columnsProdCat = [
+    {
+        title: "Product Category Code",
+        dataIndex: "productcategorycode",
+        key: "productcategorycode",
+    },
+    {
+        title: "Product Category Name",
+        dataIndex: "productcategoryname",
+        key: "productcategoryname",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "Description",
+        render: (text) => (text ?? "N/A"),
+    }
+];
+
+export const columnsUnit = [
+    {
+        title: "Unit Code",
+        dataIndex: "unitcode",
+        key: "unitcode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+];
+
+
+export const columnsBuilding = [
+    {
+        title: "Building Code",
+        dataIndex: "buildingcode",
+        key: "buildingcode",
+        fixed: "left",
+    },
+    {
+        title: "Building Name",
+        dataIndex: "buildingname",
+        key: "buildingname",
+    },
+    {
+        title: "Address",
+        dataIndex: "address",
+        key: "address",
+        width: 350,
+    },
+    {
+        title: "Phone Number",
+        dataIndex: "phone",
+        key: "phone",
+    },
+    {
+        title: "Fax",
+        dataIndex: "fax",
+        key: "fax",
+    },
+    {
+        title: "Contact Name",
+        dataIndex: "contact",
+        key: "contact",
+    },
+    {
+        title: "Zip Code",
+        dataIndex: "zipcode",
+        key: "zipcode",
+    },
+    {
+        title: "City",
+        dataIndex: "city",
+        key: "city",
+    },
+    {
+        title: "Country",
+        dataIndex: "country",
+        key: "country",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+];
+
+export const columnsManufacture = [
+    {
+        title: "Manufacture Code",
+        dataIndex: "manufacturecode",
+        key: "manufacturecode",
+    },
+    {
+        title: "Manufacture Name",
+        dataIndex: "manufacturename",
+        key: "manufacturename",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    }
+];

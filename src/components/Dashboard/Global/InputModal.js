@@ -1,16 +1,25 @@
 import { Button, Form, Input, Modal, Table } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderTitle from './HeaderTitle';
 import SearchInput from './Table/SearchInput';
 
-const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal, onDetail }) => {
+const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal, onDetail, onEdit }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
+    useEffect(() => {
+        if (onEdit) {
+            setSelectedRowKeys([onEdit.key]);
+        }
+    }, [onEdit]);
+
+
     const showModal = () => {
         setIsModalOpen(true);
-        onOpenModal(true);
+        if (!onEdit) {
+            onOpenModal(true);
+        }
     };
 
     const handleSearch = (e) => {
@@ -25,22 +34,19 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
 
     const rowSelection = {
         type: "radio",
-        selectedRowKeys, // Bind selected row keys to rowSelection
+        selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
-            setSelectedRowKeys(selectedRowKeys); // Update selected row keys state
+            setSelectedRowKeys(selectedRowKeys);
             onData(selectedRows[0]);
             setIsModalOpen(false);
         },
     };
 
-    // Handle row click event
     const handleRowClick = (record, rowIndex) => {
-        setSelectedRowKeys([record.key]); // Update selected row keys
+        setSelectedRowKeys([record.key]);
         onData(record);
         setIsModalOpen(false);
     };
-
-    // console.log(columns);
 
 
     return (

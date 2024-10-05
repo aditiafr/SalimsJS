@@ -33,6 +33,28 @@ export const getUnit = async () => {
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
+export const getFormula = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/formula/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getSample = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/sample/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
 export const getProduct = async () => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/product/list`, {
@@ -68,7 +90,7 @@ export const getWarehouse = async (Suspend) => {
 
 export const getZona = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=${true || 1}` : ''
     const response = await axios.get(`${baseURL}/zona/list${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -80,7 +102,7 @@ export const getZona = async (Suspend) => {
 
 export const getSubZona = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=${true || 1}` : ''
     const response = await axios.get(`${baseURL}/subzona/list${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -292,7 +314,7 @@ export const getproductType = async (Suspend) => {
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
-export const getproductCat = async (Suspend) => {
+export const getProductCat = async (Suspend) => {
     const token = Cookies.get('access_token');
     const isSuspend = !Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/product-category/list?sortParam=prodcatcode&sortOrder=desc${isSuspend}`, {
