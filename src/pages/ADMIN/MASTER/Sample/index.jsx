@@ -6,38 +6,6 @@ import { getSample } from "../../../../Api/Master/getData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import SampleParams from "./Params";
 
-// const data = [
-//   { params: '#BJ1#', des: 'Berat Jenis Sample', value: '1' },
-//   { params: '@Bps@', des: 'Berat Penimbangan standar', value: '3' },
-//   { params: '@Bpu@', des: 'Berat penimbangan uji', value: '6' },
-//   { params: '@Cws@', des: 'Purity baku pembanding yang digunakan', value: '8' },
-//   { params: '@Fps@', des: 'Faktor pengenceran standard', value: '4' },
-//   { params: '@Fpu@', des: 'Faktor pengenceran uji', value: '7' },
-//   { params: '@Ls@', des: 'Luas Area Standar', value: '5' },
-//   { params: '@Lu@', des: 'Luas area uji', value: '2' }
-// ];
-
-// let total = "((@Lu@ * (@Bps@ / @Fps@ * 1000)) / (@Ls@ * (@Bpu@ * 1.5) / (@Fpu@ * #BJ1#) * 1000)) * @Cws@";
-
-// const replaceParams = (expression, data) => {
-//   data.forEach(({ params, value }) => {
-//     const regex = new RegExp(params, 'g');
-//     expression = expression.replace(regex, value);
-//   });
-//   return expression;
-// };
-
-// let evaluatedTotal = replaceParams(total, data);
-
-// try {
-//   // eslint-disable-next-line no-eval
-//   const result = eval(evaluatedTotal);
-//   console.log("Hasil perhitungan:", result);
-// } catch (error) {
-//   console.error("Error saat menghitung ekspresi:", error);
-// }
-
-
 const Sample = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -198,8 +166,8 @@ const expandedRowRender = (record) => {
 
   return (
     <>
-    <h1 className="text-2xl font-semibold my-2">Parameter</h1>
-    <SampleParams dataSource={record.sample_pa} />
+      <h1 className="text-2xl font-semibold my-2">Parameter</h1>
+      <SampleParams dataSource={record.sample_pa} />
     </>
   )
 };

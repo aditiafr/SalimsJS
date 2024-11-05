@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Typography, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { getFormula } from '../../../../../../Api/Master/getData';
-import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
+import InputModal from '../../../../../components/Dashboard/Global/InputModal';
+import { getParameter } from '../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -14,39 +14,39 @@ const EditableCell = ({
     record,
     index,
     children,
-    onDataFormula,
+    onDataParameter,
     ...restProps
 }) => {
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [dataParameter, setDataParameter] = useState([]);
+    const [selectParameter, setSelectParameter] = useState("");
+    const [openParameter, setOpenParameter] = useState(null);
 
-    const [dataFormula, setDataFormula] = useState([]);
-    const [selectFormula, setSelectFormula] = useState("");
-    const [openFormula, setOpenFormula] = useState(null);
-
-    // FORMULA
     useEffect(() => {
-        const fetchFormula = async () => {
+        const fetchParameter = async () => {
             try {
-                setIsLoading(true);
-                const res = await getFormula();
-                setDataFormula(res);
+                const res = await getParameter();
+                setDataParameter(res);
             } catch (error) {
                 console.log(error);
             }
+        }
+
+        if (openParameter) {
+            fetchParameter();
+            setOpenParameter(false);
             setIsLoading(false);
         }
-        if (openFormula) {
-            fetchFormula();
-            setOpenFormula(false);
-        }
-    }, [openFormula]);
+
+    }, [openParameter]);
 
     useEffect(() => {
-        if (selectFormula) {
-            onDataFormula(selectFormula);
+        if (selectParameter) {
+            onDataParameter(selectParameter);
         }
-    }, [onDataFormula, selectFormula]);
+    }, [onDataParameter, selectParameter]);
+
 
 
     return (
@@ -54,35 +54,45 @@ const EditableCell = ({
             {editing ? (
                 <div>
 
-                    {dataIndex === 'description' ? (
-                        <Form.Item
-                            name={dataIndex}
-                            style={{
-                                margin: 0,
-                            }}
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: `Please Input ${title}!`,
-                            //     },
-                            // ]}
-                        >
-                            <Input.TextArea rows={4} placeholder={title} />
-                        </Form.Item>
+                    {
+                        dataIndex === 'refvalue1' ||
+                            dataIndex === 'refvalue2' ||
+                            dataIndex === 'refvalue3' ||
+                            dataIndex === 'refvalue4' ||
+                            dataIndex === 'refvalue5'
+                            ? (
+                                <Form.Item
+                                    name={dataIndex}
+                                    style={{
+                                        margin: 0,
+                                    }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: `Please Input ${title}!`,
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber min={0} placeholder={title} className="w-full" />
+                                </Form.Item>
 
-                    ) : dataIndex === "formulacode" && (
-                        <InputModal
-                            title="FORMULA"
-                            label="Formula Name"
-                            name={dataIndex}
-                            dataSource={dataFormula}
-                            loading={isLoading}
-                            columns={columnsFormula}
-                            onData={(values) => setSelectFormula(values)}
-                            onOpenModal={(values) => setOpenFormula(values)}
-                            onDetail={true}
-                        />
-                    )}
+                            ) :
+                            dataIndex === 'parname' && editing && (
+
+                                <InputModal
+                                    title="PARAMETER"
+                                    label="Parameter Name"
+                                    name={dataIndex}
+                                    dataSource={dataParameter}
+                                    loading={isLoading}
+                                    columns={columnsParameter}
+                                    onData={(values) => setSelectParameter(values)}
+                                    onOpenModal={(values) => setOpenParameter(values)}
+                                    onDetail={true}
+                                />
+
+                            )
+                    }
 
                 </div>
             ) : (
@@ -94,24 +104,27 @@ const EditableCell = ({
 };
 
 
-const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
-    // console.log(onEdit);
-
+const FormDetailQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [count, setCount] = useState(0);
 
     const [editingKey, setEditingKey] = useState('');
+    // const [loading, setLoading] = useState(false);
+    // const [isDisable, setIsDisable] = useState(true);
 
-    const [dataFormula, setDataFormula] = useState(null);
+    const [dataParameter, setDataParameter] = useState(null);
 
     useEffect(() => {
-        if (form && dataFormula) {
-            form.setFieldsValue({ formulacode: dataFormula.formulaname });
+        if (form && dataParameter) {
+            form.setFieldsValue({
+                parname: dataParameter.parname
+            })
         }
-    }, [dataFormula, form])
+    }, [dataParameter, form]);
+
 
     useEffect(() => {
         if (onEdit) {
@@ -183,13 +196,11 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
             if (index > -1) {
                 const item = newData[index];
-                const FormulaCode = dataFormula.formulacode
-                const FormulaVersion = dataFormula.version
+                const ParCode = dataParameter.parcode;
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    formulacode: FormulaCode,
-                    formulaversion: FormulaVersion
+                    parcode: ParCode
                 });
                 setData(newData);
                 setEditingKey('');
@@ -226,10 +237,14 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            detailno: num,
-            parcode: onParamCode,
-            formulacode: '',
-            description: '',
+            // userid: "CUS" + code,
+            parcode: '',
+            parname: '',
+            refvalue1: '',
+            refvalue2: '',
+            refvalue3: '',
+            refvalue4: '',
+            refvalue5: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
@@ -264,28 +279,38 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             width: 80,
         },
         // {
-        //     title: 'detailno',
-        //     dataIndex: 'detailno',
-        //     editable: true,
-        // },
-        // {
         //     title: 'Parameter Code',
         //     dataIndex: 'parcode',
         //     editable: true,
         // },
         {
-            title: 'Formula',
-            dataIndex: 'formulacode',
+            title: 'Parameter Name',
+            dataIndex: 'parname',
             editable: true,
         },
-        // {
-        //     title: 'Formula version',
-        //     dataIndex: 'formulaversion',
-        //     editable: true,
-        // },
         {
-            title: 'Description',
-            dataIndex: 'description',
+            title: 'Reference Value 1',
+            dataIndex: 'refvalue1',
+            editable: true,
+        },
+        {
+            title: 'Reference Value 2',
+            dataIndex: 'refvalue2',
+            editable: true,
+        },
+        {
+            title: 'Reference Value 3',
+            dataIndex: 'refvalue3',
+            editable: true,
+        },
+        {
+            title: 'Reference Value 4',
+            dataIndex: 'refvalue4',
+            editable: true,
+        },
+        {
+            title: 'Reference Value 5',
+            dataIndex: 'refvalue5',
             editable: true,
         },
     ];
@@ -334,7 +359,7 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
-                onDataFormula: (values) => setDataFormula(values)
+                onDataParameter: (values) => setDataParameter(values),
             }),
             ...col,
         };
@@ -344,14 +369,14 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
         <Form form={form} component={false}>
             <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    FORMULA
+                    DETAIL QUALITY REFERENCE
                 </p>
                 {!onApproval && (
                     <Button
                         onClick={handleAdd}
                         color="primary"
                         variant="contained"
-                        disabled={!!editingKey || !onParamCode}
+                        disabled={!!editingKey}
                     >
                         + Add Data
                     </Button>
@@ -369,33 +394,98 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 rowClassName="editable-row"
                 pagination={false}
                 scroll={{
-                    x: 1000
+                    x: 1500
                 }}
             />
         </Form>
     );
 };
-export default FormSampleFormula;
+export default FormDetailQualityReference;
 
-const columnsFormula = [
+
+
+const columnsParameter = [
     {
-        title: "Formula Code",
-        dataIndex: "formulacode",
-        key: "formulacode",
+        title: "No",
+        dataIndex: "key",
+        key: "key",
+        width: 60,
+        fixed: "left",
     },
     {
-        title: "Formula Name",
-        dataIndex: "formulaname",
-        key: "formulaname",
+        title: "Parameter Code",
+        dataIndex: "parcode",
+        key: "parcode",
+        fixed: "left",
     },
     {
-        title: "Formula",
-        dataIndex: "formula",
-        key: "formula",
+        title: "Parameter Name",
+        dataIndex: "parname",
+        key: "parname",
+    },
+    {
+        title: "Method Id",
+        dataIndex: "methodid",
+        key: "methodid",
+    },
+    {
+        title: "Preservation",
+        dataIndex: "preservation",
+        key: "preservation",
+    },
+    {
+        title: "Storage Time Limit",
+        dataIndex: "storagetimelimit",
+        key: "storagetimelimit",
+    },
+    {
+        title: "Product Category Code",
+        dataIndex: "prodcatcode",
+        key: "prodcatcode",
+    },
+    {
+        title: "product Category Name",
+        dataIndex: "prodcatname",
+        key: "prodcatname",
+    },
+    {
+        title: "Unit Code",
+        dataIndex: "unitcode",
+        key: "unitcode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Alias Name",
+        dataIndex: "aliasname",
+        key: "aliasname",
+    },
+    {
+        title: "Duration",
+        dataIndex: "duration",
+        key: "duration",
+    },
+    {
+        title: "Akreditasi",
+        dataIndex: "akreditasi",
+        key: "akreditasi",
+    },
+    {
+        title: "Result Unit Code",
+        dataIndex: "resultunitcode",
+        key: "resultunitcode",
+    },
+    {
+        title: "Price",
+        dataIndex: "price",
+        key: "price",
     },
     {
         title: "Description",
         dataIndex: "description",
         key: "description",
-    },
+    }
 ];

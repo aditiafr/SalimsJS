@@ -12,8 +12,20 @@ const baseURL = process.env.REACT_APP_BASEURL;
 
 export const getBuilding = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/building/list?sortParam=buildingcode&sortOrder=asc${isSuspend}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getQualityReference = async (Suspend) => {
+    const token = Cookies.get('access_token');
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
+    const response = await axios.get(`${baseURL}/quality/reference/list?sortParam=qrid&sortOrder=asc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -29,7 +41,7 @@ export const getUnit = async () => {
             Authorization: `Bearer ${token}`
         }
     });
-    
+
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
@@ -40,7 +52,7 @@ export const getFormula = async () => {
             Authorization: `Bearer ${token}`
         }
     });
-    
+
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
@@ -51,7 +63,7 @@ export const getSample = async () => {
             Authorization: `Bearer ${token}`
         }
     });
-    
+
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
@@ -78,7 +90,7 @@ export const getBuildingNextCode = async () => {
 
 export const getWarehouse = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/warehouse/list?sortParam=warehousecode&sortOrder=desc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -187,7 +199,7 @@ export const getSampleLocationNextCode = async (BuildingCode) => {
 
 export const getManufacture = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/manufacture/list?sortParam=manufacturecode&sortOrder=desc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -304,7 +316,7 @@ export const getCustomer = async () => {
 
 export const getproductType = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/product-type/list?sortParam=prodtypecode&sortOrder=desc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -316,7 +328,7 @@ export const getproductType = async (Suspend) => {
 
 export const getProductCat = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const isSuspend = !Suspend ? `&isSuspend=0` : ''
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
     const response = await axios.get(`${baseURL}/product-category/list?sortParam=prodcatcode&sortOrder=desc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`

@@ -1,39 +1,17 @@
-import { Button, Input, Table, Tag } from "antd";
-import React, { useState } from "react";
+import { Button, Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { getQualityReference } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
+import DetailQualityReference from "./Detail";
+import EditQualityReference from "./edit";
+import DeleteQualityReference from "./delete";
 
-const data = [
-  {
-    qrid: "QR001",
-    qrname: "Premium Grade",
-    prodcatcode: "ELEC",
-    refvalueqty: 100,
-    description: "Highest quality rating for electronic products, meeting all premium standards",
-    issuspend: false
-  },
-  {
-    qrid: "QR002",
-    qrname: "Standard Grade",
-    prodcatcode: "FOOD",
-    refvalueqty: 85,
-    description: "Normal quality rating for food products, meeting all safety and quality standards",
-    issuspend: true
-  },
-  {
-    qrid: "QR003",
-    qrname: "Economy Grade",
-    prodcatcode: "TEXT",
-    refvalueqty: 70,
-    description: "Basic quality rating for textile products, meeting minimum quality standards",
-    issuspend: true
-  }
-];
-
-const QualityRefference = () => {
-  // const [data, setData] = useState([]);
+const QualityReference = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  // const [loading, setLoading] = useState(false);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
@@ -45,6 +23,21 @@ const QualityRefference = () => {
     )
   );
 
+  const fetchData = async () => {
+    try {
+      const res = await getQualityReference();
+      setData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+    setIsLoading(false);
+  }, []);
+
+
   const columns = [
     {
       title: "No",
@@ -54,27 +47,27 @@ const QualityRefference = () => {
       fixed: "left",
     },
     {
-      title: "qrid",
+      title: "QR ID",
       dataIndex: "qrid",
       key: "qrid",
     },
     {
-      title: "qrname",
+      title: "QR Name",
       dataIndex: "qrname",
       key: "qrname",
     },
     {
-      title: "prodcatcode",
+      title: "Product Category Code",
       dataIndex: "prodcatcode",
       key: "prodcatcode",
     },
     {
-      title: "refvalueqty",
+      title: "Reference Value Quantity",
       dataIndex: "refvalueqty",
       key: "refvalueqty",
     },
     {
-      title: "description",
+      title: "Description",
       dataIndex: "description",
       key: "description",
     },
@@ -86,33 +79,41 @@ const QualityRefference = () => {
         <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditQualityReference dataSource={record} onEdit={fetchData} />
+          <DeleteQualityReference dataSource={record} onDelete={fetchData} />
+        </Space>
+      ),
+    },
   ];
 
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle title="QualityRefference" subtitle="All data QualityRefference" />
+        <HeaderTitle title="QUALITY REFERENCE" subtitle="All data QualityReference" />
         <div>
-          <Link to="/master/quality_refference/form">
+          <Link to="/master/quality_reference/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Input
-            placeholder="search..."
-            allowClear
-            value={searchText}
-            onChange={handleSearch}
-            style={{ width: 200 }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={loading}
+          loading={isLoading}
           rowSelection
           columns={columns}
           dataSource={filteredData}
+          expandable={{
+            expandedRowRender
+          }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
@@ -126,4 +127,12 @@ const QualityRefference = () => {
   );
 };
 
-export default QualityRefference;
+export default QualityReference;
+
+
+
+const expandedRowRender = (record) => {
+  return (
+    <DetailQualityReference dataSource={record.detail} />
+  )
+}

@@ -6,6 +6,7 @@ import { getTran } from "../Api/General/GetData";
 import { ViewPages } from "./Pages/viewPages";
 import { FormPages } from "./Pages/formPages";
 import Dashboard from "../pages/ADMIN/Dashboard";
+import FormSampleParameter from "../pages/ADMIN/MASTER/Sample/Params/form";
 
 const RoutesDashboard = () => {
 
@@ -42,6 +43,12 @@ const RoutesDashboard = () => {
       path: `/${item.trantype.toLowerCase()}/${item.tranformname.toLowerCase()}/form`,
       element: item.page,
     })),
+
+    {
+      path: "/master/sample/form/parameter",
+      element: <FormSampleParameter />,
+    },
+    
   ];
 
   return (

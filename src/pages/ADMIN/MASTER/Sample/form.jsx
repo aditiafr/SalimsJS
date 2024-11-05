@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, InputNumber, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import InputModal from '../../../../components/Dashboard/Global/InputModal';
 import { getBuilding, getManufacture, getProductCat, getUnit } from '../../../../Api/Master/getData';
 import FormSampleParams from './Params/form';
+import SampleParams from './Params';
 
 const FormSample = () => {
     const [form] = Form.useForm();
@@ -347,9 +348,16 @@ const FormSample = () => {
                         </Form.Item>
 
                     </div>
-                    
+
                     <div className="m-4 p-4 border rounded-md">
-                        <FormSampleParams onSaveData={(values) => setSampleParams(values)} />
+                        <div className="flex justify-between">
+                            <h1 className="text-2xl font-semibold my-2">Parameter</h1>
+                            <Link to="parameter">
+                                <Button type="primary">+ Add New</Button>
+                            </Link>
+                        </div>
+                        <SampleParams dataSource={[]} />
+                        {/* <FormSampleParams onSaveData={(values) => setSampleParams(values)} /> */}
                     </div>
 
                     <ButtonSubmit onReset={onReset} onLoading={loading} />

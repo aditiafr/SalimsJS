@@ -54,6 +54,9 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
             <Form.Item
                 label={!onDetail ? label : ''}
                 name={name}
+                style={
+                    onDetail && { margin: 0, }
+                }
                 rules={[
                     {
                         required: true,
@@ -61,7 +64,7 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
                     },
                 ]}
             >
-                <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
+                <Input onClick={showModal} readOnly placeholder={`${label}`} />
             </Form.Item>
 
             <Modal

@@ -14,6 +14,16 @@ export const updateBuilding = async (BuildingCode, Data) => {
     return response;
 }
 
+export const updateQualityReference = async (QualityId, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/quality/reference/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const updateProduct = async (Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.put(`${baseUrl}/product/update`, Data, {
