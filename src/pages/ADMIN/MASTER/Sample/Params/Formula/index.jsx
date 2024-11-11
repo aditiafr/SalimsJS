@@ -22,8 +22,8 @@ const columns = [
     key: "detailno",
   },
   {
-    title: "formulaname",
-    dataIndex: "Formula Name",
+    title: "Formula Name",
+    dataIndex: "formulaname",
     key: "formulaname",
   },
   {

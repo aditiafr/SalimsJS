@@ -14,12 +14,10 @@ const FormSample = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const prefix = PrefixGlobal();
+    
+    const dataParm = JSON.parse(localStorage.getItem('DataSampleParm')) || [];
 
-    const [sampleFormula, setSampleFormula] = useState([]);
-    const [sampleParams, setSampleParams] = useState([]);
-    const [sampleProduct, setSampleProduct] = useState([]);
-
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [dataProdCat, setDataProdCat] = useState([]);
     const [selectProdCat, setSelectProdCat] = useState("");
@@ -50,18 +48,17 @@ const FormSample = () => {
     useEffect(() => {
         const fetchProdCat = async () => {
             try {
-                setIsLoading(true);
                 const res = await getProductCat(false);
                 const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
                 setDataProdCat(filter);
             } catch (error) {
                 console.log(error);
             }
-            setIsLoading(false);
         }
         if (openProdCat) {
             fetchProdCat();
             setOpenProdCat(false);
+            setIsLoading(false);
         }
     }, [openProdCat]);
 
@@ -80,17 +77,16 @@ const FormSample = () => {
     useEffect(() => {
         const fetchUnit = async () => {
             try {
-                setIsLoading(true);
                 const res = await getUnit();
                 setDataUnit(res);
             } catch (error) {
                 console.log(error);
             }
-            setIsLoading(false);
         }
         if (openUnit) {
             fetchUnit()
             setOpenUnit(false);
+            setIsLoading(false);
         }
     }, [openUnit]);
 
@@ -98,18 +94,17 @@ const FormSample = () => {
     useEffect(() => {
         const fetchBuilding = async () => {
             try {
-                setIsLoading(true);
                 const res = await getBuilding(false);
                 const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
                 setDataBuilding(filter);
             } catch (error) {
                 console.log(error);
             }
-            setIsLoading(false);
         }
         if (openBuilding) {
             fetchBuilding();
             setOpenBuilding(false);
+            setIsLoading(false);
         }
     }, [openBuilding]);
 
@@ -117,18 +112,17 @@ const FormSample = () => {
     useEffect(() => {
         const fetchManufacture = async () => {
             try {
-                setIsLoading(true);
                 const res = await getManufacture(false);
                 const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
                 setDataManufacture(filter);
             } catch (error) {
                 console.log(error);
             }
-            setIsLoading(false);
         }
         if (openManufacture) {
             fetchManufacture();
             setOpenManufacture(false);
+            setIsLoading(false);
         }
     }, [openManufacture]);
 
@@ -356,7 +350,7 @@ const FormSample = () => {
                                 <Button type="primary">+ Add New</Button>
                             </Link>
                         </div>
-                        <SampleParams dataSource={[]} />
+                        <SampleParams dataSource={dataParm} />
                         {/* <FormSampleParams onSaveData={(values) => setSampleParams(values)} /> */}
                     </div>
 

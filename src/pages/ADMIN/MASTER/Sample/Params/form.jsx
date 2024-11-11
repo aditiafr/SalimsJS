@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, InputNumber, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import HeaderTitle from '../../../../../components/Dashboard/Global/HeaderTitle';
 import ButtonSubmit from '../../../../../components/Dashboard/Global/Button/ButtonSubmit';
 import InputModal from '../../../../../components/Dashboard/Global/InputModal';
@@ -24,12 +24,39 @@ const FormSampleParameter = () => {
   const [sampleFormula, setSampleFormula] = useState([]);
   const [sampleProduct, setSampleProduct] = useState([]);
 
+  const { code } = useParams();
+  const [dataParams, setDataParams] = useState(null);
+
+  useEffect(() => {
+    if (code) {
+      const dataParm = JSON.parse(localStorage.getItem('DataSampleParm'));
+      const filter = dataParm.filter(item => item.parcode === code);
+      setDataParams(filter[0]);
+      setOpenParameter(true);
+    }
+  }, [code, form]);
+
+  useEffect(() => {
+    if (code && dataParams) {
+      form.setFieldsValue(dataParams);
+      // setSampleFormula(dataParams.sample_fo);
+      // setSampleProduct(dataParams.sample_pr);
+    }
+  }, [code, dataParams, form]);
+
+
   // PARAMETER
   useEffect(() => {
     const fetchParameter = async () => {
       try {
         const res = await getParameter();
         setDataParameter(res);
+
+        if (code && dataParams) {
+          const selected = res.filter(item => item.parcode === dataParams.parcode);
+          setSelectParameter(selected[0])
+        }
+
       } catch (error) {
         console.log(error);
       }
@@ -41,7 +68,7 @@ const FormSampleParameter = () => {
       setIsLoading(false)
     }
 
-  }, [openParameter]);
+  }, [code, dataParams, openParameter]);
 
 
   useEffect(() => {
@@ -57,9 +84,28 @@ const FormSampleParameter = () => {
       const payload = {
         ...values,
         branchcode: "0001",
+        parname: ParameterName,
         parcode: ParameterCode,
+        sample_fo: sampleFormula,
+        sample_pr: sampleProduct,
       };
-      console.log(payload);
+      // console.log(payload);
+
+      const existingData = JSON.parse(localStorage.getItem('DataSampleParm')) || [];
+      if (code) {
+        const updatedData = existingData.map((item) =>
+          item.parcode === code ? { ...item, ...values } : item
+        );
+
+        localStorage.setItem('DataSampleParm', JSON.stringify(updatedData));
+        message.success("Success Update Data!")
+      } else {
+        const updatedData = [...existingData, payload];
+        localStorage.setItem('DataSampleParm', JSON.stringify(updatedData));
+        message.success("Success Add Data!");
+      }
+      navigate(-1);
+
     } catch (error) {
       console.log(error);
     }
@@ -106,7 +152,7 @@ const FormSampleParameter = () => {
                 },
               ]}
             >
-              <Input placeholder="Input Request Quantity" />
+              <InputNumber placeholder="Input Request Quantity" className="w-full" />
             </Form.Item>
 
             <Form.Item
@@ -171,7 +217,7 @@ const FormSampleParameter = () => {
                 },
               ]}
             >
-              <InputNumber placeholder="Input Frequency" className="w-full" />
+              <Input placeholder="Input Frequency" className="w-full" />
             </Form.Item>
 
             <Form.Item
@@ -193,6 +239,7 @@ const FormSampleParameter = () => {
             <FormSampleFormula
               onSaveData={(values) => setSampleFormula(values)}
               onParamCode={ParameterCode}
+              onEdit={dataParams ? dataParams.sample_fo : ''}
             />
           </div>
 
@@ -200,6 +247,7 @@ const FormSampleParameter = () => {
             <FormSampleProduct
               onSaveData={(values) => setSampleProduct(values)}
               onParamCode={ParameterCode}
+              onEdit={dataParams ? dataParams.sample_pr : ''}
             />
           </div>
 

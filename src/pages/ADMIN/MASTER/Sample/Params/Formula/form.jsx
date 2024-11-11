@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Typography, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -14,12 +14,22 @@ const EditableCell = ({
     record,
     index,
     children,
+    onData,
     onDataFormula,
+    onEdit,
     ...restProps
 }) => {
 
-    const [isLoading, setIsLoading] = useState(false);
+    // console.log(record);
+    useEffect(() => {
+        if (onEdit) {
+            setOpenFormula(true);
+        }
+    }, [onEdit]);
 
+
+
+    const [isLoading, setIsLoading] = useState(false);
     const [dataFormula, setDataFormula] = useState([]);
     const [selectFormula, setSelectFormula] = useState("");
     const [openFormula, setOpenFormula] = useState(null);
@@ -29,8 +39,17 @@ const EditableCell = ({
         const fetchFormula = async () => {
             try {
                 setIsLoading(true);
+                const formulaCode = onData.map(item => item.formulacode);
+
                 const res = await getFormula();
-                setDataFormula(res);
+                const filter = res.filter(item => !formulaCode.includes(item.formulacode));
+                setDataFormula(filter);
+
+                if (onEdit) {
+                    const selected = res.filter(item => item.formulacode === record.formulacode);
+                    setSelectFormula(selected[0]);
+                }
+
             } catch (error) {
                 console.log(error);
             }
@@ -40,37 +59,28 @@ const EditableCell = ({
             fetchFormula();
             setOpenFormula(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openFormula]);
 
     useEffect(() => {
         if (selectFormula) {
             onDataFormula(selectFormula);
         }
-    }, [onDataFormula, selectFormula]);
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectFormula]);
 
     return (
         <td {...restProps}>
             {editing ? (
                 <div>
-
                     {dataIndex === 'description' ? (
                         <Form.Item
                             name={dataIndex}
-                            style={{
-                                margin: 0,
-                            }}
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: `Please Input ${title}!`,
-                            //     },
-                            // ]}
+                            style={{ margin: 0 }}
                         >
                             <Input.TextArea rows={4} placeholder={title} />
                         </Form.Item>
-
-                    ) : dataIndex === "formulacode" && (
+                    ) : dataIndex === "formulaname" ? (
                         <InputModal
                             title="FORMULA"
                             label="Formula Name"
@@ -82,14 +92,20 @@ const EditableCell = ({
                             onOpenModal={(values) => setOpenFormula(values)}
                             onDetail={true}
                         />
-                    )}
-
+                    ) : (dataIndex === "lspec" || dataIndex === "uspec") ? (
+                        <Form.Item
+                            name={dataIndex}
+                            style={{ margin: 0 }}
+                        >
+                            <InputNumber placeholder={title} className="w-full" />
+                        </Form.Item>
+                    ) : null}
                 </div>
             ) : (
                 children
-            )
-            }
-        </td >
+            )}
+        </td>
+
     );
 };
 
@@ -97,7 +113,6 @@ const EditableCell = ({
 const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
     // console.log(onEdit);
-
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -109,7 +124,7 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
     useEffect(() => {
         if (form && dataFormula) {
-            form.setFieldsValue({ formulacode: dataFormula.formulaname });
+            form.setFieldsValue({ formulaname: dataFormula.formulaname });
         }
     }, [dataFormula, form])
 
@@ -133,6 +148,7 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             ...record,
             // DocExpDate: docExpDate,
         });
+
         setEditingKey(record.key);
     };
 
@@ -229,7 +245,10 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             detailno: num,
             parcode: onParamCode,
             formulacode: '',
+            formulaname: '',
             description: '',
+            lspec: '',
+            uspec: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
@@ -263,26 +282,21 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             sorter: (a, b) => a.key - b.key,
             width: 80,
         },
-        // {
-        //     title: 'detailno',
-        //     dataIndex: 'detailno',
-        //     editable: true,
-        // },
-        // {
-        //     title: 'Parameter Code',
-        //     dataIndex: 'parcode',
-        //     editable: true,
-        // },
         {
             title: 'Formula',
-            dataIndex: 'formulacode',
+            dataIndex: 'formulaname',
             editable: true,
         },
-        // {
-        //     title: 'Formula version',
-        //     dataIndex: 'formulaversion',
-        //     editable: true,
-        // },
+        {
+            title: 'Lower Spec',
+            dataIndex: 'lspec',
+            editable: true,
+        },
+        {
+            title: 'Upper Spec',
+            dataIndex: 'uspec',
+            editable: true,
+        },
         {
             title: 'Description',
             dataIndex: 'description',
@@ -334,7 +348,9 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
-                onDataFormula: (values) => setDataFormula(values)
+                onData: data,
+                onDataFormula: (values) => setDataFormula(values),
+                onEdit: onEdit,
             }),
             ...col,
         };

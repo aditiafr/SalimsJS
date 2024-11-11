@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Typography, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { getFormula } from '../../../../../../Api/Master/getData';
+import { getFormula, getProduct } from '../../../../../../Api/Master/getData';
 import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
 
 const EditableCell = ({
@@ -14,39 +14,59 @@ const EditableCell = ({
     record,
     index,
     children,
-    onDataFormula,
+    onData,
+    onDataProduct,
+    onEdit,
     ...restProps
 }) => {
 
+    useEffect(() => {
+        if (onEdit) {
+            setOpenProduct(true);
+        }
+    }, [onEdit]);
+
+
     const [isLoading, setIsLoading] = useState(false);
 
-    const [dataFormula, setDataFormula] = useState([]);
-    const [selectFormula, setSelectFormula] = useState("");
-    const [openFormula, setOpenFormula] = useState(null);
+    const [dataProduct, setDataProduct] = useState([]);
+    const [selectProduct, setSelectProduct] = useState("");
+    const [openProduct, setOpenProduct] = useState(null);
 
-    // FORMULA
+    // PRODUCT
     useEffect(() => {
-        const fetchFormula = async () => {
+        const fetchProduct = async () => {
             try {
                 setIsLoading(true);
-                const res = await getFormula();
-                setDataFormula(res);
+                const productCode = onData.map(item => item.req_prod_code);
+
+                const res = await getProduct();
+                const filter = res.filter(item => !productCode.includes(item.prodcode));
+                setDataProduct(filter);
+
+                if (onEdit) {
+                    const selected = res.filter(item => item.prodcode === record.req_prod_code);
+                    setSelectProduct(selected[0]);
+                }
+
             } catch (error) {
                 console.log(error);
             }
             setIsLoading(false);
         }
-        if (openFormula) {
-            fetchFormula();
-            setOpenFormula(false);
+        if (openProduct) {
+            fetchProduct();
+            setOpenProduct(false);
         }
-    }, [openFormula]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openProduct]);
 
     useEffect(() => {
-        if (selectFormula) {
-            onDataFormula(selectFormula);
+        if (selectProduct) {
+            onDataProduct(selectProduct);
         }
-    }, [onDataFormula, selectFormula]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectProduct]);
 
 
     return (
@@ -54,32 +74,32 @@ const EditableCell = ({
             {editing ? (
                 <div>
 
-                    {dataIndex === 'description' ? (
+                    {dataIndex === 'prod_qty' ? (
                         <Form.Item
                             name={dataIndex}
                             style={{
                                 margin: 0,
                             }}
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: `Please Input ${title}!`,
-                            //     },
-                            // ]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: `Please Input ${title}!`,
+                                },
+                            ]}
                         >
-                            <Input.TextArea rows={4} placeholder={title} />
+                            <InputNumber placeholder={title} className="w-full" />
                         </Form.Item>
 
-                    ) : dataIndex === "formulacode" && (
+                    ) : dataIndex === "productname" && (
                         <InputModal
-                            title="FORMULA"
-                            label="Formula Name"
+                            title="Product"
+                            label="Product Name"
                             name={dataIndex}
-                            dataSource={dataFormula}
+                            dataSource={dataProduct}
                             loading={isLoading}
-                            columns={columnsFormula}
-                            onData={(values) => setSelectFormula(values)}
-                            onOpenModal={(values) => setOpenFormula(values)}
+                            columns={columnsProduct}
+                            onData={(values) => setSelectProduct(values)}
+                            onOpenModal={(values) => setOpenProduct(values)}
                             onDetail={true}
                         />
                     )}
@@ -96,19 +116,22 @@ const EditableCell = ({
 
 const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
+    // console.log(onEdit);
+
+
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [count, setCount] = useState(0);
 
     const [editingKey, setEditingKey] = useState('');
 
-    const [dataFormula, setDataFormula] = useState(null);
+    const [dataProduct, setDataProduct] = useState(null);
 
     useEffect(() => {
-        if (form && dataFormula) {
-            form.setFieldsValue({ Formulacode: dataFormula.Formulaname });
+        if (form && dataProduct) {
+            form.setFieldsValue({ productname: dataProduct.prodname });
         }
-    }, [dataFormula, form])
+    }, [dataProduct, form])
 
     useEffect(() => {
         if (onEdit) {
@@ -180,13 +203,11 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
             if (index > -1) {
                 const item = newData[index];
-                const FormulaCode = dataFormula.formulacode
-                const FormulaVersion = dataFormula.version
+                const prodCode = dataProduct.prodcode;
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    formulacode: FormulaCode,
-                    formulaversion: FormulaVersion
+                    req_prod_code: prodCode
                 });
                 setData(newData);
                 setEditingKey('');
@@ -226,6 +247,7 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             detailno: num,
             parcode: onParamCode,
             req_prod_code: '',
+            productname: '',
             prod_qty: '',
         };
         setData([newData, ...data]);
@@ -261,8 +283,8 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             width: 80,
         },
         {
-            title: 'Product',
-            dataIndex: 'req_prod_code',
+            title: 'Product Name',
+            dataIndex: 'productname',
             editable: true,
         },
         {
@@ -316,7 +338,9 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
-                onDataFormula: (values) => setDataFormula(values)
+                onData: data,
+                onDataProduct: (values) => setDataProduct(values),
+                onEdit: onEdit
             }),
             ...col,
         };
@@ -359,25 +383,98 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 };
 export default FormSampleProduct;
 
-const columnsFormula = [
+const columnsProduct = [
     {
-        title: "Formula Code",
-        dataIndex: "formulacode",
-        key: "formulacode",
+        title: "No",
+        dataIndex: "key",
+        key: "key",
+        width: 60,
+        fixed: "left",
     },
     {
-        title: "Formula Name",
-        dataIndex: "formulaname",
-        key: "formulaname",
+        title: "Product Code",
+        dataIndex: "prodcode",
+        key: "prodcode",
+        fixed: "left",
     },
     {
-        title: "Formula",
-        dataIndex: "formula",
-        key: "formula",
+        title: "Product Name",
+        dataIndex: "prodname",
+        key: "prodname",
+    },
+    {
+        title: "Product Type Name",
+        dataIndex: "prodtypename",
+        key: "prodtypename",
+    },
+    {
+        title: "Product Category Name",
+        dataIndex: "prodcatname",
+        key: "prodcatname",
+    },
+    {
+        title: "Unit name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Formula QTY",
+        dataIndex: "formulaqty",
+        key: "formulaqty",
+    },
+    {
+        title: "Warehouse Name",
+        dataIndex: "warehousename",
+        key: "warehousename",
+    },
+    {
+        title: "Alias Name",
+        dataIndex: "aliasname",
+        key: "aliasname",
+    },
+    {
+        title: "Shelf Life",
+        dataIndex: "shelflife",
+        key: "shelflife",
+    },
+    {
+        title: "Use In Batch No",
+        dataIndex: "useintbatchno",
+        key: "useintbatchno",
+    },
+    {
+        title: "Use Ext BatchNo",
+        dataIndex: "useextbatchno",
+        key: "useextbatchno",
+    },
+    {
+        title: "Manufacture Name",
+        dataIndex: "manufacturename",
+        key: "manufacturename",
+    },
+    {
+        title: "Building Name",
+        dataIndex: "buildingname",
+        key: "buildingname",
+    },
+    {
+        title: "Min Stock",
+        dataIndex: "minstock",
+        key: "minstock",
+    },
+    {
+        title: "Unit Code Pack",
+        dataIndex: "unitcodepack",
+        key: "unitcodepack",
+    },
+    {
+        title: "Formula QTY Pack",
+        dataIndex: "formulaqtypack",
+        key: "formulaqtypack",
     },
     {
         title: "Description",
         dataIndex: "description",
         key: "description",
-    },
+    }
 ];

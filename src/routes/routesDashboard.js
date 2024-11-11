@@ -44,8 +44,13 @@ const RoutesDashboard = () => {
       element: item.page,
     })),
 
+    // MASTER SAMPLE
     {
       path: "/master/sample/form/parameter",
+      element: <FormSampleParameter />,
+    },
+    {
+      path: "/master/sample/form/parameter/:code",
       element: <FormSampleParameter />,
     },
     
