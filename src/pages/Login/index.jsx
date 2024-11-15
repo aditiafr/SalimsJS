@@ -37,6 +37,8 @@ const Login = () => {
       localStorage.clear();
 
       Cookies.set('access_token', response.data.access_token, { expires: 7 });
+      Cookies.set('usernam', response.data.data.usernam, { expires: 7 });
+      Cookies.set('branchcode', response.data.data.branchcode, { expires: 7 });
 
       navigate("/dashboard");
     } catch (error) {

@@ -38,6 +38,8 @@ import FormProductInformation from "../../pages/ADMIN/INVENTORY/ProductInformati
 import FormZona from "../../pages/ADMIN/MASTER/Zona/form";
 import FormSubZona from "../../pages/ADMIN/MASTER/SubZona/form";
 import FormPriceList from "../../pages/ADMIN/MASTER/PriceList/form";
+import FormMaintenanceRequest from "../../pages/ADMIN/EQUIPMENT_MAINTENANCE/MaintenanceRequest/form"
+import FormMaintenanceProcess from "../../pages/ADMIN/EQUIPMENT_MAINTENANCE/MaintenanceProcess/form"
 
 export const FormPages = {
 
@@ -88,8 +90,8 @@ export const FormPages = {
     1304: <FormProductInformation />,
 
     // EQUIPMENT MAINTENANCE
-    // 1401: <MaintenanceRequest />,
-    // 1402: <MaintenanceProcess />,
+    1401: <FormMaintenanceRequest />,
+    1402: <FormMaintenanceProcess />,
 
     // // SETUP
     // 1501: <UserTrustee />,

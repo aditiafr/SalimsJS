@@ -1,20 +1,95 @@
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { Col, DatePicker, Form, Input, Row } from "antd";
+import { Col, DatePicker, Form, Input, Row, Select, message } from "antd";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getMaintenanceRequestNextCode } from '../../../../Api/Maintenance/getData';
+import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
+import { postMaintenanceRequest } from '../../../../Api/Maintenance/postData';
+import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
+import Cookies from "js-cookie";
 
 const FormMaintenanceRequest = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [equipment, setEquipment] = useState([]);
+  const [branchcode, setBranchCode] = useState("");
+  const prefix = PrefixGlobal();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getEquipment();
+      const branch = Cookies.get('branchcode');
+      console.log(response);
+
+      // Mengubah key
+      const modifiedData = response.map(item => ({
+        label: `(${item.equipmentcode}) ${item.equipmentname}`,
+        value: item.equipmentcode,
+        key: item.equipmentversion,
+      }));
+
+      setEquipment(modifiedData)
+      setBranchCode(branch)
+      // setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+
+      let { EquipmentCode, ...payload } = values;
+
+      let equipmentOne = await getEquipmentOne(EquipmentCode);
+      let detail = [
+        {
+          equipmentversion: equipmentOne.version,
+          equipmentcode: equipmentOne.equipmentcode
+        }
+      ];
+      console.log(payload);
+      payload = {
+        ...payload,
+        branchcode: branchcode,
+        issuspend: false,
+        detail: detail
+      }
+      if (!values.mrnumber) {
+        const nextCode = await getMaintenanceRequestNextCode(branchcode);
+        const mrnumber = nextCode.mrnumber;
+        form.setFieldsValue({ mrnumber: mrnumber });
+        payload = {
+          ...payload,
+          mrnumber: mrnumber
+        }
+      }
+      console.log(payload);
+      const response = await postMaintenanceRequest(payload);
+      message.success(response.data.message);
+      navigate("/equipment_maintenance/maintenance_request");
+    } catch (error) {
+      // message.error(error.response.data.message);
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const onReset = () => {
     form.resetFields();
   };
+
+  const filterOption = (input, option) =>
+    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
   return (
     <>
@@ -25,20 +100,33 @@ const FormMaintenanceRequest = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
           <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
+            {/* <Col xs={24} sm={12}>
               <Form.Item
-                label="MR Number"
-                name="MRNumber"
+                label="Branch"
+                name="branchcode"
                 rules={[
                   {
                     required: true,
-                    message: "Please input MR Number!",
+                    message: "Please input your Branch!",
+                  },
+                ]}
+              >
+                <Input maxLength={20} />
+              </Form.Item>
+            </Col> */}
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="MR Number"
+                name="mrnumber"
+                rules={[
+                  {
+                    validator: prefix,
                   },
                 ]}
               >
@@ -49,7 +137,7 @@ const FormMaintenanceRequest = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="MR Date"
-                name="MRDate"
+                name="mrdate"
                 rules={[
                   {
                     required: true,
@@ -61,8 +149,24 @@ const FormMaintenanceRequest = () => {
               </Form.Item>
             </Col>
 
+
             <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
+              <Form.Item
+                label="Periode"
+                name="periode"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input Periode!",
+                  },
+                ]}
+              >
+                <DatePicker className="w-full" />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item label="Description" name="description">
                 <Input.TextArea />
               </Form.Item>
             </Col>
@@ -78,11 +182,18 @@ const FormMaintenanceRequest = () => {
                   },
                 ]}
               >
-                <Input />
+                {/* <Input /> */}
+                <Select
+                  showSearch
+                  placeholder="Select Equipment"
+                  optionFilterProp="children"
+                  filterOption={filterOption}
+                  options={equipment}
+                />
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={12}>
+            {/* <Col xs={24} sm={12}>
               <Form.Item
                 label="Status"
                 name="Status"
@@ -93,11 +204,18 @@ const FormMaintenanceRequest = () => {
                   },
                 ]}
               >
-                <Input />
+                 <Input /> 
+                <Select
+                  showSearch
+                  placeholder="Select Equipment Type"
+                  optionFilterProp="children"
+                  filterOption={filterOption}
+                  options={equipementTypes}
+                />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

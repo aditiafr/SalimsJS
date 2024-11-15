@@ -1,90 +1,122 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle'
 import { Link } from 'react-router-dom'
-import { Button, Table, Input } from 'antd'
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: 'MR Number',
-    dataIndex: 'MRNumber',
-    key: 'MRNumber',
-    width: 100,
-  },
-  {
-    title: 'MR Date',
-    dataIndex: 'MRDate',
-    key: 'MRDate',
-    width: 100,
-  },
-  {
-    title: 'Equipment Code',
-    dataIndex: 'EquipmentCode',
-    key: 'EquipmentCode',
-    width: 100,
-  },
-  {
-    title: 'Status',
-    dataIndex: 'Status',
-    key: 'Status',
-    width: 100,
-  },
-  {
-    title: 'Description',
-    dataIndex: 'Description',
-    key: 'Description',
-    width: 200,
-    render: (text) => (text ?? 'N/A'),
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    MRNumber: 'MR001',
-    MRDate: '2021-01-01',
-    EquipmentCode: 'EC001',
-    Status: 'Active',
-    Description: 'Maintenance Request 001',
-  },
-  {
-    key: '2',
-    MRNumber: 'MR002',
-    MRDate: '2021-02-01',
-    EquipmentCode: 'EC002',
-    Status: 'Inactive',
-    Description: 'Maintenance Request 002',
-  },
-]
+import { Button, Space, Table, Tag } from 'antd'
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
+import { getMaintenanceRequest } from "../../../../Api/Maintenance/getData";
+import EditMaintenanceRequest from "./edit";
+import DeleteMaintenanceRequest from "./delete";
 
 const MaintenanceRequest = () => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getMaintenanceRequest();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: 'Branch',
+      dataIndex: 'branchcode',
+      key: 'branchcode',
+      width: 100,
+    },
+    {
+      title: 'MR Number',
+      dataIndex: 'mrnumber',
+      key: 'mrnumber',
+      width: 100,
+    },
+    {
+      title: 'MR Date',
+      dataIndex: 'mrdate',
+      key: 'mrdate',
+      width: 100,
+    },
+    {
+      title: 'Equipment Code',
+      dataIndex: 'equipmentcode',
+      key: 'equipmentcode',
+      width: 100,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'Status',
+      key: 'Status',
+      width: 100,
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      width: 200,
+      render: (text) => (text ?? 'N/A'),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditMaintenanceRequest dataSource={record} onEdit={fetchData} />
+          {record.issuspend === false && (
+            <DeleteMaintenanceRequest dataSource={record} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
+  ]
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="MAINTENANCE REQUEST" subtitle="All data maintenance request" />
         <div>
-          <Link to="/transaction/maintenance-request/form">
+          <Link to="/equipment_maintenance/maintenance_request/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

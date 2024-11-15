@@ -275,6 +275,30 @@ export const getEquipmentType = async () => {
     return EquipmentTypeMapFromHttp(response.data.data);
 }
 
+
+export const getEquipment = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/equipment/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}
+
+
+export const getEquipmentOne = async (equipmentCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/equipment/one/${equipmentCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}
+
 export const getDepartments = async (params) => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/department/list`, {

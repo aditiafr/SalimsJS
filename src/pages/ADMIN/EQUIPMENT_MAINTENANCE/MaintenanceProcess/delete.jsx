@@ -1,0 +1,49 @@
+import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Tooltip } from "antd";
+import React from "react";
+import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
+import { deleteMaintenanceProcess } from "../../../../Api/Maintenance/DeleteData";
+
+const { confirm } = Modal;
+
+const DeleteMaintenanceProcess = ({ dataSource, onDelete }) => {
+
+  const handleDelete = async () => {
+    try {
+      let detail = [
+        {
+          mrnumber: dataSource.mrnumber,
+        }
+      ];
+      console.log(detail);
+      const res = await deleteMaintenanceProcess(dataSource.branchcode, dataSource.mpnumber, detail);
+      message.success(res.data.message);
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const content = `Data Maintenance Process Code ${dataSource.mpnumber} in Branch ${dataSource.branchcode}...`;
+
+  const showConfirm = () => {
+    confirm({
+      title: "Do you want to suspend these items?",
+      icon: <ExclamationCircleFilled />,
+      content: content,
+      centered: true,
+      footer: <ButtonDelete onDelete={handleDelete} />,
+    });
+  };
+
+  return (
+    <>
+      <Tooltip title="Suspend">
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
+      </Tooltip>
+    </>
+  );
+};
+
+export default DeleteMaintenanceProcess;

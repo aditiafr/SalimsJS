@@ -26,3 +26,15 @@ export const getPrefix = async () => {
     return response.data.data;
 }
 
+export const getTranAppStatus = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/tranappstatus?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}
+

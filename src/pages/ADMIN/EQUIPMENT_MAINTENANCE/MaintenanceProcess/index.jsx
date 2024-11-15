@@ -1,98 +1,120 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle'
 import { Link } from 'react-router-dom'
-import { Button, Table, Input } from 'antd'
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: 'MP Number',
-    dataIndex: 'MPNumber',
-    key: 'MPNumber',
-    width: 100,
-  },
-  {
-    title: 'MP Date',
-    dataIndex: 'MPDate',
-    key: 'MPDate',
-    width: 100,
-  },
-  {
-    title: 'Equipment Code',
-    dataIndex: 'EquipmentCode',
-    key: 'EquipmentCode',
-    width: 100,
-  },
-  {
-    title: 'MR Number',
-    dataIndex: 'MRNumber',
-    key: 'MRNumber',
-    width: 100,
-  },
-  {
-    title: 'Status',
-    dataIndex: 'Status',
-    key: 'Status',
-    width: 100,
-  },
-  {
-    title: 'Description',
-    dataIndex: 'Description',
-    key: 'Description',
-    width: 200,
-    render: (text) => (text ?? 'N/A'),
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    MPNumber: 'MP001',
-    MPDate: '2021-01-01',
-    EquipmentCode: 'EC001',
-    MRNumber: 'MR001',
-    Status: 'Active',
-    Description: 'Maintenance Process 001',
-  },
-  {
-    key: '2',
-    MPNumber: 'MP002',
-    MPDate: '2021-02-01',
-    EquipmentCode: 'EC002',
-    MRNumber: 'MR002',
-    Status: 'Inactive',
-    Description: 'Maintenance Process 002',
-  },
-]
+import { Button, Table, Space, Tag } from 'antd'
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
+import EditMaintenanceProcess from "./edit";
+import DeleteMaintenanceProcess from "./delete";
+import { getMaintenanceProcess } from "../../../../Api/Maintenance/getData";
+import DetailFormula from "./detail";
 
 const MaintenanceProcess = () => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getMaintenanceProcess();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+
+  const columns = [
+    {
+      title: 'MP Number',
+      dataIndex: 'mpnumber',
+      key: 'mpnumber',
+      width: 100,
+    },
+    {
+      title: 'MP Date',
+      dataIndex: 'mpdate',
+      key: 'mpdate',
+      width: 100,
+    },
+    {
+      title: 'MR Number',
+      dataIndex: 'mrnumber',
+      key: 'mrnumber',
+      width: 100,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 100,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      width: 200,
+      render: (text) => (text ?? 'N/A'),
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <DetailFormula dataSource={record} />
+          <EditMaintenanceProcess dataSource={record} onEdit={fetchData} />
+          {record.issuspend === false && (
+            <DeleteMaintenanceProcess dataSource={record} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
+  ]
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="MAINTENANCE PROCESS" subtitle="All data maintenance process" />
         <div>
-          <Link to="/transaction/maintenance-process/form">
+          <Link to="/equipment_maintenance/maintenance_process/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
