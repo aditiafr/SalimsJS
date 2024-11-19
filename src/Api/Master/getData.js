@@ -498,3 +498,29 @@ export const getPriceListNextCode = async () => {
 
     return response.data.data.pricecode;
 }
+
+export const getLabour = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/labour/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getLabourNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/labour/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: {
+            tranidx: selectedTranIdx
+        }
+    });
+
+    return response.data.data.labourcode;
+}

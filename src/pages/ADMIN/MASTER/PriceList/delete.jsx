@@ -26,7 +26,7 @@ const DeletePriceList = ({ priceListCode, name, onDelete }) => {
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to suspend this items?",
+      title: "Do you want to suspend this item?",
       icon: <ExclamationCircleFilled />,
       content: `Price List ${name}`,
       centered: true,

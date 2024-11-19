@@ -1,7 +1,7 @@
 export const DepartmentMapFromHttp = (data) => {
   return data.map((row, index) => ({ 
-    DepartmentCode: row.departmentCode,
-    DepartmentName: row.departmentName,
+    DepartmentCode: row.departmentcode,
+    DepartmentName: row.departmentname,
     Description: row.description,
     IsSuspend: row.isSuspend,
     key: index + 1 

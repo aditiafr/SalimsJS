@@ -261,3 +261,18 @@ export const postPriceList = async (Data) => {
     });
     return response;
 }
+
+export const postLabour = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.post(`${baseUrl}/labour/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}   

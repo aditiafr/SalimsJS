@@ -305,3 +305,29 @@ export const setSuspendPriceList = async (PriceCode) => {
     });
     return response;
 }
+
+export const updateLabour = async (LabourCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/labour/update/0001/${LabourCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendLabour = async (LabourCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/labour/set-suspend/0001/${LabourCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

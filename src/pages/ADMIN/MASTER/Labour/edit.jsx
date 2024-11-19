@@ -1,21 +1,86 @@
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox, Select, Table } from "antd";
-import React, { useState } from "react";
+import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox, Select, Table, message, DatePicker } from "antd";
+import React, { useEffect, useState } from "react";
+import { updateLabour } from "../../../../Api/Master/updateData";
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
+import FormLabourPar from "./LabourPar/form";
+import { getDepartments } from "../../../../Api/Master/getData";
+import dayjs from 'dayjs';
 
-const EditLabour = () => {
+const EditLabour = ({ dataSource, onEdit }) => {
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [labourPar, setLabourPar] = useState([]);
+
+  const [isDepartmentLoading, setIsDepartmentLoading] = useState(false);
+  const [dataDepartment, setDataDepartment] = useState([]);
+  const [selectDepartment, setSelectDepartment] = useState("");
+  const [openDepartment, setOpenDepartment] = useState(null);
+  const departmentName = selectDepartment ? selectDepartment.DepartmentName : "";
+  const departmentCode = selectDepartment ? selectDepartment.DepartmentCode : "";
+
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        setIsDepartmentLoading(true);
+        const response = await getDepartments(false);
+        setDataDepartment(response);
+
+        for (let i = 0; i < response.length; i++) {
+          if (response[i].DepartmentCode === dataSource.depcode) {
+            setSelectDepartment(response[i]);
+            form.setFieldsValue({ departmentname: response[i].DepartmentName });
+            break;
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setIsDepartmentLoading(false);
+    };
+
+    fetchDepartment();
+  }, [openDepartment]);
+
+  useEffect(() => {
+    form.setFieldsValue({ departmentname: departmentName });
+  }, [departmentName, form]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...dataSource,
+      dateofuse: dayjs(dataSource.dateofuse),
+      dateofavailable: dayjs(dataSource.dateofavailable),
+    });
+  }, [dataSource, form]);
 
   const showModal = () => {
     setIsModalOpen(true);
+    setLabourPar(dataSource.detail);
   };
 
-  const [form] = Form.useForm();
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = {
+        ...values,
+        labour_par: labourPar,
+        depcode: selectDepartment.DepartmentCode,
+      };
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+      const response = await updateLabour(dataSource.labourcode, payload);
+      onEdit(true);
+      message.success(response.data.message);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -24,100 +89,6 @@ const EditLabour = () => {
     form.resetFields();
     setIsModalOpen(false);
   };
-
-  const filterOption = (input, option) =>
-    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-  
-  const departments = [
-    { label: "(D03) Quality Control", value: "(D03) Quality Control" },
-    { label: "(D04) Production", value: "(D04) Production" },
-    { label: "(D05) Warehouse", value: "(D05) Warehouse" },
-  ];
-
-  const levels = [
-    { label: "Supervisor", value: "Supervisor" },
-    { label: "Staff", value: "Staff" },
-    { label: "Operator", value: "Operator" },
-  ];
-
-  const columns = [
-    {
-      title: "Code",
-      dataIndex: "Code",
-      key: "Code",
-      width: 80,
-    },
-    {
-      title: "Parameter",
-      dataIndex: "Parameter",
-      key: "Parameter",
-      width: 100,
-    },
-    {
-      title: "Procedure",
-      dataIndex: "Procedure",
-      key: "Procedure",
-      width: 100,
-      render: (text) => (text ?? "N/A"),
-    },
-    {
-      title: "Alias",
-      dataIndex: "Alias",
-      key: "Alias",
-      width: 100,
-      render: (text) => (text ?? "N/A"),
-    },
-    {
-      title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 200,
-      render: (text) => (text ?? "N/A"),
-    }
-  ];
-
-  const data = [
-    {
-      key: 1,
-      Code  : "QC01",
-      Parameter: "COD",
-      Procedure: "Waste-01",
-      Alias: "Deternimation of Chemical Oxygen Demand",
-      Description: "0"
-    },
-    {
-      key: 2,
-      Code  : "QC02",
-      Parameter: "TSS",
-      Procedure: "Waste-02",
-      Alias: "Deternimation of Total Suspended Solid",
-      Description: "0"
-    },
-    {
-      key: 3,
-      Code  : "QC03",
-      Parameter: "pH",
-      Procedure: "Waste-03",
-      Alias: "Deternimation of pH",
-      Description: "0"
-    },
-    {
-      key: 4,
-      Code  : "QC04",
-      Parameter: "Temperature",
-      Procedure: "Waste-04",
-      Alias: "Deternimation of Temperature",
-      Description: "0"
-    },
-    {
-      key: 5,
-      Code  : "QC05",
-      Parameter: "DO",
-      Procedure: "Waste-05",
-      Alias: "Deternimation of Dissolved Oxygen",
-      Description: "0"
-    },
-  ];
 
   return (
     <>
@@ -147,7 +118,7 @@ const EditLabour = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -155,100 +126,88 @@ const EditLabour = () => {
           <Row gutter={30} style={{ margin: "0px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Branch"
-                name="Branch"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Branch!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-
-              <Form.Item
-                label="Department"
-                name="Department"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select Department!",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Select Department"
-                  optionFilterProp="children"
-                  filterOption={filterOption}
-                  options={departments}
-                />
-              </Form.Item>
-
-              <Form.Item
                 label="Code"
-                name="Code"
+                name="labourcode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your Code!",
+                    required: false,
+                    message: "Please input Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={6} disabled />
               </Form.Item>
 
               <Form.Item
                 label="Name"
-                name="Name"
+                name="labourname"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input Name!",
                   },
                 ]}
               >
                 <Input />
               </Form.Item>
+
+              <Form.Item
+                label="Title"
+                name="tittle"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input Title!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <InputModal
+                title="Department"
+                label="Department"
+                name="departmentname"
+                dataSource={dataDepartment}
+                loading={isDepartmentLoading}
+                columns={departmentColumns}
+                onData={(values) => setSelectDepartment(values)}
+                onOpenModal={(values) => setOpenDepartment(values)}
+              />
             </Col>
 
-            <Col xs={24} sm={12}>
+            <Col xs={24} sm={12}>     
               <Form.Item
-                label="Level"
-                name="Level"
+                label="Date of Use"
+                name="dateofuse"
               >
-                <Select
-                  showSearch
-                  placeholder="Select Level"
-                  optionFilterProp="children"
-                  filterOption={filterOption}
-                  options={levels}
-                />
-              </Form.Item>
-              
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea rows={6} />
+               <DatePicker style={{ width: "100%" }} />
               </Form.Item>
 
-              <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
+              <Form.Item
+                label="Date of Available"
+                name="dateofavailable"
+              >
+               <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+         
+              <Form.Item label="Description" name="description">
+                <Input.TextArea rows={3} />
+              </Form.Item>
+
+              <Form.Item name="issuspend" valuePropName="checked" initialValue={false}>
                 <Checkbox>Suspended</Checkbox>
               </Form.Item>
             </Col>
 
-            <Col xs={24}>
-              <Table
-                columns={columns}
-                dataSource={data}
-                pagination={false}
-                scroll={{
-                  x: 1000,
-                }}
-                style={{ width: "100%" }}
-              />
-            </Col>
+            <div className="m-4 p-4 border rounded-md">
+                <FormLabourPar 
+                  onSaveData={(values) => setLabourPar(values)} 
+                  onEdit={dataSource.detail}
+                />
+            </div>
           </Row>
-          <ButtonEdit onReset={onReset} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>
     </>
@@ -256,3 +215,32 @@ const EditLabour = () => {
 };
 
 export default EditLabour;
+
+const departmentColumns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: 60,
+    fixed: "left",
+  },
+  {
+    title: "Department Code",
+    dataIndex: "DepartmentCode",
+    key: "DepartmentCode",
+    width: 80,
+  },
+  {
+    title: "Department Name",
+    dataIndex: "DepartmentName",
+    key: "DepartmentName",
+    width: 100,
+  },
+  {
+    title: "Description",
+    dataIndex: "Description",
+    key: "Description",
+    width: 200,
+    render: (text) => (text || "N/A"),
+  },
+];
