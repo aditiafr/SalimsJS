@@ -14,6 +14,18 @@ export const postBuilding = async (Data) => {
     return response;
 }
 
+export const postSample = async (Data) => {
+    console.log(Data);
+    
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/sample/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const postQualityReference = async (Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/quality/reference/store`, Data, {

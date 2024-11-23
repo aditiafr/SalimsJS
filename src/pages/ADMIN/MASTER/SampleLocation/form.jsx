@@ -2,7 +2,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Form, Input, message } from "antd";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useEffect, useState } from "react";
-import { getLocationNextCode, getBuilding, getSampleLocationNextCode } from "../../../../Api/Master/getData";
+import { getBuilding, getSampleLocationNextCode } from "../../../../Api/Master/getData";
 import { postSampleLocation } from "../../../../Api/Master/postData";
 import { useNavigate } from "react-router-dom";
 import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
@@ -108,7 +108,7 @@ const FormSampleLocation = () => {
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
             <InputModal
-              title="Building"
+              title="BUILDING"
               label="Building Name"
               name="buildingname"
               dataSource={dataBuilding}
@@ -127,7 +127,7 @@ const FormSampleLocation = () => {
                 },
               ]}
             >
-              <Input maxLength={6} />
+              <Input maxLength={6} placeholder="Input Location Code" />
             </Form.Item>
 
             <Form.Item
@@ -140,11 +140,11 @@ const FormSampleLocation = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Location Name" />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Description" />
             </Form.Item>
           </div>
           <ButtonSubmit onReset={onReset} onLoading={loading} />

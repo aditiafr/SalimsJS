@@ -1,47 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, InputNumber, message } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Form, Input, InputNumber, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
+import { PrefixGlobal, selectedTranIdx } from '../../../../components/Dashboard/Global/Helper';
 import InputModal from '../../../../components/Dashboard/Global/InputModal';
-import { getBuilding, getManufacture, getProductCat, getUnit } from '../../../../Api/Master/getData';
-import FormSampleParams from './Params/form';
-import SampleParams from './Params';
+import { getBuilding, getManufacture, getProductCat, getTempCondition, getUnit } from '../../../../Api/Master/getData';
+import FormSampleParameter from './Params/form';
+import { postSample } from '../../../../Api/Master/postData';
 
 const FormSample = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const prefix = PrefixGlobal();
-    
-    const dataParm = JSON.parse(localStorage.getItem('DataSampleParm')) || [];
 
     const [isLoading, setIsLoading] = useState(true);
 
     const [dataProdCat, setDataProdCat] = useState([]);
     const [selectProdCat, setSelectProdCat] = useState("");
     const [openProdCat, setOpenProdCat] = useState(null);
-    const ProdCatName = selectProdCat ? selectProdCat.productcategoryname : '';
     const ProdCatCode = selectProdCat ? selectProdCat.productcategorycode : '';
+    const ProdCatName = selectProdCat ? selectProdCat.productcategoryname : '';
 
     const [dataUnit, setDataUnit] = useState([]);
     const [selectUnit, setSelectUnit] = useState("");
     const [openUnit, setOpenUnit] = useState(null);
-    const UnitName = selectUnit ? selectUnit.unitname : '';
     const UnitCode = selectUnit ? selectUnit.unitcode : '';
+    const UnitName = selectUnit ? selectUnit.unitname : '';
 
     const [dataBuilding, setDataBuilding] = useState([]);
     const [selectBuilding, setSelectBuilding] = useState("");
     const [openBuilding, setOpenBuilding] = useState(null);
-    const BuildingName = selectBuilding ? selectBuilding.buildingname : '';
     const BuildingCode = selectBuilding ? selectBuilding.buildingcode : '';
+    const BuildingName = selectBuilding ? selectBuilding.buildingname : '';
 
     const [dataManufacture, setDataManufacture] = useState([]);
     const [selectManufacture, setSelectManufacture] = useState("");
     const [openManufacture, setOpenManufacture] = useState(null);
-    const ManufactureName = selectManufacture ? selectManufacture.manufacturename : '';
     const ManufactureCode = selectManufacture ? selectManufacture.manufacturecode : '';
+    const ManufactureName = selectManufacture ? selectManufacture.manufacturename : '';
+
+    const [dataUnitPack, setDataUnitPack] = useState([]);
+    const [selectUnitPack, setSelectUnitPack] = useState("");
+    const [openUnitPack, setOpenUnitPack] = useState(null);
+    const UnitPackCode = selectUnitPack ? selectUnitPack.unitcode : '';
+    const UnitPackName = selectUnitPack ? selectUnitPack.unitname : '';
+
+    const [dataTemp, setDataTemp] = useState([]);
+    const [selectTemp, setSelectTemp] = useState("");
+    const [openTemp, setOpenTemp] = useState(null);
+    const TempCode = selectTemp ? selectTemp.tempcode : '';
+    const TempName = selectTemp ? selectTemp.tempname : '';
+
+    const [dataSampleParameter, setDataSampleParameter] = useState([]);
 
 
     // PRODUCT CATEGORY
@@ -60,35 +72,32 @@ const FormSample = () => {
             setOpenProdCat(false);
             setIsLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openProdCat]);
 
-    useEffect(() => {
-        form.setFieldsValue(
-            {
-                productcatname: ProdCatName,
-                unitname: UnitName,
-                buildingname: BuildingName,
-                manufacturename: ManufactureName
-            }
-        )
-    }, [BuildingName, ManufactureName, ProdCatName, UnitName, form]);
 
     // UNIT
     useEffect(() => {
         const fetchUnit = async () => {
             try {
-                const res = await getUnit();
+                const res = await getUnit(false);
                 setDataUnit(res);
+                setDataUnitPack(res);
+
+
             } catch (error) {
                 console.log(error);
             }
         }
-        if (openUnit) {
+        if (openUnit || openUnitPack) {
             fetchUnit()
             setOpenUnit(false);
+            setOpenUnitPack(false);
             setIsLoading(false);
         }
-    }, [openUnit]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openUnit, openUnitPack]);
+
 
     // BUILDING
     useEffect(() => {
@@ -106,7 +115,9 @@ const FormSample = () => {
             setOpenBuilding(false);
             setIsLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openBuilding]);
+
 
     // MANUFACTURE
     useEffect(() => {
@@ -115,6 +126,7 @@ const FormSample = () => {
                 const res = await getManufacture(false);
                 const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
                 setDataManufacture(filter);
+
             } catch (error) {
                 console.log(error);
             }
@@ -124,20 +136,69 @@ const FormSample = () => {
             setOpenManufacture(false);
             setIsLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openManufacture]);
+
+
+    // TEMP CONDITION
+    useEffect(() => {
+        const fetchTemp = async () => {
+            try {
+                const res = await getTempCondition(false);
+                setDataTemp(res);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        if (openTemp) {
+            fetchTemp();
+            setOpenTemp(false);
+            setIsLoading(false);
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openTemp]);
+
+
+
+    useEffect(() => {
+        form.setFieldsValue(
+            {
+                productcatname: ProdCatName,
+                unitname: UnitName,
+                buildingname: BuildingName,
+                manufacturename: ManufactureName,
+                tempname: TempName,
+                unitcodepack: UnitPackName,
+            }
+        )
+    }, [BuildingName, ManufactureName, ProdCatName, TempName, UnitName, UnitPackName, form]);
+
 
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
             const payload = {
                 ...values,
+                tranidx: selectedTranIdx,
+                branchcode: "0001",
+                user: "admin",
                 prodcatcode: ProdCatCode,
                 unitcode: UnitCode,
                 buildingcode: BuildingCode,
                 manufacturecode: ManufactureCode,
-                tempcode: "MTC001",
+                tempcode: TempCode,
+                unitcodepack: UnitPackCode,
+                useextbatchno: false,
+                useintbatchno: false,
+                sample_pa: dataSampleParameter,
             }
             console.log(payload);
+            const res = await postSample();
+            console.log(res);
+            
         } catch (error) {
             message.error(error.response.data.message);
             console.log(error);
@@ -233,30 +294,28 @@ const FormSample = () => {
                             onOpenModal={(values) => setOpenManufacture(values)}
                         />
 
-                        {/* <Form.Item
-                            label="tempcode"
-                            name="tempcode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your tempcode!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input tempcode" />
-                        </Form.Item> */}
+                        <InputModal
+                            title="TEMP CONDITION"
+                            label="Temp Condition"
+                            name="tempname"
+                            dataSource={dataTemp}
+                            loading={isLoading}
+                            columns={columnsTemp}
+                            onData={(values) => setSelectTemp(values)}
+                            onOpenModal={(values) => setOpenTemp(values)}
+                        />
 
                         <Form.Item
-                            label="Formula QTY"
+                            label="Formula Quantity"
                             name="formulaqty"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Formula QTY!",
+                                    message: "Please input your Formula Quantity!",
                                 },
                             ]}
                         >
-                            <InputNumber placeholder="Input Formula QTY" className="w-full" />
+                            <InputNumber placeholder="Input Formula Quantity" className="w-full" />
                         </Form.Item>
 
                         <Form.Item
@@ -285,79 +344,46 @@ const FormSample = () => {
                             <InputNumber placeholder="Input Shelf Life" className="w-full" />
                         </Form.Item>
 
-                        {/* <Form.Item
-                            label="Use Int Batch No"
-                            name="useintbatchno"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Use Int Batch No!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Use Int Batch No" />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Use Ext Batch No"
-                            name="useextbatchno"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Use Ext Batch No!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Use Ext Batch No" />
-                        </Form.Item> */}
-
-                        <Form.Item
-                            label="Unit Code Pack"
+                        <InputModal
+                            title="UNIT PACK"
+                            label="Unit Pack"
                             name="unitcodepack"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Unit Code Pack!",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Input Unit Code Pack" />
-                        </Form.Item>
+                            dataSource={dataUnitPack}
+                            loading={isLoading}
+                            columns={columnsUnit}
+                            onData={(values) => setSelectUnitPack(values)}
+                            onOpenModal={(values) => setOpenUnitPack(values)}
+                        />
 
                         <Form.Item
-                            label="Formula QTY Pack"
+                            label="Formula Quantity Pack"
                             name="formulaqtypack"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Formula QTY Pack!",
+                                    message: "Please input your Formula Quantity Pack!",
                                 },
                             ]}
                         >
-                            <InputNumber placeholder="Input Formula QTY Pack" className="w-full" />
+                            <InputNumber placeholder="Input Formula Quantity Pack" className="w-full" />
                         </Form.Item>
 
-                        <Form.Item label="Description" name="description">
+                        <Form.Item label="Description" name="description" className="lg:col-span-2">
                             <Input.TextArea placeholder="Input Description" />
                         </Form.Item>
 
                     </div>
 
                     <div className="m-4 p-4 border rounded-md">
-                        <div className="flex justify-between">
-                            <h1 className="text-2xl font-semibold my-2">Parameter</h1>
-                            <Link to="parameter">
-                                <Button type="primary">+ Add New</Button>
-                            </Link>
-                        </div>
-                        <SampleParams dataSource={dataParm} />
-                        {/* <FormSampleParams onSaveData={(values) => setSampleParams(values)} /> */}
+                        <FormSampleParameter
+                            onSaveData={(values) => setDataSampleParameter(values)}
+                        />
                     </div>
 
                     <ButtonSubmit onReset={onReset} onLoading={loading} />
 
-                </Form>
-            </div>
+                </Form >
+            </div >
         </>
     );
 };
@@ -474,3 +500,22 @@ export const columnsManufacture = [
         key: "description",
     }
 ];
+
+
+const columnsTemp = [
+    {
+        title: "Temp Code",
+        dataIndex: "tempcode",
+        key: "tempcode",
+    },
+    {
+        title: "Temp Name",
+        dataIndex: "tempname",
+        key: "tempname",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    },
+]

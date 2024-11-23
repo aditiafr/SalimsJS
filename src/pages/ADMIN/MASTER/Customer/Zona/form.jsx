@@ -425,9 +425,8 @@ const FormCustomerZona = ({ onSaveData, onEdit, onApproval }) => {
                 </p>
                 {!onApproval && (
                     <Button
+                        type="primary"
                         onClick={handleAdd}
-                        color="primary"
-                        variant="contained"
                         disabled={!!editingKey}
                     >
                         + Add Data

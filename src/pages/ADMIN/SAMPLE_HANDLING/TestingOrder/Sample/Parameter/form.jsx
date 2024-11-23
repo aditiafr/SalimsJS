@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, DatePicker, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
+import { getParameter } from '../../../../../../Api/Master/getData';
+import { toRupiah } from '../../../../../../components/Dashboard/Global/General.js'
 
 const EditableCell = ({
     editing,
@@ -12,36 +14,87 @@ const EditableCell = ({
     record,
     index,
     children,
+    onData,
+    onDataParameter,
+    onEdit,
     ...restProps
 }) => {
 
-    const handleOnKeyPress = (event) => {
-        if (!/[0-9]/.test(event.key)) {
-            event.preventDefault();
+    useEffect(() => {
+        if (onEdit) {
+            setOpenParameter(true);
         }
-    }
+    }, [onEdit]);
+
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [dataParameter, setDataParameter] = useState([]);
+    const [selectParameter, setSelectParameter] = useState("");
+    const [openParameter, setOpenParameter] = useState(null);
+
+    // PARAMETER
+    useEffect(() => {
+        const fetchParameter = async () => {
+            try {
+                const parameterCode = onData.map(item => item.parcode);
+
+                const res = await getParameter();
+                const filter = res.filter(item => !parameterCode.includes(item.parcode));
+                setDataParameter(filter);
+
+                if (onEdit) {
+                    const selected = res.filter(item => item.parcode === record.parcode);
+                    setSelectParameter(selected[0]);
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (openParameter) {
+            fetchParameter();
+            setOpenParameter(false);
+            setIsLoading(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openParameter]);
+
+    useEffect(() => {
+        if (selectParameter) {
+            onDataParameter(selectParameter);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectParameter]);
+
 
     return (
         <td {...restProps}>
             {editing ? (
                 <div>
 
-                    {dataIndex === 'phone' ? (
+                    {dataIndex === 'description' ? (
                         <Form.Item
                             name={dataIndex}
                             style={{
                                 margin: 0,
                             }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: `Please Input ${title}!`,
-                                },
-                            ]}
                         >
-                            <Input placeholder={title} onKeyPress={handleOnKeyPress} />
+                            <Input.TextArea placeholder={title} />
                         </Form.Item>
 
+                    ) : dataIndex === 'parname' ? (
+                        <InputModal
+                            title="PARAMETER"
+                            label={title}
+                            name={dataIndex}
+                            dataSource={dataParameter}
+                            loading={isLoading}
+                            columns={columnsParameter}
+                            onData={(values) => setSelectParameter(values)}
+                            onOpenModal={(values) => setOpenParameter(values)}
+                            onDetail={true}
+                        />
                     ) : (
 
                         <Form.Item
@@ -56,9 +109,15 @@ const EditableCell = ({
                                 },
                             ]}
                         >
-                            {dataIndex === 'userpwd' && editing ? (
-
-                                <Input.Password placeholder={title} maxLength={50} />
+                            {dataIndex === 'price' && editing ? (
+                                <InputNumber
+                                    className="w-full"
+                                    placeholder={title}
+                                    min={0}
+                                    formatter={(value) => `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => value?.replace(/Rp\s?|(,*)/g, '')}
+                                    readOnly
+                                />
 
                             ) : (
 
@@ -78,15 +137,31 @@ const EditableCell = ({
 };
 
 
-const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
+const FormTestingOrderParameter = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [count, setCount] = useState(0);
 
     const [editingKey, setEditingKey] = useState('');
-    // const [loading, setLoading] = useState(false);
-    // const [isDisable, setIsDisable] = useState(true);
+
+    const [dataParameter, setDataParameter] = useState(null);
+
+
+    useEffect(() => {
+        if (form && dataParameter) {
+            form.setFieldsValue({
+                parname: dataParameter.parname
+            });
+
+            setData(data.map((item) => ({
+                ...item,
+                price: dataParameter.price
+            })))
+
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataParameter, form])
 
     useEffect(() => {
         if (onEdit) {
@@ -137,7 +212,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
 
 
     const handleCancel = (record) => {
-        if (!record.username) {
+        if (!record.parcode) {
             const newData = data.filter((item) => item.key !== record.key);
             setData(newData);
         } else {
@@ -155,6 +230,9 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
             const row = await form.validateFields();
             const newData = [...data];
             const index = newData.findIndex((item) => record.key === item.key);
+            const parCode = dataParameter.parcode;
+            const methodId = dataParameter.methodid;
+            const Price = dataParameter.price;
 
             if (index > -1) {
                 const item = newData[index];
@@ -162,7 +240,9 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    // DocExpDate: docExpDate,
+                    parcode: parCode,
+                    methodid: methodId,
+                    price: Price,
                 });
                 setData(newData);
                 setEditingKey('');
@@ -185,50 +265,26 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         }
     };
 
-
-
     const handleAdd = () => {
-
         const num = count + 1;
-        const code = (count + 1).toString().padStart(3, '0');
+        // const code = (count + 1).toString().padStart(3, '0');
 
         if (editingKey) {
             message.warning("Complete the input form !");
-            return; // Stop saving if duplicate found
+            return;
         }
 
         const newData = {
             key: num,
-            // userid: "CUS" + code,
-            username: '',
-            userpwd: '',
-            phone: '',
-            position: '',
+            parcode: '',
+            parname: '',
+            insitu: false,
+            price: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
-
-        // console.log("DataFormTran", data);
     };
 
-    // const handleSaveAllData = async () => {
-    //     setLoading(true);
-    // setIsDisable(true);
-    //     try {
-    //         onSaveData(data);
-    //         console.log("PostData", data);
-    //         message.success("Success add form table data!!");
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     setLoading(false);
-    // }
-
-    // const handleCancelAllData = () => {
-    //     setData([]);
-    //     setCount(0);
-    //     onSaveData([]);
-    // }
 
     const columns = [
         {
@@ -237,31 +293,16 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
             sorter: (a, b) => a.key - b.key,
             width: 80,
         },
-        // {
-        //     title: 'User Id',
-        //     dataIndex: 'userid',
-        //     editable: true,
-        // },
         {
-            title: 'Username',
-            dataIndex: 'username',
+            title: 'Parameter',
+            dataIndex: 'parname',
             editable: true,
         },
         {
-            title: 'User Password',
-            dataIndex: 'userpwd',
-            editable: true,
-            render: (text) => '*******',
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone',
-            editable: true,
-        },
-        {
-            title: 'Position',
-            dataIndex: 'position',
-            editable: true,
+            title: 'Price',
+            dataIndex: 'price',
+            // editable: true,
+            render: (value) => <p>{toRupiah(value)}</p>
         },
     ];
 
@@ -275,23 +316,33 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleSave(record)} style={{ fontSize: '18px' }}>
-                            <SaveFilled />
-                        </Typography.Link>
-
-                        <Typography.Link onClick={() => handleCancel(record)} style={{ fontSize: '18px' }}>
-                            <CloseOutlined />
-                        </Typography.Link>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<SaveFilled />}
+                            onClick={() => handleSave(record)}
+                        />
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<CloseOutlined />}
+                            onClick={() => handleCancel(record)}
+                        />
                     </span>
                 ) : (
                     <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleEdit(record)} style={{ fontSize: '18px' }}>
-                            <EditFilled />
-                        </Typography.Link>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<EditFilled />}
+                            onClick={() => handleEdit(record)}
+                        />
                         <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                            <Link>
-                                <DeleteOutlined style={{ fontSize: '18px' }} />
-                            </Link>
+                            <Button
+                                color="primary"
+                                variant="text"
+                                icon={<DeleteOutlined />}
+                            />
                         </Popconfirm>
                     </span>
                 );
@@ -309,6 +360,9 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
+                onData: data,
+                onDataParameter: (values) => setDataParameter(values),
+                onEdit: onEdit
             }),
             ...col,
         };
@@ -318,7 +372,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         <Form form={form} component={false}>
             <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    USER
+                    PARAMETER
                 </p>
                 {!onApproval && (
                     <Button
@@ -368,4 +422,84 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         </Form>
     );
 };
-export default FormCustomerUser;
+export default FormTestingOrderParameter;
+
+
+const columnsParameter = [
+    {
+        title: "Parameter Code",
+        dataIndex: "parcode",
+        key: "parcode",
+        fixed: "left",
+    },
+    {
+        title: "Parameter Name",
+        dataIndex: "parname",
+        key: "parname",
+    },
+    {
+        title: "Method Id",
+        dataIndex: "methodid",
+        key: "methodid",
+    },
+    {
+        title: "Preservation",
+        dataIndex: "preservation",
+        key: "preservation",
+    },
+    {
+        title: "Storage Time Limit",
+        dataIndex: "storagetimelimit",
+        key: "storagetimelimit",
+    },
+    {
+        title: "Product Category Code",
+        dataIndex: "prodcatcode",
+        key: "prodcatcode",
+    },
+    {
+        title: "product Category Name",
+        dataIndex: "prodcatname",
+        key: "prodcatname",
+    },
+    {
+        title: "Unit Code",
+        dataIndex: "unitcode",
+        key: "unitcode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Alias Name",
+        dataIndex: "aliasname",
+        key: "aliasname",
+    },
+    {
+        title: "Duration",
+        dataIndex: "duration",
+        key: "duration",
+    },
+    {
+        title: "Akreditasi",
+        dataIndex: "akreditasi",
+        key: "akreditasi",
+    },
+    {
+        title: "Result Unit Code",
+        dataIndex: "resultunitcode",
+        key: "resultunitcode",
+    },
+    {
+        title: "Price",
+        dataIndex: "price",
+        key: "price",
+    },
+    {
+        title: "Description",
+        dataIndex: "description",
+        key: "description",
+    },
+]

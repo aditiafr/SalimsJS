@@ -47,12 +47,12 @@ const QualityReference = () => {
       fixed: "left",
     },
     {
-      title: "QR ID",
+      title: "Quality Reference Id",
       dataIndex: "qrid",
       key: "qrid",
     },
     {
-      title: "QR Name",
+      title: "Quality Reference Name",
       dataIndex: "qrname",
       key: "qrname",
     },

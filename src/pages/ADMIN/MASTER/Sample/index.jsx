@@ -130,7 +130,7 @@ const Sample = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="SAMPLE" subtitle="All data Sample" />
         <div>
-          <Link to="/master/sample/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

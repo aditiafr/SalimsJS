@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, Button, message, InputNumber } from 'antd';
+import { Form, Popconfirm, Table, Typography, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { getFormula, getProduct } from '../../../../../../Api/Master/getData';
+import { getProduct } from '../../../../../../Api/Master/getData';
 import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
 
 const EditableCell = ({
@@ -92,7 +92,7 @@ const EditableCell = ({
 
                     ) : dataIndex === "productname" && (
                         <InputModal
-                            title="Product"
+                            title="PRODUCT"
                             label="Product Name"
                             name={dataIndex}
                             dataSource={dataProduct}
@@ -294,39 +294,47 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
         },
     ];
 
-    if (!onApproval) {
-        columns.push({
-            title: 'Actions',
-            dataIndex: 'actions',
-            width: 100,
-            fixed: "right",
-            render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleSave(record)} style={{ fontSize: '18px' }}>
-                            <SaveFilled />
-                        </Typography.Link>
-
-                        <Typography.Link onClick={() => handleCancel(record)} style={{ fontSize: '18px' }}>
-                            <CloseOutlined />
-                        </Typography.Link>
-                    </span>
-                ) : (
-                    <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleEdit(record)} style={{ fontSize: '18px' }}>
-                            <EditFilled />
-                        </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                            <Link>
-                                <DeleteOutlined style={{ fontSize: '18px' }} />
-                            </Link>
-                        </Popconfirm>
-                    </span>
-                );
-            },
-        });
-    }
+    columns.push({
+        title: 'Actions',
+        dataIndex: 'actions',
+        width: 100,
+        fixed: "right",
+        render: (_, record) => {
+            const editable = isEditing(record);
+            return editable ? (
+                <span className="flex items-center justify-around">
+                    <Button
+                        color="primary"
+                        variant="text"
+                        icon={<SaveFilled />}
+                        onClick={() => handleSave(record)}
+                    />
+                    <Button
+                        color="primary"
+                        variant="text"
+                        icon={<CloseOutlined />}
+                        onClick={() => handleCancel(record)}
+                    />
+                </span>
+            ) : (
+                <span className="flex items-center justify-around">
+                    <Button
+                        color="primary"
+                        variant="text"
+                        icon={<EditFilled />}
+                        onClick={() => handleEdit(record)}
+                    />
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<DeleteOutlined />}
+                        />
+                    </Popconfirm>
+                </span>
+            );
+        },
+    });
 
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
@@ -354,10 +362,9 @@ const FormSampleProduct = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 </p>
                 {!onApproval && (
                     <Button
+                        type="primary"
                         onClick={handleAdd}
-                        color="primary"
-                        variant="contained"
-                        disabled={!!editingKey || !onParamCode}
+                        disabled={!!editingKey}
                     >
                         + Add Data
                     </Button>

@@ -100,7 +100,7 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
                         },
                     })}
                     scroll={
-                        columns.length > 5 && { x: 2000 }
+                        columns.length >= 10 && { x: 3000 }
                     }
                 />
             </Modal>

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Popconfirm, Table, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
-import { getFormula } from '../../../../../../Api/Master/getData';
-import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
+import { toRupiah } from '../../../../../components/Dashboard/Global/General';
+import InputModal from '../../../../../components/Dashboard/Global/InputModal';
+import { getExpense } from '../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -14,101 +15,128 @@ const EditableCell = ({
     index,
     children,
     onData,
-    onDataFormula,
+    onDataExpense,
     onEdit,
     ...restProps
 }) => {
 
     useEffect(() => {
         if (onEdit) {
-            setOpenFormula(true);
+            setOpenExpense(true);
         }
     }, [onEdit]);
 
 
     const [isLoading, setIsLoading] = useState(true);
-    const [dataFormula, setDataFormula] = useState([]);
-    const [selectFormula, setSelectFormula] = useState("");
-    const [openFormula, setOpenFormula] = useState(null);
 
-    // FORMULA
+    const [dataExpense, setDataExpense] = useState([]);
+    const [selectExpense, setSelectExpense] = useState("");
+    const [openExpense, setOpenExpense] = useState(null);
+
+    // Expense
     useEffect(() => {
-        const fetchFormula = async () => {
+        const fetchExpense = async () => {
             try {
-                const formulaCode = onData.map(item => item.formulacode);
+                const ExpenseCode = onData.map(item => item.expensecode);
 
-                const res = await getFormula();
-                const filter = res.filter(item => !formulaCode.includes(item.formulacode));
-                setDataFormula(filter);
+                const res = await getExpense();
+                const filter = res.filter(item => !ExpenseCode.includes(item.expensecode));
+                setDataExpense(filter);
 
                 if (onEdit) {
-                    const selected = res.filter(item => item.formulacode === record.formulacode);
-                    setSelectFormula(selected[0]);
+                    const selected = res.filter(item => item.expensecode === record.expensecode);
+                    setSelectExpense(selected[0]);
                 }
 
             } catch (error) {
                 console.log(error);
             }
         }
-        if (openFormula) {
-            fetchFormula();
-            setOpenFormula(false);
+        if (openExpense) {
+            fetchExpense();
+            setOpenExpense(false);
             setIsLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openFormula]);
+    }, [openExpense]);
 
     useEffect(() => {
-        if (selectFormula) {
-            onDataFormula(selectFormula);
+        if (selectExpense) {
+            onDataExpense(selectExpense);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectFormula]);
+    }, [selectExpense]);
 
     return (
         <td {...restProps}>
             {editing ? (
                 <div>
+
                     {dataIndex === 'description' ? (
                         <Form.Item
                             name={dataIndex}
-                            style={{ margin: 0 }}
+                            style={{
+                                margin: 0,
+                            }}
                         >
-                            <Input.TextArea rows={4} placeholder={title} />
+                            <Input.TextArea placeholder={title} />
                         </Form.Item>
-                    ) : dataIndex === "formulaname" ? (
+
+                    ) : dataIndex === 'expense' ? (
                         <InputModal
-                            title="FORMULA"
-                            label="Formula Name"
+                            title="EXPENSE"
+                            label={title}
                             name={dataIndex}
-                            dataSource={dataFormula}
+                            dataSource={dataExpense}
                             loading={isLoading}
-                            columns={columnsFormula}
-                            onData={(values) => setSelectFormula(values)}
-                            onOpenModal={(values) => setOpenFormula(values)}
+                            columns={columnsExpense}
+                            onData={(values) => setSelectExpense(values)}
+                            onOpenModal={(values) => setOpenExpense(values)}
                             onDetail={true}
                         />
-                    ) : (dataIndex === "lspec" || dataIndex === "uspec") ? (
+                    ) : (
+
                         <Form.Item
                             name={dataIndex}
-                            style={{ margin: 0 }}
+                            style={{
+                                margin: 0,
+                            }}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: `Please Input ${title}!`,
+                                },
+                            ]}
                         >
-                            <InputNumber placeholder={title} className="w-full" />
+                            {dataIndex === 'expensevalue' && editing ? (
+
+                                <InputNumber
+                                    className="w-full"
+                                    placeholder={title}
+                                    min={0}
+                                    formatter={(value) => `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => value?.replace(/Rp\s?|(,*)/g, '')}
+                                />
+
+                            ) : (
+
+                                <Input placeholder={title} maxLength={50} />
+
+                            )}
                         </Form.Item>
-                    ) : null}
+                    )}
+
                 </div>
             ) : (
                 children
-            )}
-        </td>
-
+            )
+            }
+        </td >
     );
 };
 
 
-const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
-
-    // console.log(onEdit);
+const FormTestingOrderAC = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -116,13 +144,24 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
     const [editingKey, setEditingKey] = useState('');
 
-    const [dataFormula, setDataFormula] = useState(null);
+    const [dataExpense, setDataExpense] = useState(null);
 
     useEffect(() => {
-        if (form && dataFormula) {
-            form.setFieldsValue({ formulaname: dataFormula.formulaname });
+        if (form && dataExpense) {
+            form.setFieldsValue({
+                expense: dataExpense.expensename
+            })
+
+            setData(data.map((item) => ({
+                ...item,
+                expensevalue: dataExpense.defaultvalue
+            }))
+            )
+
         }
-    }, [dataFormula, form])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataExpense, form]);
+
 
     useEffect(() => {
         if (onEdit) {
@@ -144,7 +183,6 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             ...record,
             // DocExpDate: docExpDate,
         });
-
         setEditingKey(record.key);
     };
 
@@ -174,7 +212,7 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
 
     const handleCancel = (record) => {
-        if (!record.username) {
+        if (!record.expensecode) {
             const newData = data.filter((item) => item.key !== record.key);
             setData(newData);
         } else {
@@ -192,16 +230,15 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             const row = await form.validateFields();
             const newData = [...data];
             const index = newData.findIndex((item) => record.key === item.key);
+            const ExpenseCode = dataExpense.expensecode;
 
             if (index > -1) {
                 const item = newData[index];
-                const FormulaCode = dataFormula.formulacode
-                const FormulaVersion = dataFormula.version
+                // const docExpDate = row.DocExpDate.format('YYYY-MM-DD');
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    formulacode: FormulaCode,
-                    formulaversion: FormulaVersion
+                    expensecode: ExpenseCode
                 });
                 setData(newData);
                 setEditingKey('');
@@ -238,38 +275,16 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            detailno: num,
-            parcode: onParamCode,
-            formulacode: '',
-            formulaname: '',
+            expense: '',
+            expensecode: '',
+            expensevalue: '',
             description: '',
-            lspec: '',
-            uspec: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
 
         // console.log("DataFormTran", data);
     };
-
-    // const handleSaveAllData = async () => {
-    //     setLoading(true);
-    // setIsDisable(true);
-    //     try {
-    //         onSaveData(data);
-    //         console.log("PostData", data);
-    //         message.success("Success add form table data!!");
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     setLoading(false);
-    // }
-
-    // const handleCancelAllData = () => {
-    //     setData([]);
-    //     setCount(0);
-    //     onSaveData([]);
-    // }
 
     const columns = [
         {
@@ -279,19 +294,15 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
             width: 80,
         },
         {
-            title: 'Formula',
-            dataIndex: 'formulaname',
+            title: 'Expense',
+            dataIndex: 'expense',
             editable: true,
         },
         {
-            title: 'Lower Spec',
-            dataIndex: 'lspec',
-            editable: true,
-        },
-        {
-            title: 'Upper Spec',
-            dataIndex: 'uspec',
-            editable: true,
+            title: 'Value',
+            dataIndex: 'expensevalue',
+            // editable: true,
+            render: (value) => <p>{toRupiah(value)}</p>
         },
         {
             title: 'Description',
@@ -300,47 +311,49 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
         },
     ];
 
-    columns.push({
-        title: 'Actions',
-        dataIndex: 'actions',
-        width: 100,
-        fixed: "right",
-        render: (_, record) => {
-            const editable = isEditing(record);
-            return editable ? (
-                <span className="flex items-center justify-around">
-                    <Button
-                        color="primary"
-                        variant="text"
-                        icon={<SaveFilled />}
-                        onClick={() => handleSave(record)}
-                    />
-                    <Button
-                        color="primary"
-                        variant="text"
-                        icon={<CloseOutlined />}
-                        onClick={() => handleCancel(record)}
-                    />
-                </span>
-            ) : (
-                <span className="flex items-center justify-around">
-                    <Button
-                        color="primary"
-                        variant="text"
-                        icon={<EditFilled />}
-                        onClick={() => handleEdit(record)}
-                    />
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+    if (!onApproval) {
+        columns.push({
+            title: 'Actions',
+            dataIndex: 'actions',
+            width: 100,
+            fixed: "right",
+            render: (_, record) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <span className="flex items-center justify-around">
                         <Button
                             color="primary"
                             variant="text"
-                            icon={<DeleteOutlined />}
+                            icon={<SaveFilled />}
+                            onClick={() => handleSave(record)}
                         />
-                    </Popconfirm>
-                </span>
-            );
-        },
-    });
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<CloseOutlined />}
+                            onClick={() => handleCancel(record)}
+                        />
+                    </span>
+                ) : (
+                    <span className="flex items-center justify-around">
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<EditFilled />}
+                            onClick={() => handleEdit(record)}
+                        />
+                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                            <Button
+                                color="primary"
+                                variant="text"
+                                icon={<DeleteOutlined />}
+                            />
+                        </Popconfirm>
+                    </span>
+                );
+            },
+        });
+    }
 
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
@@ -353,8 +366,8 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                 title: col.title,
                 editing: isEditing(record),
                 onData: data,
-                onDataFormula: (values) => setDataFormula(values),
-                onEdit: onEdit,
+                onDataExpense: (values) => setDataExpense(values),
+                onEdit: onEdit
             }),
             ...col,
         };
@@ -364,7 +377,7 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
         <Form form={form} component={false}>
             <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    FORMULA
+                    AC COST
                 </p>
                 {!onApproval && (
                     <Button
@@ -391,30 +404,52 @@ const FormSampleFormula = ({ onSaveData, onParamCode, onEdit, onApproval }) => {
                     x: 1000
                 }}
             />
+            {/* {!onApproval && (
+                <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                        type="primary"
+                        onClick={handleCancelAllData}
+                        disabled={!!editingKey || !!isDisable}
+                    >
+                        <span>Cancel</span>
+                    </Button>
+                    <Button
+                        color="primary"
+                        onClick={handleSaveAllData}
+                        variant="contained"
+                        disabled={!!editingKey || !!isDisable}
+                    >
+                        <span>Save</span>
+                    </Button>
+
+                </div>
+            )} */}
         </Form>
     );
 };
-export default FormSampleFormula;
+export default FormTestingOrderAC;
 
-const columnsFormula = [
+
+
+const columnsExpense = [
     {
-        title: "Formula Code",
-        dataIndex: "formulacode",
-        key: "formulacode",
+        title: 'Expense Code',
+        dataIndex: 'expensecode',
+        key: 'expensecode'
     },
     {
-        title: "Formula Name",
-        dataIndex: "formulaname",
-        key: "formulaname",
+        title: 'Expense Name',
+        dataIndex: 'expensename',
+        key: 'expensename'
     },
     {
-        title: "Formula",
-        dataIndex: "formula",
-        key: "formula",
+        title: 'Value',
+        dataIndex: 'defaultvalue',
+        key: 'defaultvalue'
     },
     {
-        title: "Description",
-        dataIndex: "description",
-        key: "description",
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description'
     },
-];
+]

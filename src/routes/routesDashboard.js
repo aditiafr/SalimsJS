@@ -7,6 +7,7 @@ import { ViewPages } from "./Pages/viewPages";
 import { FormPages } from "./Pages/formPages";
 import Dashboard from "../pages/ADMIN/Dashboard";
 import FormSampleParameter from "../pages/ADMIN/MASTER/Sample/Params/form";
+import FormTestingOrderSample from "../pages/ADMIN/SAMPLE_HANDLING/TestingOrder/Sample/form";
 
 const RoutesDashboard = () => {
 
@@ -52,6 +53,17 @@ const RoutesDashboard = () => {
     {
       path: "/master/sample/form/parameter/:code",
       element: <FormSampleParameter />,
+    },
+    
+    
+    // SAMPLE HANDLING TESTING ORDER
+    {
+      path: "/sample_handling/testing_order/form/sample",
+      element: <FormTestingOrderSample />,
+    },
+    {
+      path: "/sample_handling/testing_order/form/sample/:code",
+      element: <FormTestingOrderSample />,
     },
     
   ];

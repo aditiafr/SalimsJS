@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Typography, DatePicker, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
+import { getEquipment } from '../../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -12,36 +13,86 @@ const EditableCell = ({
     record,
     index,
     children,
+    onData,
+    onDataEquipment,
+    onEdit,
     ...restProps
 }) => {
 
-    const handleOnKeyPress = (event) => {
-        if (!/[0-9]/.test(event.key)) {
-            event.preventDefault();
+    useEffect(() => {
+        if (onEdit) {
+            setOpenEquipment(true);
         }
-    }
+    }, [onEdit]);
+
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [dataEquipment, setDataEquipment] = useState([]);
+    const [selectEquipment, setSelectEquipment] = useState("");
+    const [openEquipment, setOpenEquipment] = useState(null);
+
+    // EQUIPMENT
+    useEffect(() => {
+        const fetchEquipment = async () => {
+            try {
+                const equipmentCode = onData.map(item => item.equipmentcode);
+
+                const res = await getEquipment();
+                const filter = res.filter(item => !equipmentCode.includes(item.equipmentcode));
+                setDataEquipment(filter);
+
+                if (onEdit) {
+                    const selected = res.filter(item => item.equipmentcode === record.equipmentcode);
+                    setSelectEquipment(selected[0]);
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (openEquipment) {
+            fetchEquipment();
+            setOpenEquipment(false);
+            setIsLoading(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openEquipment]);
+
+    useEffect(() => {
+        if (selectEquipment) {
+            onDataEquipment(selectEquipment);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectEquipment]);
 
     return (
         <td {...restProps}>
             {editing ? (
                 <div>
 
-                    {dataIndex === 'phone' ? (
+                    {dataIndex === 'description' ? (
                         <Form.Item
                             name={dataIndex}
                             style={{
                                 margin: 0,
                             }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: `Please Input ${title}!`,
-                                },
-                            ]}
                         >
-                            <Input placeholder={title} onKeyPress={handleOnKeyPress} />
+                            <Input.TextArea placeholder={title} />
                         </Form.Item>
 
+                    ) : dataIndex === 'equipmentname' ? (
+                        <InputModal
+                            title="EQUIPMENT"
+                            label="Equipment"
+                            name={dataIndex}
+                            dataSource={dataEquipment}
+                            loading={isLoading}
+                            columns={columnsEquipment}
+                            onData={(values) => setSelectEquipment(values)}
+                            onOpenModal={(values) => setOpenEquipment(values)}
+                            onDetail={true}
+                        />
                     ) : (
 
                         <Form.Item
@@ -56,15 +107,18 @@ const EditableCell = ({
                                 },
                             ]}
                         >
-                            {dataIndex === 'userpwd' && editing ? (
+                            {
+                                (dataIndex === 'conqty' ||
+                                    dataIndex === 'volqty')
+                                    && editing ? (
 
-                                <Input.Password placeholder={title} maxLength={50} />
+                                    <InputNumber placeholder={title} min={0} className="w-full" />
 
-                            ) : (
+                                ) : (
 
-                                <Input placeholder={title} maxLength={50} />
+                                    <Input placeholder={title} maxLength={50} />
 
-                            )}
+                                )}
                         </Form.Item>
                     )}
 
@@ -78,15 +132,24 @@ const EditableCell = ({
 };
 
 
-const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
+const FormTestingOrderContainerInformation = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [count, setCount] = useState(0);
 
     const [editingKey, setEditingKey] = useState('');
-    // const [loading, setLoading] = useState(false);
-    // const [isDisable, setIsDisable] = useState(true);
+
+    const [dataEquipment, setDataEquipment] = useState(null);
+
+    useEffect(() => {
+        if (form && dataEquipment) {
+            form.setFieldsValue({
+                equipmentname: dataEquipment.equipmentname
+            })
+        }
+    }, [dataEquipment, form]);
+
 
     useEffect(() => {
         if (onEdit) {
@@ -137,7 +200,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
 
 
     const handleCancel = (record) => {
-        if (!record.username) {
+        if (!record.equipmentcode) {
             const newData = data.filter((item) => item.key !== record.key);
             setData(newData);
         } else {
@@ -155,6 +218,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
             const row = await form.validateFields();
             const newData = [...data];
             const index = newData.findIndex((item) => record.key === item.key);
+            const equipmentCode = dataEquipment.equipmentcode
 
             if (index > -1) {
                 const item = newData[index];
@@ -162,7 +226,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    // DocExpDate: docExpDate,
+                    equipmentcode: equipmentCode
                 });
                 setData(newData);
                 setEditingKey('');
@@ -185,50 +249,30 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         }
     };
 
-
-
     const handleAdd = () => {
-
         const num = count + 1;
-        const code = (count + 1).toString().padStart(3, '0');
+        // const code = (count + 1).toString().padStart(3, '0');
 
         if (editingKey) {
             message.warning("Complete the input form !");
-            return; // Stop saving if duplicate found
+            return;
         }
 
         const newData = {
             key: num,
-            // userid: "CUS" + code,
-            username: '',
-            userpwd: '',
-            phone: '',
-            position: '',
+            detailno: num,
+            equipmentcode: '',
+            equipmentname: '',
+            conqty: '',
+            conuom: '',
+            volqty: '',
+            voluom: '',
+            description: '',
         };
         setData([newData, ...data]);
         handleEdit(newData);
-
-        // console.log("DataFormTran", data);
     };
 
-    // const handleSaveAllData = async () => {
-    //     setLoading(true);
-    // setIsDisable(true);
-    //     try {
-    //         onSaveData(data);
-    //         console.log("PostData", data);
-    //         message.success("Success add form table data!!");
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     setLoading(false);
-    // }
-
-    // const handleCancelAllData = () => {
-    //     setData([]);
-    //     setCount(0);
-    //     onSaveData([]);
-    // }
 
     const columns = [
         {
@@ -238,29 +282,43 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
             width: 80,
         },
         // {
-        //     title: 'User Id',
-        //     dataIndex: 'userid',
+        //     title: 'detailno',
+        //     dataIndex: 'detailno',
+        //     editable: true,
+        // },
+        // {
+        //     title: 'Equipment Code',
+        //     dataIndex: 'equipmentcode',
         //     editable: true,
         // },
         {
-            title: 'Username',
-            dataIndex: 'username',
+            title: 'Equipment  Name',
+            dataIndex: 'equipmentname',
             editable: true,
         },
         {
-            title: 'User Password',
-            dataIndex: 'userpwd',
-            editable: true,
-            render: (text) => '*******',
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone',
+            title: 'Con Quantity',
+            dataIndex: 'conqty',
             editable: true,
         },
         {
-            title: 'Position',
-            dataIndex: 'position',
+            title: 'Con UOM',
+            dataIndex: 'conuom',
+            editable: true,
+        },
+        {
+            title: 'Volume Quantity',
+            dataIndex: 'volqty',
+            editable: true,
+        },
+        {
+            title: 'Volume UOM',
+            dataIndex: 'voluom',
+            editable: true,
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
             editable: true,
         },
     ];
@@ -275,23 +333,33 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleSave(record)} style={{ fontSize: '18px' }}>
-                            <SaveFilled />
-                        </Typography.Link>
-
-                        <Typography.Link onClick={() => handleCancel(record)} style={{ fontSize: '18px' }}>
-                            <CloseOutlined />
-                        </Typography.Link>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<SaveFilled />}
+                            onClick={() => handleSave(record)}
+                        />
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<CloseOutlined />}
+                            onClick={() => handleCancel(record)}
+                        />
                     </span>
                 ) : (
                     <span className="flex items-center justify-around">
-                        <Typography.Link onClick={() => handleEdit(record)} style={{ fontSize: '18px' }}>
-                            <EditFilled />
-                        </Typography.Link>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<EditFilled />}
+                            onClick={() => handleEdit(record)}
+                        />
                         <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                            <Link>
-                                <DeleteOutlined style={{ fontSize: '18px' }} />
-                            </Link>
+                            <Button
+                                color="primary"
+                                variant="text"
+                                icon={<DeleteOutlined />}
+                            />
                         </Popconfirm>
                     </span>
                 );
@@ -309,6 +377,9 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
+                onData: data,
+                onDataEquipment: (values) => setDataEquipment(values),
+                onEdit: onEdit
             }),
             ...col,
         };
@@ -318,7 +389,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         <Form form={form} component={false}>
             <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    USER
+                    CONTAINER INFORMATION
                 </p>
                 {!onApproval && (
                     <Button
@@ -342,7 +413,7 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 rowClassName="editable-row"
                 pagination={false}
                 scroll={{
-                    x: 1000
+                    x: 1500
                 }}
             />
             {/* {!onApproval && (
@@ -368,4 +439,58 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
         </Form>
     );
 };
-export default FormCustomerUser;
+export default FormTestingOrderContainerInformation;
+
+
+const columnsEquipment = [
+    {
+        title: 'Equipment Name',
+        dataIndex: 'equipmentname',
+        key: 'equipmentname'
+    },
+    {
+        title: 'Equipment Type Name',
+        dataIndex: 'equipmenttypename',
+        key: 'equipmenttypename'
+    },
+    {
+        title: 'Vendor Name',
+        dataIndex: 'vendorname',
+        key: 'vendorname'
+    },
+    {
+        title: 'Manufacture Name',
+        dataIndex: 'manufacturename',
+        key: 'manufacturename'
+    },
+    {
+        title: 'Serial Number',
+        dataIndex: 'serialnumber',
+        key: 'serialnumber'
+    },
+    {
+        title: 'Date Calibration',
+        dataIndex: 'datecalibration',
+        key: 'datecalibration'
+    },
+    {
+        title: 'Due Date Calibration',
+        dataIndex: 'duedatecalibration',
+        key: 'duedatecalibration'
+    },
+    {
+        title: 'Quantity',
+        dataIndex: 'qty',
+        key: 'qty'
+    },
+    {
+        title: 'Temp Info',
+        dataIndex: 'tempinfo',
+        key: 'tempinfo'
+    },
+    {
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description'
+    },
+]
