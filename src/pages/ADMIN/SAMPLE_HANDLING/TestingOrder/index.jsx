@@ -6,6 +6,8 @@ import { getTestingOrder } from "../../../../Api/SampleHandling/GetData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import TestingOrderAcCost from "./AcCost";
 import TestingOrderSample from "./Sample";
+import DeleteTestingOrder from "./Delete";
+import EditTestingOrder from "./edit";
 
 const TestingOrder = () => {
   const [data, setData] = useState([]);
@@ -111,8 +113,8 @@ const TestingOrder = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          {/* <EditCustomer dataSource={record} onEdit={fetchData} />
-          <DeleteCustomer dataSource={record} onDelete={fetchData} /> */}
+          <EditTestingOrder dataSource={record} />
+          <DeleteTestingOrder dataSource={record} onDelete={fetchData} />
         </Space>
       ),
     },

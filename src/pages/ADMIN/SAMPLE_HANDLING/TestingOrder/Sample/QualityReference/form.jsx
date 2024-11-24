@@ -145,7 +145,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
             const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
             setData(dataEdit);
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
-            onSaveData(dataEdit);
+            onSaveData(dataEdit);            
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onEdit]);

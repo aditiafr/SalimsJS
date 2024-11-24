@@ -3,7 +3,7 @@ import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal, selectedTranIdx } from "../../../../components/Dashboard/Global/Helper";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InputModal from "../../../../components/Dashboard/Global/InputModal";
 import { getCustomer } from "../../../../Api/Master/getData";
 import { columnsCustomer } from "./ColumnsTestingOrder";
@@ -12,9 +12,20 @@ import FormTestingOrderSample from "./Sample/form";
 import DetailPriceSample from "./DetailPrice";
 import { postTestingOrder } from "../../../../Api/SampleHandling/PostData";
 import dayjs from "dayjs";
+import { getTestingOrderOne } from "../../../../Api/SampleHandling/GetData";
+import { updateTestingOrder } from "../../../../Api/SampleHandling/UpdateData";
 
 const FormTestingOrder = () => {
+
   const [form] = Form.useForm();
+  const { code } = useParams();
+  const [dataOne, setDataOne] = useState(null);
+
+  useEffect(() => {
+    setOpenCustomer(true);
+  }, []);
+
+
   const navigate = useNavigate();
   const prefix = PrefixGlobal();
   const [loading, setLoading] = useState(false);
@@ -50,6 +61,34 @@ const FormTestingOrder = () => {
   const Total_Gross = AC_EV + SMPL_STP;
 
 
+  // EDIT DATA
+  useEffect(() => {
+    if (code) {
+
+      const fetchDataOne = async () => {
+        try {
+          const res = await getTestingOrderOne(code);
+          setDataOne(res);
+
+          form.setFieldsValue({
+            ...res,
+            // customername: CustomerName,
+            reqdate: dayjs(res.reqdate),
+          });
+
+          setValuePrice((prev) => ({ ...prev, discount: res.discount }))
+          setValuePrice((prev) => ({ ...prev, vat: res.vat }))
+
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      fetchDataOne();
+
+    }
+  }, [code, form]);
+
 
   // TOTAL PRICE
   const Gross = Total_Gross
@@ -80,6 +119,12 @@ const FormTestingOrder = () => {
       try {
         const res = await getCustomer(false);
         setDataCustomer(res);
+
+        if (code && dataOne) {
+          const selected = res.filter(item => item.customercode === dataOne.customercode);
+          setSelectCustomer(selected[0]);
+        }
+
       } catch (error) {
         console.log(error);
       }
@@ -87,22 +132,32 @@ const FormTestingOrder = () => {
 
     if (openCustomer) {
       fetchCustomer();
-      setOpenCustomer(false);
+      // setOpenCustomer(false);
       setIsLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openCustomer]);
 
 
   useEffect(() => {
     form.setFieldsValue({
       customername: CustomerName,
-      periode: dayjs().format('YYYYMM'),
-      reqdate: dayjs(),
-      discount: 0,
-      vat: 11,
     })
-  }, [CustomerName, form]);
+  }, [CustomerName, code, form]);
+
+  useEffect(() => {
+    if (!code) {
+      form.setFieldsValue({
+        periode: dayjs().format('YYYYMM'),
+        reqdate: dayjs(),
+        discount: 0,
+        vat: 11,
+      })
+    }
+
+  }, [code, form]);
+
 
   const handleSubmit = async (values) => {
     try {
@@ -121,18 +176,23 @@ const FormTestingOrder = () => {
         customercode: CustomerCode,
         reqdate: values.reqdate.format('YYYY-MM-DD'),
         gross: Gross,
-        discount: TotalDiscount,
+        discount: DiscountPersen,
         dpp: DPP,
-        vat: TotalVAT,
+        vat: VATPersen,
         net: NET,
         testing_order_ac: dataAcCost,
         testing_order_sample: dataSample,
       }
 
-      const res = await postTestingOrder(payload);
-      message.success(res.data.message);
-      navigate('/sample_handling/testing_order');
+      if (code) {
+        const res = await updateTestingOrder(payload);
+        message.success(res.data.message);
+      } else {
+        const res = await postTestingOrder(payload);
+        message.success(res.data.message);
+      }
 
+      navigate('/sample_handling/testing_order');
     } catch (error) {
       console.log(error);
       message.error(error.response.data.message);
@@ -164,6 +224,7 @@ const FormTestingOrder = () => {
               label="Request Number"
               name="reqnumber"
               rules={[
+                !code &&
                 {
                   validator: prefix,
                 },
@@ -207,6 +268,7 @@ const FormTestingOrder = () => {
               columns={columnsCustomer}
               onData={(values) => setSelectCustomer(values)}
               onOpenModal={(values) => setOpenCustomer(values)}
+              onEdit={selectCustomer}
             />
 
             <Form.Item
@@ -260,11 +322,11 @@ const FormTestingOrder = () => {
           </div>
 
           <div className="m-4 p-4 border rounded-md">
-            <FormTestingOrderAcCost onSaveData={(values) => setDataAcCost(values)} />
+            <FormTestingOrderAcCost onSaveData={(values) => setDataAcCost(values)} onEdit={dataOne} />
           </div>
 
           <div className="m-4 p-4 border rounded-md">
-            <FormTestingOrderSample onSaveData={(values) => setDataSample(values)} />
+            <FormTestingOrderSample onSaveData={(values) => setDataSample(values)} onEdit={dataOne} />
           </div>
 
           <div className="m-4 my-8 px-4 border rounded-md">

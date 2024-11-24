@@ -82,7 +82,7 @@ const EditableCell = ({
                             <Input.TextArea placeholder={title} />
                         </Form.Item>
 
-                    ) : dataIndex === 'expense' ? (
+                    ) : dataIndex === 'expensename' ? (
                         <InputModal
                             title="EXPENSE"
                             label={title}
@@ -165,7 +165,7 @@ const FormTestingOrderAC = ({ onSaveData, onEdit, onApproval }) => {
 
     useEffect(() => {
         if (onEdit) {
-            const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
+            const dataEdit = onEdit.testing_order_ac.map((row, index) => ({ ...row, key: index + 1 })).reverse()
             setData(dataEdit);
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
             onSaveData(dataEdit);
@@ -275,7 +275,7 @@ const FormTestingOrderAC = ({ onSaveData, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            expense: '',
+            expensename: '',
             expensecode: '',
             expensevalue: '',
             description: '',
@@ -295,7 +295,7 @@ const FormTestingOrderAC = ({ onSaveData, onEdit, onApproval }) => {
         },
         {
             title: 'Expense',
-            dataIndex: 'expense',
+            dataIndex: 'expensename',
             editable: true,
         },
         {

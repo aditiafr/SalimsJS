@@ -15,3 +15,14 @@ export const getTestingOrder = async (Suspend) => {
 
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
+
+export const getTestingOrderOne = async (Code) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/transaction/testing-order/one/0001/${Code}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}

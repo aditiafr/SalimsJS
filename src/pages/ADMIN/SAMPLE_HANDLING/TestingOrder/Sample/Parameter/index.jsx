@@ -20,11 +20,11 @@ const TestingOrderParameter = ({dataSource}) => {
 export default TestingOrderParameter
 
 const columns = [
-    // {
-    //     title: "Parameter Code",
-    //     dataIndex: "parcode",
-    //     key: "parcode",
-    // },
+    {
+        title: "Parameter Code",
+        dataIndex: "parcode",
+        key: "parcode",
+    },
     // {
     //     title: "Method Id",
     //     dataIndex: "methodid",

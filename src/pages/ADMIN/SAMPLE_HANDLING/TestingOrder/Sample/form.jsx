@@ -242,7 +242,7 @@ const FormTestingOrderSample = ({ onSaveData, onEdit, onApproval }) => {
 
     useEffect(() => {
         if (onEdit) {
-            const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
+            const dataEdit = onEdit.testing_order_sample.map((row, index) => ({ ...row, key: index + 1 })).reverse()
             setData(dataEdit);
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
             onSaveData(dataEdit);
@@ -619,16 +619,19 @@ const expandedRowRender = (record, onSaveContainerInformation, onSaveQualityRefe
         onSaveParameter(record.key, values);
     };
 
+    // console.log(record);
+    
+
     return (
         <>
             <div className="m-4 p-4 border rounded-md">
-                <FormTestingOrderContainerInformation onSaveData={handleSaveContainerInformation} />
+                <FormTestingOrderContainerInformation onSaveData={handleSaveContainerInformation} onEdit={record.testing_order_ci} />
             </div>
             <div className="m-4 p-4 border rounded-md">
-                <FormTestingQualityReference onSaveData={handleSaveQualityReference} />
+                <FormTestingQualityReference onSaveData={handleSaveQualityReference} onEdit={record.testing_order_qr} />
             </div>
             <div className="m-4 p-4 border rounded-md">
-                <FormTestingOrderParameter onSaveData={handleSaveParameter} />
+                <FormTestingOrderParameter onSaveData={handleSaveParameter} onEdit={record.testing_order_par} />
             </div>
         </>
     );
