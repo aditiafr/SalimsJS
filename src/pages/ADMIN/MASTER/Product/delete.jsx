@@ -1,21 +1,31 @@
-import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
-import { Button, Modal, Tooltip } from "antd";
+import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Tooltip } from "antd";
 import React from "react";
+import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
+import { deleteProduct } from "../../../../Api/Master/DeleteData";
 
 const { confirm } = Modal;
 
-const DeleteProduct = ({ name }) => {
-    const handleDelete = () => {
-        Modal.destroyAll();
-        console.log("Delete Data!");
+const DeleteProduct = ({ dataSource, onDelete }) => {
+
+    const handleDelete = async () => {
+        try {
+            const res = await deleteProduct(dataSource.branchcode, dataSource.prodcode);
+            message.success(res.data.message);
+            onDelete(true);
+            Modal.destroyAll();
+        } catch (error) {
+            console.log(error);
+        }
     };
+
+    const content = `Data Product Code ${dataSource.prodcode} & Product Name ${dataSource.prodname}...`;
 
     const showConfirm = () => {
         confirm({
-            title: "Do you want to delete these items?",
+            title: "Do you want to suspend these items?",
             icon: <ExclamationCircleFilled />,
-            content: `Product ${name}`,
+            content: content,
             centered: true,
             footer: <ButtonDelete onDelete={handleDelete} />,
         });
@@ -23,8 +33,8 @@ const DeleteProduct = ({ name }) => {
 
     return (
         <>
-            <Tooltip title="Delete">
-                <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+            <Tooltip title="Suspend">
+                <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
             </Tooltip>
         </>
     );

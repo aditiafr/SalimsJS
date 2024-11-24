@@ -1,20 +1,209 @@
-import { Col, Form, Input, Row } from "antd";
+import { DatePicker, Form, Input, InputNumber, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
+import { PrefixGlobal, selectedTranIdx } from "../../../../components/Dashboard/Global/Helper";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
+import { getCustomer } from "../../../../Api/Master/getData";
+import { columnsCustomer } from "./ColumnsTestingOrder";
+import FormTestingOrderAcCost from "./AcCost/form";
+import FormTestingOrderSample from "./Sample/form";
+import DetailPriceSample from "./DetailPrice";
+import { postTestingOrder } from "../../../../Api/SampleHandling/PostData";
+import dayjs from "dayjs";
+import { getTestingOrderOne } from "../../../../Api/SampleHandling/GetData";
+import { updateTestingOrder } from "../../../../Api/SampleHandling/UpdateData";
 
 const FormTestingOrder = () => {
-  const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+  const [form] = Form.useForm();
+  const { code } = useParams();
+  const [dataOne, setDataOne] = useState(null);
+
+  useEffect(() => {
+    setOpenCustomer(true);
+  }, []);
+
+
+  const navigate = useNavigate();
+  const prefix = PrefixGlobal();
+  const [loading, setLoading] = useState(false);
+
+  const [valuePrice, setValuePrice] = useState({
+    discount: 0,
+    vat: 11,
+
+  });
+
+  const [TPrice, setTPrice] = useState({
+    Gross: 0,
+    DiscountPersen: 0,
+    TotalDiscount: 0,
+    DPP: 0,
+    VATPersen: 0,
+    TotalVAT: 0,
+    NET: 0,
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [dataCustomer, setDataCustomer] = useState([]);
+  const [selectCustomer, setSelectCustomer] = useState("");
+  const [openCustomer, setOpenCustomer] = useState(null);
+  const CustomerCode = selectCustomer ? selectCustomer.customercode : '';
+  const CustomerName = selectCustomer ? selectCustomer.customername : '';
+
+  const [dataAcCost, setDataAcCost] = useState([]);
+  const [dataSample, setDataSample] = useState([]);
+  const AC_EV = dataAcCost.length > 0 ? parseInt(dataAcCost.reduce((sum, item) => sum + item.expensevalue, 0)) : 0;
+  const SMPL_STP = dataAcCost.length > 0 ? parseInt(dataSample.reduce((sum, item) => sum + item.subtotalprice, 0)) : 0;
+  const Total_Gross = AC_EV + SMPL_STP;
+
+
+  // EDIT DATA
+  useEffect(() => {
+    if (code) {
+
+      const fetchDataOne = async () => {
+        try {
+          const res = await getTestingOrderOne(code);
+          setDataOne(res);
+
+          form.setFieldsValue({
+            ...res,
+            // customername: CustomerName,
+            reqdate: dayjs(res.reqdate),
+          });
+
+          setValuePrice((prev) => ({ ...prev, discount: res.discount }))
+          setValuePrice((prev) => ({ ...prev, vat: res.vat }))
+
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      fetchDataOne();
+
+    }
+  }, [code, form]);
+
+
+  // TOTAL PRICE
+  const Gross = Total_Gross
+  const DiscountPersen = valuePrice.discount
+  const TotalDiscount = Gross * (DiscountPersen / 100);
+  const DPP = Gross - TotalDiscount;
+  const VATPersen = valuePrice.vat
+  const TotalVAT = DPP * (VATPersen / 100);
+  const NET = DPP + TotalVAT;
+
+  useEffect(() => {
+    setTPrice(
+      {
+        Gross: Gross,
+        DiscountPersen: DiscountPersen,
+        TotalDiscount: TotalDiscount,
+        DPP: DPP,
+        VATPersen: VATPersen,
+        TotalVAT: TotalVAT,
+        NET: NET,
+      }
+    )
+  }, [DPP, DiscountPersen, Gross, NET, TotalDiscount, TotalVAT, VATPersen]);
+
+  // CUSTOMER
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const res = await getCustomer(false);
+        setDataCustomer(res);
+
+        if (code && dataOne) {
+          const selected = res.filter(item => item.customercode === dataOne.customercode);
+          setSelectCustomer(selected[0]);
+        }
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (openCustomer) {
+      fetchCustomer();
+      // setOpenCustomer(false);
+      setIsLoading(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openCustomer]);
+
+
+  useEffect(() => {
+    form.setFieldsValue({
+      customername: CustomerName,
+    })
+  }, [CustomerName, code, form]);
+
+  useEffect(() => {
+    if (!code) {
+      form.setFieldsValue({
+        periode: dayjs().format('YYYYMM'),
+        reqdate: dayjs(),
+        discount: 0,
+        vat: 11,
+      })
+    }
+
+  }, [code, form]);
+
+
+  const handleSubmit = async (values) => {
+    try {
+
+      if (!dataAcCost.length > 0 || !dataSample.length > 0) {
+        message.info("Complete the detail Testing Order data form!");
+        return;
+      }
+
+      setLoading(true);
+
+      const payload = {
+        ...values,
+        tranidx: selectedTranIdx,
+        branchcode: '0001',
+        customercode: CustomerCode,
+        reqdate: values.reqdate.format('YYYY-MM-DD'),
+        gross: Gross,
+        discount: DiscountPersen,
+        dpp: DPP,
+        vat: VATPersen,
+        net: NET,
+        testing_order_ac: dataAcCost,
+        testing_order_sample: dataSample,
+      }
+
+      if (code) {
+        const res = await updateTestingOrder(payload);
+        message.success(res.data.message);
+      } else {
+        const res = await postTestingOrder(payload);
+        message.success(res.data.message);
+      }
+
+      navigate('/sample_handling/testing_order');
+    } catch (error) {
+      console.log(error);
+      message.error(error.response.data.message);
+    }
+    setLoading(false);
+  }
 
   const onReset = () => {
     form.resetFields();
   };
+
 
   return (
     <>
@@ -25,154 +214,127 @@ const FormTestingOrder = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Request Number"
-                name="ReqNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Request Number!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Request Date"
-                name="ReqDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Request Date!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Request Number"
+              name="reqnumber"
+              rules={[
+                !code &&
+                {
+                  validator: prefix,
+                },
+              ]}
+            >
+              <Input placeholder="Input Request Number" maxLength={6} defaultValue="" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Customer Code"
-                name="CustomerCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Customer Code!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Periode"
+              name="periode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Periode!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Periode" autoFocus />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Request By"
-                name="RequestBy"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Request By!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Request Date"
+              name="reqdate"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Request Date!",
+                },
+              ]}
+            >
+              <DatePicker placeholder="Input Request Date" className="w-full" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Gross"
-                name="Gross"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Gross!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <InputModal
+              title="CUSTOEMR"
+              label="Customer"
+              name="customername"
+              dataSource={dataCustomer}
+              loading={isLoading}
+              columns={columnsCustomer}
+              onData={(values) => setSelectCustomer(values)}
+              onOpenModal={(values) => setOpenCustomer(values)}
+              onEdit={selectCustomer}
+            />
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Discount"
-                name="Discount"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Discount!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Request By"
+              name="requestby"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Request By!",
+                },
+              ]}
+            >
+              <Input placeholder="Input Request By" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="DPP"
-                name="DPP"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your DPP!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Discount (%)"
+              name="discount"
+            >
+              <InputNumber
+                min={0}
+                max={100}
+                placeholder="Input Discount"
+                suffix="%"
+                className="w-full"
+                onChange={(value) => setValuePrice((prev) => ({ ...prev, discount: value }))}
+              />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="VAT"
-                name="VAT"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your VAT!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="VAT"
+              name="vat"
+            >
+              <InputNumber
+                min={0}
+                max={100}
+                placeholder="Input VAT"
+                suffix="%"
+                className="w-full"
+                onChange={(value) => setValuePrice((prev) => ({ ...prev, vat: value }))}
+              />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="NET"
-                name="NET"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your NET!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Description"
+              name="description"
+            >
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
-          <ButtonSubmit onReset={onReset} />
+          </div>
+
+          <div className="m-4 p-4 border rounded-md">
+            <FormTestingOrderAcCost onSaveData={(values) => setDataAcCost(values)} onEdit={dataOne} />
+          </div>
+
+          <div className="m-4 p-4 border rounded-md">
+            <FormTestingOrderSample onSaveData={(values) => setDataSample(values)} onEdit={dataOne} />
+          </div>
+
+          <div className="m-4 my-8 px-4 border rounded-md">
+            <DetailPriceSample onData={TPrice} />
+          </div>
+
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
+
         </Form>
       </div>
     </>

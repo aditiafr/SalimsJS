@@ -119,7 +119,7 @@ const EditableCell = ({
                         <InputModal
                             title="SUBZONA"
                             label="SubZona Name"
-                            name="subzonaname"
+                            name={dataIndex}
                             dataSource={dataSubZona}
                             loading={isLoading}
                             columns={columnsSubZona}
@@ -130,8 +130,6 @@ const EditableCell = ({
                     )}
                     {/* <Input placeholder={title} maxLength={50} /> */}
                     {/* </Form.Item> */}
-
-
                 </div>
             ) : (
                 children
@@ -174,7 +172,7 @@ const FormCustomerZona = ({ onSaveData, onEdit, onApproval }) => {
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
             onSaveData(dataEdit);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onEdit]);
 
 
@@ -427,9 +425,8 @@ const FormCustomerZona = ({ onSaveData, onEdit, onApproval }) => {
                 </p>
                 {!onApproval && (
                     <Button
+                        type="primary"
                         onClick={handleAdd}
-                        color="primary"
-                        variant="contained"
                         disabled={!!editingKey}
                     >
                         + Add Data

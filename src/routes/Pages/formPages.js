@@ -14,7 +14,7 @@ import FormParameterCategory from "../../pages/ADMIN/MASTER/ParameterCategory/fo
 import FormProduct from "../../pages/ADMIN/MASTER/Product/form";
 import FormProductCategory from "../../pages/ADMIN/MASTER/ProductCategory/form";
 import FormProductType from "../../pages/ADMIN/MASTER/ProductType/form";
-import FormQualityRefference from "../../pages/ADMIN/MASTER/QualityRefference/form";
+import FormQualityReference from "../../pages/ADMIN/MASTER/QualityReference/form";
 import FormSample from "../../pages/ADMIN/MASTER/Sample/form";
 import FormSampleLocation from "../../pages/ADMIN/MASTER/SampleLocation/form";
 import FormLocation from "../../pages/ADMIN/MASTER/Location/form";
@@ -63,7 +63,7 @@ export const FormPages = {
     1121: <FormFormulaTableRef />,
     1122: <FormCustomer />,
     1123: <FormParameterCategory />,
-    1124: <FormQualityRefference />,
+    1124: <FormQualityReference />,
     1125: <FormTestPreparation />,
     1126: <FormTestMethode />,
     1127: <FormOtherExpense />,
