@@ -192,3 +192,38 @@ export const deleteProductType = async (ProductTypeCode) => {
     });
     return response;
 }
+
+export const deleteParameterCategory = async (ParameterCategoryCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/parameter-category/delete/${ParameterCategoryCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const deleteOtherExpense = async (OtherExpenseCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.delete(`${baseUrl}/expense/delete/${OtherExpenseCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const deleteParameter = async (ParameterCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/parameter/set-suspend/${ParameterCode}`, 
+        {
+            issuspend: true
+        }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+    return response;
+}

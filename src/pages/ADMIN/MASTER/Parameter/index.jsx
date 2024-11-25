@@ -67,27 +67,22 @@ const Parameter = () => {
       key: "preservation",
     },
     {
-      title: "Storage Time Limit",
-      dataIndex: "storagetimelimit",
-      key: "storagetimelimit",
+      title: "Parameter Category Code",
+      dataIndex: "parcatcode",
+      key: "parcatcode",
     },
     {
-      title: "Product Category Code",
-      dataIndex: "prodcatcode",
-      key: "prodcatcode",
+      title: "Parameter Category Name",
+      dataIndex: "parcatname",
+      key: "parcatname",
     },
     {
-      title: "product Category Name",
-      dataIndex: "prodcatname",
-      key: "prodcatname",
+      title: "Result Unit Code",
+      dataIndex: "resultunitcode",
+      key: "resultunitcode",
     },
     {
-      title: "Unit Code",
-      dataIndex: "unitcode",
-      key: "unitcode",
-    },
-    {
-      title: "Unit Name",
+      title: "Result Unit Name",
       dataIndex: "unitname",
       key: "unitname",
     },
@@ -105,11 +100,9 @@ const Parameter = () => {
       title: "Akreditasi",
       dataIndex: "akreditasi",
       key: "akreditasi",
-    },
-    {
-      title: "Result Unit Code",
-      dataIndex: "resultunitcode",
-      key: "resultunitcode",
+      render: (akreditasi) => (
+        <Tag color={akreditasi ? 'green' : 'red'}> {akreditasi ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Price",
@@ -136,8 +129,8 @@ const Parameter = () => {
       render: (_, record) => (
         <Space>
           <EditParameter dataSource={record} onEdit={fetchData} />
-          {record.issuspend === false && (
-            <DeleteParameter dataSource={record} onDelete={fetchData} />
+          {!!!record.issuspend && (
+            <DeleteParameter parameterCode={record.parcode} name={record.parname} onDelete={fetchData} />
           )}
         </Space>
       ),

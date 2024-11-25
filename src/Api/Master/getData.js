@@ -5,6 +5,8 @@ import { DepartmentMapFromHttp } from "../../mapper/Department";
 import { PackingTypeMapFromHttp } from "../../mapper/PackingType";
 import { ProductCategoryMapFromHttp } from "../../mapper/ProductCategory";
 import { ProductTypeMapFromHttp } from "../../mapper/ProductType";
+import { ParameterCategoryMapFromHttp } from "../../mapper/ParameterCategory";
+import { OtherExpenseMapFromHttp } from "../../mapper/OtherExpense";
 import { selectedTranIdx } from "../../components/Dashboard/Global/Helper";
 
 const baseURL = process.env.REACT_APP_BASEURL;
@@ -64,6 +66,18 @@ export const getZona = async (Suspend) => {
     return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
 }
 
+export const getZonaNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/zona/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.zona;
+}
+
 export const getSubZona = async (Suspend) => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/subzona/list${Suspend ? `?isSuspend=${Suspend}` : ''}`, {
@@ -75,8 +89,21 @@ export const getSubZona = async (Suspend) => {
     return response.data.data.map((row, index) => ({ key: index + 1, ...row }));
 }
 
+export const getSubZonaNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/subzona/next-code?tranidx=${selectedTranIdx}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.subzonacode;
+}
+
 export const getWarehouseNextCode = async () => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/warehouse/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -98,6 +125,7 @@ export const getVendor = async () => {
 
 export const getVendorNextCode = async () => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/vendor/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -119,6 +147,7 @@ export const getLocation = async () => {
 
 export const getLocationNextCode = async (WarehouseCode) => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/location/next-code?tranidx=${selectedTranIdx}&warehousecode=${WarehouseCode}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -140,6 +169,7 @@ export const getSampleLocation = async () => {
 
 export const getSampleLocationNextCode = async (BuildingCode) => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/sampleloc/next-code?tranidx=${selectedTranIdx}&buildingcode=${BuildingCode}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -172,6 +202,7 @@ export const getParameter = async () => {
 
 export const getParameterNextCode = async (WarehouseCode) => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/parameter/next-code?tranidx=${selectedTranIdx}&warehousecode=${WarehouseCode}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -182,6 +213,7 @@ export const getParameterNextCode = async (WarehouseCode) => {
 
 export const getManufactureNextCode = async () => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/manufacture/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -245,6 +277,7 @@ export const getTimePoint = async () => {
 
 export const getTimePointNextCode = async () => {
     const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
     const response = await axios.get(`${baseURL}/timepoint/next-code?tranidx=${selectedTranIdx}`, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -389,4 +422,129 @@ export const getProductTypeNextCode = async () => {
     });
 
     return response.data.data.productTypeCode;
+}
+
+export const getParameterCategory = async (params) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/parameter-category/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+
+    return ParameterCategoryMapFromHttp(response.data.data);
+}
+
+export const getParameterCategoryNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/parameter-category/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.parameterCategoryCode;
+}
+
+export const getOtherExpense = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/expense/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return OtherExpenseMapFromHttp(response.data.data);
+}
+
+export const getOtherExpenseNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/expense/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.expenseCode;
+}
+
+export const getEquipment = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/equipment/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getEquipmentNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/equipment/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: {
+            tranidx: selectedTranIdx,
+            branchcode: '0001' // dont know what is this
+        }
+    });
+
+    return response.data.data.equipment;
+}
+
+export const getPriceList = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/pricelist/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getPriceListNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/pricelist/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: {
+            tranidx: selectedTranIdx,
+            branchcode: '0001' // dont know what is this
+        }
+    });
+
+    return response.data.data.pricecode;
+}
+
+export const getLabour = async () => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/labour/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getLabourNextCode = async () => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.get(`${baseURL}/labour/next-code`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: {
+            tranidx: selectedTranIdx
+        }
+    });
+
+    return response.data.data.labourcode;
 }

@@ -1,88 +1,93 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag } from "antd";
 import EditPriceList from "./edit";
 import DeletePriceList from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
+import { useEffect, useState } from "react";
+import { getPriceList } from "../../../../Api/Master/getData";
+import PriceListDetail from "./PriceListDetail";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Branch Code",
-    dataIndex: "BranchCode",
-    key: "BranchCode",
-    width: 100,
-  },
-  {
-    title: "Price Code",
-    dataIndex: "PriceCode",
-    key: "PriceCode",
-    width: 100,
-  },
-  {
-    title: "Price Name",
-    dataIndex: "PriceName",
-    key: "PriceName",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (isSuspend) => (
-      <Tag color={isSuspend ? 'red' : 'green' }> {isSuspend ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditPriceList />
-        <DeletePriceList name={record.PriceName} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    BranchCode: "B01",
-    PriceCode: "P01",
-    PriceName: "Price 1",
-    Description: "Lorem ipsum dolor sit amet",
-    IsSuspend: false,
-  },
-  {
-    key: 2,
-    BranchCode: "B02",
-    PriceCode: "P02",
-    PriceName: "Price 2",
-    Description: "Lorem ipsum dolor sit amet",
-    IsSuspend: true,
-  }
-];
-
 const PriceList = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getPriceList();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "Branch Code",
+      dataIndex: "branchcode",
+      key: "branchcode",
+      width: 100,
+    },
+    {
+      title: "Price Code",
+      dataIndex: "pricecode",
+      key: "pricecode",
+      width: 100,
+    },
+    {
+      title: "Price Name",
+      dataIndex: "pricename",
+      key: "pricename",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 200,
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      width: 100,
+      render: (isSuspend) => (
+        <Tag color={isSuspend ? 'red' : 'green' }> {isSuspend ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditPriceList onEdit={fetchData} dataSource={record} />
+          {record.issuspend === false && (
+            <DeletePriceList name={record.pricename} priceListCode={record.pricecode} onDelete={fetchData} />
+          )}  
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Price List M"
-          subtitle="All data price list m"
+          title="Price List"
+          subtitle="All data price list"
         />
         <div>
-          <Link to="/master/price-list-m/form">
+          <Link to="/master/pricelist/form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
@@ -98,10 +103,13 @@ const PriceList = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}
+          expandable={{ 
+            expandedRowRender
+           }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
@@ -116,3 +124,17 @@ const PriceList = () => {
 };
 
 export default PriceList;
+
+const expandedRowRender = (record) => {
+  const items = [
+    {
+      key: '1',
+      label: 'Detail',
+      children: <PriceListDetail dataSource={record.detail} />,
+    },
+  ];
+
+  return (
+    <Tabs defaultActiveKey="1" items={items} />
+  )
+}

@@ -1,27 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditFilled } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Tooltip, Checkbox, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
+import { updatePriceList } from "../../../../Api/Master/updateData";
+import FormPriceListDetail from "./PriceListDetail/form";
 
-const EditPriceList = () => {
+const EditPriceList = ({ dataSource, onEdit }) => {
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [priceListDetail, setPriceListDetail] = useState([]);
+
+  useEffect(() => {
+    form.setFieldsValue(dataSource);
+  }, [dataSource, form])
 
   const showModal = () => {
     setIsModalOpen(true);
+    setPriceListDetail(dataSource.detail);
   };
 
-  const [form] = Form.useForm();
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = {
+        ...values,
+        detail: priceListDetail,
+      };
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+      const response = await updatePriceList(dataSource.pricecode, payload);
+      onEdit(true);
+      message.success(response.data.message);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
   const onReset = () => {
-    form.resetFields();
+    form.setFieldsValue(dataSource);
     setIsModalOpen(false);
   };
 
@@ -34,8 +57,8 @@ const EditPriceList = () => {
       <Modal
         title={
           <HeaderTitle
-            title="PRICE LIST M"
-            subtitle="Edit data a price list m"
+            title="PRICE LIST"
+            subtitle="Edit data a price list"
           />
         }
         centered
@@ -53,7 +76,7 @@ const EditPriceList = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -61,56 +84,44 @@ const EditPriceList = () => {
           <Row gutter={30} style={{ margin: "0px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="BranchCode"
-                name="BranchCode"
+                label="Price Code"
+                name="pricecode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your BranchCode!",
+                    required: false,
+                    message: "Please input Price Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={6} disabled />
               </Form.Item>
 
               <Form.Item
-                label="PriceCode"
-                name="PriceCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your PriceCode!",
-                  },
-                ]}
-              >
-                <Input maxLength={20} />
-              </Form.Item>
-
-              <Form.Item
-                label="PriceName"
-                name="PriceName"
+                label="Price Name"
+                name="pricename"
               >
                 <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="Description"
-                name="Description"
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="IsSuspend"
-                name="IsSuspend"
-                valuePropName="checked"
-                initialValue={false}
-              >
-                <Checkbox>IsSuspend</Checkbox>
               </Form.Item>
             </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item label="Description" name="description">
+                <Input.TextArea rows={3} />
+              </Form.Item>
+
+              <Form.Item name="issuspend" valuePropName="checked" initialValue={false}>
+                <Checkbox>Suspended</Checkbox>
+              </Form.Item>
+            </Col>
+
+            <div className="m-4 p-4 border rounded-md">
+              <FormPriceListDetail 
+                onSaveData={(values) => setPriceListDetail(values)} 
+                onEdit={dataSource.detail}
+              />
+            </div>
           </Row>
-          <ButtonEdit onReset={onReset} />
+          <ButtonEdit onReset={onReset} onLoading={loading} />
         </Form>
       </Modal>
     </>

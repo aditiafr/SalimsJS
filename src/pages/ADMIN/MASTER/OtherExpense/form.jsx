@@ -4,13 +4,60 @@ import { Form, Input, Col, Row } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import Checkbox from "antd/es/checkbox/Checkbox";
+import { useNavigate } from "react-router-dom";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { useEffect, useState } from "react";
+import { getOtherExpenseNextCode } from "../../../../Api/Master/getData";
+import { OtherExpenseMapToHttp } from "../../../../mapper/OtherExpense";
+import { postOtherExpense } from "../../../../Api/Master/postData";
 
 const FormOtherExpense = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { messageApi } = useMessageContext();
+  const [loading, setLoading] = useState(false);
+  const [otherExpenseCode, setOtherExpenseCode] = useState("");
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const fetchOtherExpenseNextCode = async () => {
+    try {
+      setLoading(true);
+      const nextOtherExpenseCode = await getOtherExpenseNextCode();
+
+      setOtherExpenseCode(nextOtherExpenseCode);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchOtherExpenseNextCode();
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ OtherExpenseCode: otherExpenseCode });
+  }, [otherExpenseCode, form]);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const payload = OtherExpenseMapToHttp(values);
+
+      const response = await postOtherExpense(payload);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+
+      navigate("/master/other_expense");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -42,7 +89,7 @@ const FormOtherExpense = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}
@@ -51,24 +98,24 @@ const FormOtherExpense = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Code"
-                name="Code"
+                name="OtherExpenseCode"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your Code!",
+                    required: false,
+                    message: "Please input Code!",
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input maxLength={5} />
               </Form.Item>
 
               <Form.Item
                 label="Name"
-                name="Name"
+                name="OtherExpenseName"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Name!",
+                    message: "Please input Name!",
                   },
                 ]}
               >
@@ -102,14 +149,14 @@ const FormOtherExpense = () => {
                 </Col>
 
                 <Col xs={24} sm={12}>
-                  <Form.Item name="Suspended" valuePropName="checked" initialValue={false}>
+                  <Form.Item name="IsSuspend" valuePropName="checked" initialValue={false}>
                     <Checkbox>Suspended</Checkbox>
                   </Form.Item>
                 </Col>
              </Row>
             </Col>
           </Row>
-          <ButtonSubmit onReset={onReset} />
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
       </div>
     </>

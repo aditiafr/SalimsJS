@@ -173,3 +173,161 @@ export const updateProductType = async (ProductTypeCode, Data) => {
     });
     return response;
 }
+
+export const updateOtherExpense = async (OtherExpenseCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/other-expense/update/${OtherExpenseCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateParameter = async (ParameterCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/parameter/update/${ParameterCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateParameterCategory = async (ParameterCategoryCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/parameter-category/update/${ParameterCategoryCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateZona = async (ZonaCode, Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/zona/update/${ZonaCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendZona = async (ZonaCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/zona/set-suspend/${ZonaCode}`, {
+        isSuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateSubZona = async (SubZonaCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/subzona/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendSubZona = async (SubZonaCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/subzona/set-suspend/${SubZonaCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateEquipment = async (EquipmentCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/equipment/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendEquipment = async (EquipmentCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/equipment/set-suspend/${EquipmentCode}`, {
+        issuspend: true,
+        branchcode: '0001' // dont know what is this
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updatePriceList = async (PriceCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.put(`${baseUrl}/pricelist/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendPriceList = async (PriceCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/pricelist/set-suspend/0001/${PriceCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const updateLabour = async (LabourCode, Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.put(`${baseUrl}/labour/update/0001/${LabourCode}`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const setSuspendLabour = async (LabourCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/labour/set-suspend/0001/${LabourCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

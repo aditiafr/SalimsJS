@@ -104,32 +104,6 @@ export const postTestPreparation = async (Data) => {
     return response;
 }
 
-export const postCustomer = async (Data) => {
-    const token = Cookies.get('access_token');
-    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
-    const response = await axios.post(`${baseUrl}/customer/store`,
-        {
-            ...Data,
-            tranidx: selectedTranIdx
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    return response;
-}
-
-export const postEquipmentType = async (Data) => {
-    const token = Cookies.get('access_token');
-    const response = await axios.post(`${baseUrl}/equipment/type/store`, Data, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response;
-}
-
 export const postPackingType = async (Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/unit/store`, Data, {
@@ -160,6 +134,66 @@ export const postProductType = async (Data) => {
     return response;
 }
 
+export const postParameterCategory = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/parameter-category/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postOtherExpense = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/expense/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postParameter = async (ParameterData) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        ParameterData.tranidx = selectedTranIdx;
+    }
+    const response = await axios.post(`${baseUrl}/parameter/store`, ParameterData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postCustomer = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    const response = await axios.post(`${baseUrl}/customer/store`,
+        {
+            ...Data,
+            tranidx: selectedTranIdx
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    return response;
+}
+
+export const postEquipmentType = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/equipment/type/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
 export const postProduct = async (Data) => {
     const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/product/store`, Data, {
@@ -169,3 +203,76 @@ export const postProduct = async (Data) => {
     });
     return response;
 }
+
+export const postZona = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.post(`${baseUrl}/zona/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postSubZona = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    const response = await axios.post(`${baseUrl}/subzona/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postEquipment = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.post(`${baseUrl}/equipment/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postPriceList = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.post(`${baseUrl}/pricelist/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
+
+export const postLabour = async (Data) => {
+    const token = Cookies.get('access_token');
+    const selectedTranIdx = localStorage.getItem('selectedMenuKey');
+    if (selectedTranIdx) {
+        Data.tranidx = selectedTranIdx;
+    }
+    Data.branchcode = "0001";
+    const response = await axios.post(`${baseUrl}/labour/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}   

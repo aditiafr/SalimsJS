@@ -1,116 +1,111 @@
 "use client";
 
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag } from "antd";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import EditLabour from "./edit";
 import DeleteLabour from "./delete";
 import DetailLabour from "./detail";
+import { getLabour } from "../../../../Api/Master/getData";
+import LabourPar from "./LabourPar";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Branch",
-    dataIndex: "Branch",
-    key: "Branch",
-    width: 80,
-  },
-  {
-    title: "Department",
-    dataIndex: "Department",
-    key: "Department",
-    width: 100,
-  },
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 100,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Level",
-    dataIndex: "Level",
-    key: "Level",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-       <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <DetailLabour />
-        <EditLabour />
-        <DeleteLabour name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Branch: "0002",
-    Department: "IT",
-    Code: "I01",
-    Name: "John Doe",
-    Level: "Staff",
-    Description: "A staff in IT department",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    Branch: "0002",
-    Department: "QA",
-    Code: "I02",
-    Name: "Jane Doe",
-    Level: "Staff",
-    Description: "A staff in IT department",
-    Suspended: true,
-  },
-  {
-    key: 3,
-    Branch: "0002",
-    Department: "FIN",
-    Code: "I03",
-    Name: "John Smith",
-    Level: "Staff",
-    Description: null,
-    Suspended: false,
-  },
-]
-
 const Labour = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getLabour();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  },  []);
+
+  const columns = [
+    {
+      title: "Branch",
+      dataIndex: "branchcode",
+      key: "branchcode",
+      width: 80,
+    },
+    {
+      title: "Labour Code",
+      dataIndex: "labourcode",
+      key: "labourcode",
+      width: 80,
+    },
+    {
+      title: "Labour Name",
+      dataIndex: "labourname",
+      key: "labourname",
+      width: 100,
+    },
+    {
+      title: "Department",
+      dataIndex: "depcode",
+      key: "depcode",
+      width: 100,
+    },
+    {
+      title: "Title",
+      dataIndex: "tittle",
+      key: "tittle",
+      width: 100,
+    },
+    {
+      title: "Date of Use",
+      dataIndex: "dateofuse",
+      key: "dateofuse",
+      width: 100,
+    },
+    {
+      title: "Date of Available",
+      dataIndex: "dateofavailable",
+      key: "dateofavailable",
+      width: 100,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 200,
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      width: 100,
+      render: (suspended) => (
+         <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditLabour dataSource={record} onEdit={fetchData} />
+          {record.issuspend === false && (
+            <DeleteLabour name={record.labourname} labourCode={record.labourcode} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -135,10 +130,11 @@ const Labour = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}
+          expandable={{ expandedRowRender }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
@@ -153,3 +149,17 @@ const Labour = () => {
 };
 
 export default Labour;
+
+const expandedRowRender = (record) => {
+  const items = [
+    {
+      key: '1',
+      label: 'Labour Parameter',
+      children: <LabourPar dataSource={record.detail} />,
+    },
+  ];
+
+  return (
+    <Tabs defaultActiveKey="1" items={items} />
+  )
+}
