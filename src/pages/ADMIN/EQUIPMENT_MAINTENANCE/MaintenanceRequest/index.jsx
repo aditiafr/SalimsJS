@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle'
 import { Link } from 'react-router-dom'
-import { Button, Space, Table, Tag } from 'antd'
+import { Button, Space, Table } from 'antd'
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import { getMaintenanceRequest } from "../../../../Api/Maintenance/getData";
 import EditMaintenanceRequest from "./edit";
@@ -63,20 +63,6 @@ const MaintenanceRequest = () => {
       width: 100,
     },
     {
-      title: 'Status',
-      dataIndex: 'Status',
-      key: 'Status',
-      width: 100,
-    },
-    {
-      title: "Suspend",
-      dataIndex: "issuspend",
-      key: "issuspend",
-      render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
-      ),
-    },
-    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
@@ -90,9 +76,6 @@ const MaintenanceRequest = () => {
       render: (_, record) => (
         <Space>
           <EditMaintenanceRequest dataSource={record} onEdit={fetchData} />
-          {record.issuspend === false && (
-            <DeleteMaintenanceRequest dataSource={record} onDelete={fetchData} />
-          )}
         </Space>
       ),
     },

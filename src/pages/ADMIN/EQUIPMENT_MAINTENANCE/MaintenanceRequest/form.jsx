@@ -3,8 +3,8 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { Col, DatePicker, Form, Input, Row, Select, message } from "antd";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMaintenanceRequestNextCode } from '../../../../Api/Maintenance/getData';
-import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
+import { getEquipment } from '../../../../Api/General/GetData';
+import { getEquipmentOne } from '../../../../Api/Master/getData';
 import { postMaintenanceRequest } from '../../../../Api/Maintenance/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import Cookies from "js-cookie";
@@ -14,7 +14,6 @@ const FormMaintenanceRequest = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [equipment, setEquipment] = useState([]);
-  const [branchcode, setBranchCode] = useState("");
   const prefix = PrefixGlobal();
 
   const fetchData = async () => {
@@ -22,7 +21,6 @@ const FormMaintenanceRequest = () => {
       setLoading(true);
       const response = await getEquipment();
       const branch = Cookies.get('branchcode');
-      console.log(response);
 
       // Mengubah key
       const modifiedData = response.map(item => ({
@@ -32,8 +30,7 @@ const FormMaintenanceRequest = () => {
       }));
 
       setEquipment(modifiedData)
-      setBranchCode(branch)
-      // setData(response);
+      form.setFieldsValue({ branchcode: branch });
     } catch (error) {
       console.log(error);
     }
@@ -51,34 +48,25 @@ const FormMaintenanceRequest = () => {
       let { EquipmentCode, ...payload } = values;
 
       let equipmentOne = await getEquipmentOne(EquipmentCode);
-      let detail = [
-        {
-          equipmentversion: equipmentOne.version,
-          equipmentcode: equipmentOne.equipmentcode
-        }
-      ];
-      console.log(payload);
+
       payload = {
         ...payload,
-        branchcode: branchcode,
-        issuspend: false,
-        detail: detail
+        equipmentcode: EquipmentCode,
+        equipmentversion: `${equipmentOne.version}`,
       }
+
       if (!values.mrnumber) {
-        const nextCode = await getMaintenanceRequestNextCode(branchcode);
-        const mrnumber = nextCode.mrnumber;
-        form.setFieldsValue({ mrnumber: mrnumber });
         payload = {
           ...payload,
-          mrnumber: mrnumber
+          mrnumber: ""
         }
       }
-      console.log(payload);
+
       const response = await postMaintenanceRequest(payload);
       message.success(response.data.message);
       navigate("/equipment_maintenance/maintenance_request");
     } catch (error) {
-      // message.error(error.response.data.message);
+      message.error(error.response.data.message);
       console.log(error);
     }
     setLoading(false);
@@ -105,7 +93,7 @@ const FormMaintenanceRequest = () => {
           form={form}
         >
           <Row gutter={30} style={{ padding: "28px" }}>
-            {/* <Col xs={24} sm={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Branch"
                 name="branchcode"
@@ -116,9 +104,9 @@ const FormMaintenanceRequest = () => {
                   },
                 ]}
               >
-                <Input maxLength={20} />
+                <Input disabled />
               </Form.Item>
-            </Col> */}
+            </Col>
 
             <Col xs={24} sm={12}>
               <Form.Item

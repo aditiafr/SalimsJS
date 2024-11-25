@@ -42,6 +42,12 @@ const MaintenanceProcess = () => {
 
   const columns = [
     {
+      title: 'Branch Code',
+      dataIndex: 'branchcode',
+      key: 'branchcode',
+      width: 100,
+    },
+    {
       title: 'MP Number',
       dataIndex: 'mpnumber',
       key: 'mpnumber',
@@ -73,24 +79,12 @@ const MaintenanceProcess = () => {
       render: (text) => (text ?? 'N/A'),
     },
     {
-      title: "Suspend",
-      dataIndex: "issuspend",
-      key: "issuspend",
-      render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
-      ),
-    },
-    {
       title: "Action",
       fixed: "right",
       width: 100,
       render: (_, record) => (
         <Space>
-          <DetailFormula dataSource={record} />
           <EditMaintenanceProcess dataSource={record} onEdit={fetchData} />
-          {record.issuspend === false && (
-            <DeleteMaintenanceProcess dataSource={record} onDelete={fetchData} />
-          )}
         </Space>
       ),
     },

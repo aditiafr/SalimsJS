@@ -38,3 +38,26 @@ export const getTranAppStatus = async () => {
     return response.data.data;
 }
 
+export const getEquipment = async () => {
+    const token = Cookies.get('access_token');
+    const branchCode = Cookies.get('branchcode');
+    const response = await axios.get(`${baseURL}/general/get-equipment/${branchCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}
+
+export const getEquipmentOne = async () => {
+    const token = Cookies.get('access_token');
+    const branchCode = Cookies.get('branchcode');
+    const response = await axios.get(`${baseURL}/general/get-equipment/${branchCode}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
+}

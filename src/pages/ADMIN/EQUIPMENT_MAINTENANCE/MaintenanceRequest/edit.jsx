@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { updateMaintenanceRequest } from "../../../../Api/Maintenance/updateData";
-import SwitchComponent from "../../../../components/Dashboard/Global/SwitchComponent";
-import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
+import { getEquipment } from '../../../../Api/General/GetData';
+import { getEquipmentOne } from '../../../../Api/Master/getData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
 
@@ -18,10 +19,11 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   const [equipment, setEquipment] = useState([]);
   const [branchcode, setBranchCode] = useState("");
   const prefix = PrefixGlobal();
+  const [payLoadData, setPayLoadData] = useState(null);
 
   const handleSwitchChange = (checked) => {
     setIsSuspend(checked);
-    form.setFieldsValue(dataSource);
+    form.setFieldsValue(payLoadData);
   };
 
   const fetchData = async () => {
@@ -48,7 +50,16 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   };
 
   useEffect(() => {
-    form.setFieldsValue(dataSource);
+    // mrdatetest
+    if (form) {
+      const payload = {
+        ...dataSource,
+        mrdate: dayjs(dataSource.mrdate),
+        periode: dayjs(dataSource.periode),
+      }
+      form.setFieldsValue(payload);
+      setPayLoadData(payload);
+    }
     fetchData();
   }, [dataSource, form])
 
@@ -77,7 +88,7 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   };
 
   const onReset = () => {
-    form.setFieldsValue(dataSource);
+    form.setFieldsValue(payLoadData);
     setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
@@ -102,10 +113,6 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
         title={
           <div className="flex justify-between items-center">
             <HeaderTitle title="MaintenanceRequest" subtitle="Edit data a MaintenanceRequest" />
-            <SwitchComponent
-              isSuspend={isSuspend}
-              handleSwitchChange={handleSwitchChange}
-            />
           </div>
         }
         centered
@@ -129,6 +136,18 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
         >
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
+            <Form.Item
+              label="Branch"
+              name="branchcode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Branch!",
+                },
+              ]}
+            >
+              <Input disabled />
+            </Form.Item>
 
             <Form.Item
               label="MR Number"
@@ -145,7 +164,7 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
 
             <Form.Item
               label="MR Date"
-              name="mrdatetest"
+              name="mrdate"
               rules={[
                 {
                   required: true,
@@ -158,7 +177,7 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
 
             <Form.Item
               label="Periode"
-              name="periodetest"
+              name="periode"
               rules={[
                 {
                   required: true,

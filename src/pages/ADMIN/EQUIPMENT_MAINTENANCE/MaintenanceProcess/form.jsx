@@ -20,6 +20,20 @@ const FormMaintenanceProcess = () => {
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
 
+  const [status, setStatus] = useState("");
+  const [customStatus, setCustomStatus] = useState("");
+
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    // Reset custom status if switching from Others
+    if (value !== "Others") {
+      setCustomStatus("");
+    }
+  };
+
+  const handleCustomInputChange = (e) => {
+    setCustomStatus(e.target.value);
+  };
 
   const fetchData = async () => {
     try {
@@ -51,9 +65,16 @@ const FormMaintenanceProcess = () => {
     try {
       setLoading(true);
 
-      let { MRNumber, ...payload } = values;
+      console.log("values", values);
 
-      // let maintenanceRequestOne = await getMaintenanceRequestOne(branchcode, MRNumber);
+      let { MRNumber, status, ...payload } = values;
+
+      console.log("before", status);
+
+      status = status === "Others" ? customStatus : status;
+
+      console.log("after", status);
+
       let detail = [
         {
           mrnumber: MRNumber
@@ -64,8 +85,8 @@ const FormMaintenanceProcess = () => {
         ...payload,
         branchcode: branchcode,
         issuspend: false,
-        status: false,
-        detail: detail
+        detail: detail,
+        status: status
       }
       console.log("payload", payload);
 
@@ -88,6 +109,13 @@ const FormMaintenanceProcess = () => {
     }
     setLoading(false);
   };
+
+  const statusOption = [
+    { label: "Calibrated", value: "Calibrated" },
+    { label: "Repaired", value: "Repaired" },
+    { label: "Unusable", value: "Unusable" },
+    { label: "Others", value: "Others" },
+  ];
 
   const onReset = () => {
     form.resetFields();
@@ -181,20 +209,37 @@ const FormMaintenanceProcess = () => {
                 />
               </Form.Item>
             </Col>
-            {/* <Col xs={24} sm={12}>
+
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Status"
-                name="Status"
+                name="status"
                 rules={[
                   {
                     required: true,
-                    message: "Please input Status!",
+                    message: "Please input MR Number!",
                   },
                 ]}
               >
-                <Input />
+                <Select
+                  showSearch
+                  placeholder="Select Status"
+                  optionFilterProp="children"
+                  filterOption={filterOption}
+                  options={statusOption}
+                  value={status}
+                  onChange={handleStatusChange}
+                />
+                {status === "Others" && (
+                  <Input
+                    placeholder="Input Status"
+                    value={customStatus}
+                    style={{ marginTop: 10 }}
+                    onChange={handleCustomInputChange}
+                  />
+                )}
               </Form.Item>
-            </Col> */}
+            </Col>
           </Row>
           <ButtonSubmit onReset={onReset} onLoading={loading} />
         </Form>
