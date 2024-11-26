@@ -23,7 +23,7 @@ import ParameterCategory from "../../pages/ADMIN/MASTER/ParameterCategory";
 import Product from "../../pages/ADMIN/MASTER/Product";
 import ProductCategory from "../../pages/ADMIN/MASTER/ProductCategory";
 import ProductType from "../../pages/ADMIN/MASTER/ProductType";
-import QualityRefference from "../../pages/ADMIN/MASTER/QualityRefference";
+import QualityReference from "../../pages/ADMIN/MASTER/QualityReference";
 import Sample from "../../pages/ADMIN/MASTER/Sample";
 import SampleLocation from "../../pages/ADMIN/MASTER/SampleLocation";
 import Location from "../../pages/ADMIN/MASTER/Location";
@@ -73,7 +73,7 @@ export const ViewPages = {
     1121: <FormulaTableRef />,
     1122: <Customer />,
     1123: <ParameterCategory />,
-    1124: <QualityRefference />,
+    1124: <QualityReference />,
     1125: <TestPreparation />,
     1126: <TestMethode />,
     1127: <OtherExpense />,

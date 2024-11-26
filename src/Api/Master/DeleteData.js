@@ -17,6 +17,34 @@ export const deleteBuilding = async (BuildingCode) => {
     return response;
 }
 
+export const deleteQualityReference = async (QRID) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/quality/reference/set-suspend/${QRID}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
+export const deleteProduct = async (BranchCode, ProductCode) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.patch(`${baseUrl}/product/set-suspend/${BranchCode}/${ProductCode}`,
+        {
+            issuspend: true
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    return response;
+}
+
 export const deleteCustomer = async (CustomerCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.patch(`${baseUrl}/customer/set-suspend/${CustomerCode}`,

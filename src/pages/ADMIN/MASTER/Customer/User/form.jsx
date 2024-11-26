@@ -12,7 +12,6 @@ const EditableCell = ({
     record,
     index,
     children,
-    Vendor,
     ...restProps
 }) => {
 
@@ -40,7 +39,7 @@ const EditableCell = ({
                                 },
                             ]}
                         >
-                            <Input rows={4} placeholder={title} onKeyPress={handleOnKeyPress} />
+                            <Input placeholder={title} onKeyPress={handleOnKeyPress} />
                         </Form.Item>
 
                     ) : (
@@ -80,9 +79,6 @@ const EditableCell = ({
 
 
 const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
-
-    console.log(onEdit);
-
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -326,9 +322,8 @@ const FormCustomerUser = ({ onSaveData, onEdit, onApproval }) => {
                 </p>
                 {!onApproval && (
                     <Button
+                        type="primary"
                         onClick={handleAdd}
-                        color="primary"
-                        variant="contained"
                         disabled={!!editingKey}
                     >
                         + Add Data

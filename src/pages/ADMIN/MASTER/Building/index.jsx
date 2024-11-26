@@ -10,21 +10,20 @@ import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInp
 const Building = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
       const response = await getBuilding();
       setData(response);
     } catch (error) {
       console.log(error);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
 
   const handleSearch = (e) => {

@@ -1,16 +1,25 @@
 import { Button, Form, Input, Modal, Table } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderTitle from './HeaderTitle';
 import SearchInput from './Table/SearchInput';
 
-const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal, onDetail }) => {
+const InputModal = ({ title, label, name, dataSource, loading, columns, onData, onOpenModal, onDetail, onEdit }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
+    useEffect(() => {
+        if (onEdit) {
+            setSelectedRowKeys([onEdit.key]);
+        }
+    }, [onEdit]);
+
+
     const showModal = () => {
         setIsModalOpen(true);
-        onOpenModal(true);
+        if (!onEdit) {
+            onOpenModal(true);
+        }
     };
 
     const handleSearch = (e) => {
@@ -25,56 +34,45 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
 
     const rowSelection = {
         type: "radio",
-        selectedRowKeys, // Bind selected row keys to rowSelection
+        selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
-            setSelectedRowKeys(selectedRowKeys); // Update selected row keys state
+            setSelectedRowKeys(selectedRowKeys);
             onData(selectedRows[0]);
             setIsModalOpen(false);
         },
     };
 
-    // Handle row click event
     const handleRowClick = (record, rowIndex) => {
-        setSelectedRowKeys([record.key]); // Update selected row keys
+        setSelectedRowKeys([record.key]);
         onData(record);
         setIsModalOpen(false);
     };
 
+
     return (
         <div>
-            {onDetail ? (
-                <Form.Item
-                    name={name}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please input your ${label}!`,
-                        },
-                    ]}
-                >
-                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
-                </Form.Item>
-            ) : (
-                <Form.Item
-                    label={label}
-                    name={name}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please input your ${label}!`,
-                        },
-                    ]}
-                >
-                    <Input onClick={showModal} readOnly placeholder={`Input ${label}`} />
-                </Form.Item>
-            )}
+            <Form.Item
+                label={!onDetail ? label : ''}
+                name={name}
+                style={
+                    onDetail && { margin: 0, }
+                }
+                rules={[
+                    {
+                        required: true,
+                        message: `Please input your ${label}!`,
+                    },
+                ]}
+            >
+                <Input onClick={showModal} readOnly placeholder={`${label}`} />
+            </Form.Item>
 
             <Modal
                 centered
                 title={<HeaderTitle title={title} subtitle="" />}
                 open={isModalOpen}
                 closable={false}
-                width={1000}
+                width={`80%`}
                 style={{
                     body: {
                         maxHeight: '70vh',
@@ -101,7 +99,9 @@ const InputModal = ({ title, label, name, dataSource, loading, columns, onData, 
                             handleRowClick(record, rowIndex);
                         },
                     })}
-                    scroll={{ x: 2000 }}
+                    scroll={
+                        columns.length >= 10 && { x: 3000 }
+                    }
                 />
             </Modal>
         </div>
