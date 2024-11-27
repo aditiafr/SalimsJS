@@ -421,18 +421,6 @@ export const getEquipmentType = async () => {
 }
 
 
-export const getEquipment = async () => {
-    const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/equipment/list`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    return response.data.data;
-}
-
-
 export const getEquipmentOne = async (equipmentCode) => {
     const token = Cookies.get('access_token');
     const response = await axios.get(`${baseURL}/equipment/one/${equipmentCode}`, {
@@ -581,16 +569,6 @@ export const getOtherExpenseNextCode = async () => {
     return response.data.data.expenseCode;
 }
 
-export const getEquipment = async () => {
-    const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/equipment/list`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
-}
 
 export const getEquipmentNextCode = async () => {
     const token = Cookies.get('access_token');

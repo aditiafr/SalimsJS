@@ -1,11 +1,13 @@
 import { EditFilled } from "@ant-design/icons";
-import { Button, Form, DatePicker, Input, message, Modal, Tooltip } from "antd";
+import { Button, Form, DatePicker, Select, Input, message, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { updateMaintenanceProcess } from "../../../../Api/Maintenance/updateData";
 import dayjs from "dayjs";
-
+import {
+  getMaintenanceRequest
+} from '../../../../Api/Maintenance/getData';
 const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
 
   const [form] = Form.useForm();
@@ -13,13 +15,49 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
   const [loading, setLoading] = useState(false);
   const [isSuspend, setIsSuspend] = useState(false);
   const [payLoadData, setPayLoadData] = useState(null);
+  const [status, setStatus] = useState("");
+  const [customStatus, setCustomStatus] = useState("");
+  const [maintenanceRequest, setMaintenanceRequest] = useState([]);
+
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    // Reset custom status if switching from Others
+    if (value !== "Others") {
+      setCustomStatus("");
+    }
+  };
 
   const handleSwitchChange = (checked) => {
     setIsSuspend(checked);
     form.setFieldsValue(payLoadData);
   };
 
+  const handleCustomInputChange = (e) => {
+    setCustomStatus(e.target.value);
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getMaintenanceRequest();
+      console.log(response);
+
+      // Mengubah key
+      const modifiedData = response.map(item => ({
+        label: `(${item.mrnumber}) ${item.description}`,
+        value: item.mrnumber,
+      }));
+
+      setMaintenanceRequest(modifiedData)
+      // setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
+    fetchData();
     if (form) {
       const payload = {
         ...dataSource,
@@ -33,7 +71,6 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
-    setIsSuspend(dataSource.issuspend);
   };
 
   const handleSubmit = async (values) => {
@@ -64,6 +101,14 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
       event.preventDefault();
     }
   }
+  const statusOption = [
+    { label: "Calibrated", value: "Calibrated" },
+    { label: "Repaired", value: "Repaired" },
+    { label: "Unusable", value: "Unusable" },
+    { label: "Others", value: "Others" },
+  ];
+  const filterOption = (input, option) =>
+    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
   return (
     <>
@@ -129,7 +174,7 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
 
             <Form.Item
               label="Periode"
-              name="periodetest"
+              name="periode"
               rules={[
                 {
                   required: true,
@@ -140,113 +185,59 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
               <DatePicker className="w-full" />
             </Form.Item>
 
-            <Form.Item
-              label="Address"
-              name="address"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Address!",
-                },
-              ]}
-            >
-              <Input.TextArea placeholder="Input Address" />
-            </Form.Item>
-
-            <Form.Item
-              label="City"
-              name="city"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your City!",
-                },
-              ]}
-            >
-              <Input placeholder="Input City" />
-            </Form.Item>
-
-            <Form.Item
-              label="Country"
-              name="country"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Country!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Country" />
-            </Form.Item>
-
-            <Form.Item
-              label="Fax"
-              name="fax"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Fax!",
-                },
-              ]}
-            >
-              <Input
-                placeholder="Input Fax"
-                onKeyPress={handleOnKeyPress}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Phone Number"
-              name="phone"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Phone Number!"
-                }
-              ]}
-            >
-              <Input
-                type="tel"
-                placeholder="Input Phone Number Example(08123456789)"
-                maxLength={13}
-                onKeyPress={handleOnKeyPress}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Contact Name"
-              name="contact"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Contact Name!",
-                },
-              ]}
-            >
-              <Input placeholder="Input Contact Name" />
-            </Form.Item>
-
-            <Form.Item
-              label="ZIP Code"
-              name="zipcode"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your ZIP Code!",
-                },
-              ]}
-            >
-              <Input
-                placeholder="Input ZIP Code"
-                maxLength={5}
-                onKeyPress={handleOnKeyPress}
-              />
-            </Form.Item>
 
             <Form.Item label="Description" name="description">
               <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 
+            <Form.Item
+              label="MR Number"
+              name="mrnumber"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input MR Number!",
+                },
+              ]}
+            >
+              {/* <Input /> */}
+              <Select
+                showSearch
+                placeholder="Select Maintenance Request"
+                optionFilterProp="children"
+                filterOption={filterOption}
+                options={maintenanceRequest}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input MR Number!",
+                },
+              ]}
+            >
+              <Select
+                showSearch
+                placeholder="Select Status"
+                optionFilterProp="children"
+                filterOption={filterOption}
+                options={statusOption}
+                value={status}
+                onChange={handleStatusChange}
+              />
+              {status === "Others" && (
+                <Input
+                  placeholder="Input Status"
+                  value={customStatus}
+                  style={{ marginTop: 10 }}
+                  onChange={handleCustomInputChange}
+                />
+              )}
+            </Form.Item>
           </div>
 
           <ButtonEdit onReset={onReset} onLoading={loading} />

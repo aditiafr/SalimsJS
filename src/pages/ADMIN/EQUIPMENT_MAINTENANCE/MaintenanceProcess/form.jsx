@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { getMaintenanceProcessNextCode } from '../../../../Api/Maintenance/getData';
 import {
   getMaintenanceRequest
-  // , getMaintenanceRequestOne 
 } from '../../../../Api/Maintenance/getData';
 import { postMaintenanceProcess } from '../../../../Api/Maintenance/postData';
 import Cookies from "js-cookie";
@@ -49,6 +48,7 @@ const FormMaintenanceProcess = () => {
       }));
 
       setMaintenanceRequest(modifiedData)
+      form.setFieldsValue({ branchcode: branch });
       setBranchCode(branch)
       // setData(response);
     } catch (error) {
@@ -140,6 +140,15 @@ const FormMaintenanceProcess = () => {
           <Row gutter={30} style={{ padding: "28px" }}>
             <Col xs={24} sm={12}>
               <Form.Item
+                label="Branch Code"
+                name="branchcode"
+              >
+                <Input placeholder="Input Branch Code" disabled />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
                 label="MP Number"
                 name="mpnumber"
                 rules={[
@@ -199,7 +208,6 @@ const FormMaintenanceProcess = () => {
                   },
                 ]}
               >
-                {/* <Input /> */}
                 <Select
                   showSearch
                   placeholder="Select Maintenance Request"

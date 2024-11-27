@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { updateMaintenanceRequest } from "../../../../Api/Maintenance/updateData";
-import { getEquipment } from '../../../../Api/General/GetData';
-import { getEquipmentOne } from '../../../../Api/Master/getData';
+// import { getEquipment } from '../../../../Api/General/GetData';
+import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
@@ -197,7 +197,7 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
 
             <Form.Item
               label="Equipment Code"
-              name="EquipmentCode"
+              name="equipmentcode"
               rules={[
                 {
                   required: true,
