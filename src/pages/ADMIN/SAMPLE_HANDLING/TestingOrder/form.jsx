@@ -53,6 +53,7 @@ const FormTestingOrder = () => {
   const [openCustomer, setOpenCustomer] = useState(null);
   const CustomerCode = selectCustomer ? selectCustomer.customercode : '';
   const CustomerName = selectCustomer ? selectCustomer.customername : '';
+  const ContactCustomer = selectCustomer ? selectCustomer.contact : '';  
 
   const [dataAcCost, setDataAcCost] = useState([]);
   const [dataSample, setDataSample] = useState([]);
@@ -143,8 +144,9 @@ const FormTestingOrder = () => {
   useEffect(() => {
     form.setFieldsValue({
       customername: CustomerName,
+      requestby: ContactCustomer,
     })
-  }, [CustomerName, code, form]);
+  }, [ContactCustomer, CustomerName, code, form]);
 
   useEffect(() => {
     if (!code) {
@@ -153,10 +155,11 @@ const FormTestingOrder = () => {
         reqdate: dayjs(),
         discount: 0,
         vat: 11,
+        requestby: ContactCustomer,
       })
     }
 
-  }, [code, form]);
+  }, [ContactCustomer, code, form]);
 
 
   const handleSubmit = async (values) => {
@@ -176,7 +179,8 @@ const FormTestingOrder = () => {
         customercode: CustomerCode,
         reqdate: values.reqdate.format('YYYY-MM-DD'),
         gross: Gross,
-        discount: DiscountPersen,
+        discount_p: DiscountPersen,
+        discount_m: TotalDiscount,
         dpp: DPP,
         vat: VATPersen,
         net: NET,
@@ -188,8 +192,10 @@ const FormTestingOrder = () => {
         const res = await updateTestingOrder(payload);
         message.success(res.data.message);
       } else {
-        const res = await postTestingOrder(payload);
-        message.success(res.data.message);
+        // const res = await postTestingOrder(payload);
+        // message.success(res.data.message);
+        console.log(payload);
+        
       }
 
       navigate('/sample_handling/testing_order');
@@ -260,7 +266,7 @@ const FormTestingOrder = () => {
             </Form.Item>
 
             <InputModal
-              title="CUSTOEMR"
+              title="CUSTOMER"
               label="Customer"
               name="customername"
               dataSource={dataCustomer}
@@ -284,7 +290,7 @@ const FormTestingOrder = () => {
               <Input placeholder="Input Request By" />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label="Discount (%)"
               name="discount"
             >
@@ -296,9 +302,9 @@ const FormTestingOrder = () => {
                 className="w-full"
                 onChange={(value) => setValuePrice((prev) => ({ ...prev, discount: value }))}
               />
-            </Form.Item>
+            </Form.Item> */}
 
-            <Form.Item
+            {/* <Form.Item
               label="VAT"
               name="vat"
             >
@@ -310,7 +316,7 @@ const FormTestingOrder = () => {
                 className="w-full"
                 onChange={(value) => setValuePrice((prev) => ({ ...prev, vat: value }))}
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
               label="Description"
