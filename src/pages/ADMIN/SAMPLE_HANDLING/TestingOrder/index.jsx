@@ -79,7 +79,7 @@ const TestingOrder = () => {
     },
     {
       title: "Discount",
-      dataIndex: "discount",
+      dataIndex: "discount_m",
       key: "discount",
     },
     {
