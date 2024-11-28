@@ -31,7 +31,7 @@ const EditableCell = ({
 
     const [dataExpense, setDataExpense] = useState([]);
     const [selectExpense, setSelectExpense] = useState("");
-    const [openExpense, setOpenExpense] = useState(null);
+    const [openExpense, setOpenExpense] = useState(null);    
 
     // Expense
     useEffect(() => {
@@ -145,11 +145,12 @@ const FormTestingOrderAC = ({ onSaveData, onEdit, onApproval }) => {
     const [editingKey, setEditingKey] = useState('');
 
     const [dataExpense, setDataExpense] = useState(null);
+    
 
     useEffect(() => {
         if (form && dataExpense) {
             form.setFieldsValue({
-                expense: dataExpense.expensename
+                expensename: dataExpense.expensename
             })
 
             setData(data.map((item) => ({
