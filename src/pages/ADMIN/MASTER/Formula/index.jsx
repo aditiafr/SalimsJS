@@ -1,128 +1,124 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag } from "antd";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import EditFormula from "./edit";
 import DeleteFormula from "./delete";
 import DetailFormula from "./detail";
+import { getFormula } from "../../../../Api/Master/getData";
+import FormulaDetail from "./FormulaDetail";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-  {
-    title: "Branch",
-    dataIndex: "Branch",
-    key: "Branch",
-    width: 100,
-  },
-  {
-    title: "Version",
-    dataIndex: "Version",
-    key: "Version",
-    width: 100,
-  },
-  {
-    title: "Code",
-    dataIndex: "Code",
-    key: "Code",
-    width: 80,
-  },
-  {
-    title: "Name",
-    dataIndex: "Name",
-    key: "Name",
-    width: 100,
-  },
-  {
-    title: "Is Numeric",
-    dataIndex: "IsNumeric",
-    key: "IsNumeric",
-    width: 110,
-    render: (isNumeric) => (
-      <Tag color={isNumeric ? 'geekblue' : 'blue' }> {isNumeric ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Result Type",
-    dataIndex: "ResultType",
-    key: "ResultType",
-    width: 120,
-  },
-  {
-    title: "Is Compare Spec",
-    dataIndex: "IsCompareSpec",
-    key: "IsCompareSpec",
-    width: 150,
-    render: (isCompareSpec) => (
-      <Tag color={isCompareSpec ? 'geekblue' : 'blue' }> {isCompareSpec ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Sim Result",
-    dataIndex: "SimResult",
-    key: "SimResult",
-    width: 120,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 110,
-    render: (suspended) => (
-       <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <DetailFormula />
-        <EditFormula />
-        <DeleteFormula name={record.Name} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    Branch: "0002",
-    Version: 2,
-    Code: "GI_E03",
-    Name: "Gula Sebelum Inversi LS 1",
-    Description: "Gula Sebelum Inversi LS 1",
-    IsNumeric: true,
-    ResultType: "Support",
-    IsCompareSpec: true,
-    Suspended: false,
-    SimResult: 34.675,
-  },
-  {
-    Key: 2,
-    Branch: "0002",
-    Version: 2,
-    Code: "GI_E04",
-    Name: "Gula Sebelum Inversi LS 2",
-    Description: null,
-    IsNumeric: false,
-    ResultType: "Final",
-    IsCompareSpec: false,
-    Suspended: true,
-    SimResult: 34.675,
-  },
-];
-
 const Formula = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);  
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getFormula();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    {
+      title: "Branch",
+      dataIndex: "branchcode",
+      key: "branchcode",
+      width: 80,
+    },
+    {
+      title: "Version",
+      dataIndex: "version",
+      key: "version",
+      width: 100,
+    },
+    {
+      title: "Code",
+      dataIndex: "formulacode",
+      key: "formulacode",
+      width: 80,
+    },
+    {
+      title: "Name",
+      dataIndex: "formulaname",
+      key: "formulaname",
+      width: 100,
+    },
+    {
+      title: "Is Numeric",
+      dataIndex: "isnumeric",
+      key: "isnumeric",
+      width: 110,
+      render: (isNumeric) => (
+        <Tag color={isNumeric ? 'geekblue' : 'blue' }> {isNumeric ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Result Type",
+      dataIndex: "isfinalresult",
+      key: "isfinalresult",
+      width: 120,
+      render: (isfinalresult) => (
+        isfinalresult ? 'Final' : 'Support' 
+      ),
+    },
+    {
+      title: "Is Compare Spec",
+      dataIndex: "comparespec",
+      key: "comparespec",
+      width: 150,
+      render: (isCompareSpec) => (
+        <Tag color={isCompareSpec ? 'geekblue' : 'blue' }> {isCompareSpec ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Sim Result",
+      dataIndex: "simvalue",
+      key: "simvalue",
+      width: 120,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 200,
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      width: 110,
+      render: (suspended) => (
+         <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditFormula />
+          {record.issuspend === false && (
+            <DeleteFormula name={record.formulaname} formulaCode={record.formulacode} onDelete={fetchData} />
+          )}
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -147,10 +143,11 @@ const Formula = () => {
           />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
           dataSource={data}
+          expandable={{ expandedRowRender }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
@@ -165,3 +162,17 @@ const Formula = () => {
 };
 
 export default Formula;
+
+const expandedRowRender = (record) => {
+  const items = [
+    {
+      key: "1",
+      label: "Detail",
+      children: <FormulaDetail dataSource={record.detail} />,
+    },
+  ];
+
+  return (
+    <Tabs defaultActiveKey="1" items={items} />
+  )
+}

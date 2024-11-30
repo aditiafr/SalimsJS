@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { postPriceList } from "../../../../Api/Master/postData";
 import { getPriceListNextCode } from "../../../../Api/Master/getData";
-import TextArea from "antd/es/input/TextArea";
 
 const FormPriceList = () => {
   const [form] = Form.useForm();
