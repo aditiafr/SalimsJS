@@ -1,16 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, InputNumber, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal, selectedTranIdx } from '../../../../components/Dashboard/Global/Helper';
 import InputModal from '../../../../components/Dashboard/Global/InputModal';
-import { getBuilding, getManufacture, getProductCat, getTempCondition, getUnit } from '../../../../Api/Master/getData';
+import { getBuilding, getManufacture, getProductCat, getSampleOne, getTempCondition, getUnit } from '../../../../Api/Master/getData';
 import FormSampleParameter from './Params/form';
 import { postSample } from '../../../../Api/Master/postData';
 
 const FormSample = () => {
     const [form] = Form.useForm();
+    const { code } = useParams();
+    const [dataOne, setDataOne] = useState(null);
+
+    // EDIT DATA
+    useEffect(() => {
+        if (code) {
+            const fetchDataOne = async () => {
+                try {
+                    const res = await getSampleOne(code);
+                    setDataOne(res);
+
+                    form.setFieldsValue({
+                        ...res,
+                    })
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            fetchDataOne();
+            setOpenProdCat(true);
+            setOpenUnit(true);
+            setOpenBuilding(true);
+            setOpenManufacture(true);
+            setOpenUnitPack(true);
+            setOpenTemp(true);
+        }
+    }, [code, form]);
+
+
+
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const prefix = PrefixGlobal();
@@ -61,19 +92,22 @@ const FormSample = () => {
         const fetchProdCat = async () => {
             try {
                 const res = await getProductCat(false);
-                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
-                setDataProdCat(filter);
+                setDataProdCat(res);
+
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.productcategorycode === dataOne.prodcatcode)
+                    setSelectProdCat(selected[0]);
+                }
+
             } catch (error) {
                 console.log(error);
             }
         }
         if (openProdCat) {
             fetchProdCat();
-            setOpenProdCat(false);
             setIsLoading(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openProdCat]);
+    }, [code, dataOne, openProdCat]);
 
 
     // UNIT
@@ -82,21 +116,21 @@ const FormSample = () => {
             try {
                 const res = await getUnit(false);
                 setDataUnit(res);
-                setDataUnitPack(res);
 
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.unitcode === dataOne.unitcode)
+                    setSelectUnit(selected[0]);
+                }
 
             } catch (error) {
                 console.log(error);
             }
         }
-        if (openUnit || openUnitPack) {
+        if (openUnit) {
             fetchUnit()
-            setOpenUnit(false);
-            setOpenUnitPack(false);
             setIsLoading(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openUnit, openUnitPack]);
+    }, [code, dataOne, openUnit]);
 
 
     // BUILDING
@@ -104,19 +138,22 @@ const FormSample = () => {
         const fetchBuilding = async () => {
             try {
                 const res = await getBuilding(false);
-                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
-                setDataBuilding(filter);
+                setDataBuilding(res);
+
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.buildingcode === dataOne.buildingcode)
+                    setSelectBuilding(selected[0]);
+                }
+
             } catch (error) {
                 console.log(error);
             }
         }
         if (openBuilding) {
             fetchBuilding();
-            setOpenBuilding(false);
             setIsLoading(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openBuilding]);
+    }, [code, dataOne, openBuilding]);
 
 
     // MANUFACTURE
@@ -124,8 +161,12 @@ const FormSample = () => {
         const fetchManufacture = async () => {
             try {
                 const res = await getManufacture(false);
-                const filter = res.map((item, row) => ({ ...item, key: row + 1 }));
-                setDataManufacture(filter);
+                setDataManufacture(res);
+
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.manufacturecode === dataOne.manufacturecode)
+                    setSelectManufacture(selected[0]);
+                }
 
             } catch (error) {
                 console.log(error);
@@ -133,11 +174,9 @@ const FormSample = () => {
         }
         if (openManufacture) {
             fetchManufacture();
-            setOpenManufacture(false);
             setIsLoading(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openManufacture]);
+    }, [code, dataOne, openManufacture]);
 
 
     // TEMP CONDITION
@@ -147,6 +186,11 @@ const FormSample = () => {
                 const res = await getTempCondition(false);
                 setDataTemp(res);
 
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.tempcode === dataOne.tempcode)
+                    setSelectTemp(selected[0]);
+                }
+
             } catch (error) {
                 console.log(error);
             }
@@ -154,12 +198,31 @@ const FormSample = () => {
 
         if (openTemp) {
             fetchTemp();
-            setOpenTemp(false);
             setIsLoading(false);
         }
+    }, [code, dataOne, openTemp]);
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openTemp]);
+    // UNIT PACK
+    useEffect(() => {
+        const fetchUnitPack = async () => {
+            try {
+                const res = await getUnit(false);
+                setDataUnitPack(res);
+
+                if (code && dataOne) {
+                    const selected = res.filter(item => item.unitcode === dataOne.unitcode)
+                    setSelectUnitPack(selected[0]);
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (openUnitPack) {
+            fetchUnitPack()
+            setIsLoading(false);
+        }
+    }, [code, dataOne, openUnitPack]);
 
 
 
@@ -175,6 +238,13 @@ const FormSample = () => {
             }
         )
     }, [BuildingName, ManufactureName, ProdCatName, TempName, UnitName, UnitPackName, form]);
+
+    useEffect(() => {
+        form.setFieldsValue({
+            samplecode: "",
+        })
+    }, [form]);
+
 
 
     const handleSubmit = async (values) => {
@@ -195,10 +265,16 @@ const FormSample = () => {
                 useintbatchno: false,
                 sample_pa: dataSampleParameter,
             }
-            console.log(payload);
-            const res = await postSample();
-            console.log(res);
-            
+
+            if (code) {
+                console.log(payload);
+            } else {
+                const res = await postSample(payload);
+                message.success(res.data.message);
+            }
+
+            // console.log(payload);
+            // navigate('/master/sample');
         } catch (error) {
             message.error(error.response.data.message);
             console.log(error);
@@ -377,6 +453,7 @@ const FormSample = () => {
                     <div className="m-4 p-4 border rounded-md">
                         <FormSampleParameter
                             onSaveData={(values) => setDataSampleParameter(values)}
+                            onEdit={dataOne}
                         />
                     </div>
 

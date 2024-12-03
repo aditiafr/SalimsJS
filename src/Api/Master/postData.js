@@ -15,8 +15,6 @@ export const postBuilding = async (Data) => {
 }
 
 export const postSample = async (Data) => {
-    console.log(Data);
-    
     const token = Cookies.get('access_token');
     const response = await axios.post(`${baseUrl}/sample/store`, Data, {
         headers: {

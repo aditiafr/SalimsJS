@@ -370,7 +370,7 @@ const FormTestingOrderParameter = ({ onSaveData, onEdit, onApproval }) => {
 
     return (
         <Form form={form} component={false}>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
                 <p className="text-2xl font-bold">
                     PARAMETER
                 </p>
@@ -390,7 +390,7 @@ const FormTestingOrderParameter = ({ onSaveData, onEdit, onApproval }) => {
                         cell: EditableCell,
                     },
                 }}
-                // bordered
+                bordered
                 dataSource={data}
                 columns={mergedColumns}
                 rowClassName="editable-row"

@@ -137,7 +137,7 @@ const FormTestingOrder = () => {
       customername: CustomerName,
       requestby: ContactCustomer,
     })
-  }, [ContactCustomer, CustomerName, code, form]);
+  }, [ContactCustomer, CustomerName, form]);
 
   useEffect(() => {
     if (!code) {

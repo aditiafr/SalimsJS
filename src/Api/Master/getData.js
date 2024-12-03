@@ -93,15 +93,27 @@ export const getFormula = async () => {
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
 
-export const getSample = async () => {
+export const getSample = async (Suspend) => {
     const token = Cookies.get('access_token');
-    const response = await axios.get(`${baseURL}/sample/list`, {
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
+    const response = await axios.get(`${baseURL}/sample/list?sortParam=samplecode&sortOrder=asc${isSuspend}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
+
+export const getSampleOne = async (Code) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.get(`${baseURL}/sample/one/0001/${Code}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data;
 }
 
 export const getProduct = async () => {

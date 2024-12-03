@@ -6,7 +6,7 @@ import { getTestingOrder } from "../../../../Api/SampleHandling/GetData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import TestingOrderAcCost from "./AcCost";
 import TestingOrderSample from "./Sample";
-import DeleteTestingOrder from "./Delete";
+import DeleteTestingOrder from "./delete";
 import EditTestingOrder from "./edit";
 import { toRupiah } from "../../../../components/Dashboard/Global/General";
 

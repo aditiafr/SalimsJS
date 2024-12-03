@@ -1,16 +1,57 @@
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { Col, DatePicker, Form, Input, Row } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { PrefixGlobal, selectedTranIdx } from "../../../../components/Dashboard/Global/Helper";
+import InputModal from "../../../../components/Dashboard/Global/InputModal";
+import { columnsLabour } from "./ColumnsSampleHandling";
 
 const FormSampleHandling = () => {
   const [form] = Form.useForm();
+  const { code } = useParams();
+  const [dataOne, setDataOne] = useState(null);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+
+  const navigate = useNavigate();
+  const prefix = PrefixGlobal();
+  const [loading, setLoading] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [dataLabour, setDataLabour] = useState([]);
+  const [selectLabour, setSelectLabour] = useState("");
+  const [openLabour, setOpenLabour] = useState(null);
+  const LabourCode = selectLabour ? selectLabour.labourcode : '';
+  const LabourName = selectLabour ? selectLabour.labourname : '';
+
+
+  const [details, setDetails] = useState([]);
+
+
+  // LABOUR
+  // const fetchLabour = async () => {
+  //   try {
+  //     const res = await 
+  //   } catch (error) {
+      
+  //   }
+  // }
+  
+
+  const handleSubmit = (values) => {
+    try {
+      const payload = {
+        ...values,
+        tranidx: selectedTranIdx,
+        branchcode: '0001',
+        details: details
+      };
+      console.log("Submit", payload);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const onReset = () => {
     form.resetFields();
@@ -25,79 +66,78 @@ const FormSampleHandling = () => {
         <Form
           name="basic"
           layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleSubmit}
           autoComplete="off"
           form={form}
         >
-          <Row gutter={30} style={{ padding: "28px" }}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="SS Number"
-                name="SSNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input SS Number!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 p-6">
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="Periode"
-                name="Periode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Periode!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="Split Sample Number"
+              name="srnumber"
+              rules={[
+                !code &&
+                {
+                  validator: prefix,
+                },
+              ]}
+            >
+              <Input placeholder="Input Split Sample Number" maxLength={6} />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="SS Date"
-                name="SSDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input SS Date!",
-                  },
-                ]}
-              >
-                <DatePicker className="w-full" />
-              </Form.Item>
-            </Col>
+            <InputModal
+              title="LABOUR"
+              label="Labout"
+              name="laboutname"
+              dataSource={dataLabour}
+              loading={isLoading}
+              columns={columnsLabour}
+              onData={(values) => setSelectLabour(values)}
+              onOpenModal={(values) => setOpenLabour(values)}
+              onEdit={selectLabour}
+            />
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                label="SR Number"
-                name="SRNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input SR Number!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            <Form.Item
+              label="periode"
+              name="periode"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your periode!",
+                },
+              ]}
+            >
+              <Input placeholder="Input periode" />
+            </Form.Item>
 
-            <Col xs={24} sm={12}>
-              <Form.Item label="Description" name="Description">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-          </Row>
-          <ButtonSubmit onReset={onReset} />
+            <Form.Item
+              label="ssdate"
+              name="ssdate"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your ssdate!",
+                },
+              ]}
+            >
+              <Input placeholder="Input ssdate" />
+            </Form.Item>
+
+            <Form.Item
+              label="Description"
+              name="description"
+            >
+              <Input.TextArea placeholder="Input Description" />
+            </Form.Item>
+
+          </div>
+
+          {/* <div className="m-4 p-4 border rounded-md">
+            <FormTakingSampleParameter onSaveData={(values) => setDataParameter(values)} onEdit={dataOne} />
+          </div> */}
+
+          <ButtonSubmit onReset={onReset} onLoading={loading} />
+
         </Form>
       </div>
     </>

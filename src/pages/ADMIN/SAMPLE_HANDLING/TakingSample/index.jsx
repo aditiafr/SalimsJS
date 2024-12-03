@@ -1,152 +1,155 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle'
 import { Link } from 'react-router-dom'
-import { Button, Table, Input } from 'antd'
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: 'TS Number',
-    dataIndex: 'TSNumber',
-    key: 'TSNumber',
-    width: 100,
-  },
-  {
-    title: 'Periode',
-    dataIndex: 'Periode',
-    key: 'Periode',
-    width: 100,
-  },
-  {
-    title: 'Date',
-    dataIndex: 'Date',
-    key: 'Date',
-    width: 100,
-  },
-  {
-    title: 'Sample Code',
-    dataIndex: 'SampleCode',
-    key: 'SampleCode',
-    width: 100,
-  },
-  {
-    title: 'PTS Number',
-    dataIndex: 'PTSNumber',
-    key: 'PTSNumber',
-    width: 100,
-  },
-  {
-    title: 'Sample No',
-    dataIndex: 'SampleNo',
-    key: 'SampleNo',
-    width: 100,
-  },
-  {
-    title: 'Map Code',
-    dataIndex: 'MapCode',
-    key: 'MapCode',
-    width: 100,
-  },
-  {
-    title: 'Address',
-    dataIndex: 'Address',
-    key: 'Address',
-    width: 100,
-  },
-  {
-    title: 'Weather',
-    dataIndex: 'Weather',
-    key: 'Weather',
-    width: 100,
-  },
-  {
-    title: 'Wind Direction',
-    dataIndex: 'WindDirection',
-    key: 'WindDirection',
-    width: 100,
-  },
-  {
-    title: 'Temperature',
-    dataIndex: 'Temperature',
-    key: 'Temperature',
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-]
-
-const data = [
-  {
-    key: 1,
-    TSNumber: 'TS-001',
-    Periode: '2021-01',
-    Date: '2021-01-01',
-    SampleCode: 'SC-001',
-    PTSNumber: 'PTS-001',
-    SampleNo: 'SN-001',
-    MapCode: 'MC-001',
-    Address: 'Jl. Jendral Sudirman No. 1',
-    Weather: 'Sunny',
-    WindDirection: 'North',
-    Temperature: '25°C',
-    Description: 'Lorem ipsum dolor sit amet',
-  },
-  {
-    key: 2,
-    TSNumber: 'TS-002',
-    Periode: '2021-02',
-    Date: '2021-02-01',
-    SampleCode: 'SC-002',
-    PTSNumber: 'PTS-002',
-    SampleNo: 'SN-002',
-    MapCode: 'MC-002',
-    Address: 'Jl. Jendral Sudirman No. 2',
-    Weather: 'Rainy',
-    WindDirection: 'South',
-    Temperature: '20°C',
-    Description: null,
-  }
-]
+import { Button, Space, Table, Tabs } from 'antd'
+import { getTakingSample } from '../../../../Api/SampleHandling/GetData'
+import SearchInput from '../../../../components/Dashboard/Global/Table/SearchInput'
+import TakingSampleParameter from './Parameter'
+import TakingSampleCI from './ContainerInformation'
+import DeleteTakingSample from './delete'
+import EditTakingSample from './edit'
 
 const TakingSample = () => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getTakingSample();
+      setData(response)
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "Taking Sample Number",
+      dataIndex: "tsnumber",
+      key: "tsnumber",
+      width: 200,
+      fixed: "left",
+    },
+    {
+      title: "Periode",
+      dataIndex: "periode",
+      key: "periode",
+    },
+    {
+      title: "Taking Sample Date",
+      dataIndex: "tsdate",
+      key: "tsdate",
+    },
+    {
+      title: "Sample Code",
+      dataIndex: "samplecode",
+      key: "samplecode",
+    },
+    {
+      title: "Planning Taking Sample Number",
+      dataIndex: "ptsnumber",
+      key: "ptsnumber",
+    },
+    {
+      title: "Sample No",
+      dataIndex: "sampleno",
+      key: "sampleno",
+    },
+    {
+      title: "Map Code",
+      dataIndex: "mapcode",
+      key: "mapcode",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Weather",
+      dataIndex: "weather",
+      key: "weather",
+    },
+    {
+      title: "Wind Direction",
+      dataIndex: "winddirection",
+      key: "winddirection",
+    },
+    {
+      title: "Temperatur",
+      dataIndex: "temperatur",
+      key: "temperatur",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditTakingSample dataSource={record} />
+          <DeleteTakingSample dataSource={record} onDelete={fetchData} />
+        </Space>
+      ),
+    },
+  ]
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TAKING SAMPLE" subtitle="All data taking sample" />
         <div>
-          <Link to="/transaction/taking-sample/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
+          expandable={{
+            expandedRowRender
+          }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 3000,
           }}
         />
       </div>
@@ -155,3 +158,23 @@ const TakingSample = () => {
 }
 
 export default TakingSample
+
+const expandedRowRender = (record) => {
+
+  const items = [
+    {
+      key: '1',
+      label: 'Parameter',
+      children: <TakingSampleParameter dataSource={record.taking_sample_parameters} />,
+    },
+    {
+      key: '2',
+      label: 'Container Information',
+      children: <TakingSampleCI dataSource={record.taking_sample_ci} />,
+    },
+  ];
+
+  return (
+    <Tabs defaultActiveKey="1" items={items} />
+  )
+}

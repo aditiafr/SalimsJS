@@ -13,3 +13,13 @@ export const updateTestingOrder = async (Data) => {
     });
     return response;
 }
+
+export const updateTakingSample = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.put(`${baseUrl}/transaction/taking-sample/update`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

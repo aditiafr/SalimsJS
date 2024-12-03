@@ -1,10 +1,11 @@
-import { Button, Input, Table, Tabs, Tag } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { getSample } from "../../../../Api/Master/getData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import SampleParams from "./Params";
+import EditSample from "./edit";
 
 const Sample = () => {
   const [data, setData] = useState([]);
@@ -121,6 +122,17 @@ const Sample = () => {
       key: "issuspend",
       render: (suspended) => (
         <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditSample dataSource={record} />
+          {/* <DeleteTakingSample dataSource={record} onDelete={fetchData} /> */}
+        </Space>
       ),
     },
   ];
