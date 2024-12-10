@@ -124,7 +124,7 @@ const Building = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="BUILDING" subtitle="All data building" />
         <div>
-          <Link to="/master/building/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

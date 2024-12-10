@@ -119,7 +119,7 @@ const QualityReference = () => {
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 1500,
           }}
         />
       </div>

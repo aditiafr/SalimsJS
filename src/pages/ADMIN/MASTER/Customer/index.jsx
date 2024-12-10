@@ -124,7 +124,7 @@ const Customer = () => {
           subtitle="All data customer"
         />
         <div>
-          <Link to="/master/customer/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

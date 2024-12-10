@@ -99,7 +99,7 @@ const SampleLocation = () => {
           subtitle="All data sample location"
         />
         <div>
-          <Link to="/master/sample_location/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

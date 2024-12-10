@@ -3,7 +3,6 @@ import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getBuildingNextCode } from '../../../../Api/Master/getData';
 import { postBuilding } from '../../../../Api/Master/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 
@@ -17,17 +16,10 @@ const FormBuilding = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = values;
-      if (!values.buildingcode) {
-        const nextCode = await getBuildingNextCode();
-        const buildingCode = nextCode.buildingcode;
-        form.setFieldsValue({ buildingcode: buildingCode });
-        payload = {
-          ...payload,
-          buildingcode: buildingCode
-        }
+      const payload = {
+        ...values,
       }
-      // console.log(payload);
+      console.log(payload);
       const response = await postBuilding(payload);
       message.success(response.data.message);
       navigate("/master/building");

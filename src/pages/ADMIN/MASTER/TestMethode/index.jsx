@@ -97,7 +97,7 @@ const TestMethode = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TEST METHODE" subtitle="All data test methode" />
         <div>
-          <Link to="/master/test_methode/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

@@ -145,7 +145,7 @@ const Vendor = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="VENDOR" subtitle="All data vendor" />
         <div>
-          <Link to="/master/vendor/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

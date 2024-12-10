@@ -2,9 +2,8 @@ import { Form, Input, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { postWarehouse } from "../../../../Api/Master/postData";
-import { getWarehouseNextCode } from "../../../../Api/Master/getData";
 import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
 
 const FormWarehouse = () => {
@@ -12,32 +11,13 @@ const FormWarehouse = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
-  const [warehouseCode, setWarehouseCode] = useState("");
-
-  useEffect(() => {
-    const fetchNextCode = async () => {
-      try {
-        const res = await getWarehouseNextCode();
-        setWarehouseCode(res.warehousecode);
-
-      } catch (error) {
-        console.log();
-      }
-    }
-    fetchNextCode();
-  }, []);
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = values;
-      if (!values.warehousecode) {
-        form.setFieldsValue({ warehousecode: warehouseCode });
-        payload = {
-          ...payload,
-          warehousecode: warehouseCode
-        }
-      }
+      const payload = {
+        ...values
+      };
       console.log(payload);
       const response = await postWarehouse(payload);
       message.success(response.data.message);

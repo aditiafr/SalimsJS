@@ -3,7 +3,6 @@ import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getTestMethodNextCode } from '../../../../Api/Master/getData';
 import { postTestMethod } from '../../../../Api/Master/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 
@@ -17,17 +16,10 @@ const FormTestMethod = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = values;
-      if (!values.methodid) {
-        const nextCode = await getTestMethodNextCode();
-        const methodId = nextCode.methodid;
-        form.setFieldsValue({ methodid: methodId });
-        payload = {
-          ...payload,
-          methodid: methodId
-        }
-      }
-      // console.log(payload);
+      const payload = {
+        ...values
+      };
+      console.log(payload);
       const response = await postTestMethod(payload);
       message.success(response.data.message);
       navigate("/master/test_methode");
@@ -51,7 +43,7 @@ const FormTestMethod = () => {
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle title="BUILDING" subtitle="form data a building" />
+        <HeaderTitle title="TEST METHODE" subtitle="form data a test methode" />
       </div>
       <div className="w-full bg-white rounded-lg">
         <Form

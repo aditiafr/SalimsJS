@@ -2,8 +2,7 @@ import { Form, Input, InputNumber, message, TimePicker } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
-import { useEffect, useState } from "react";
-import { getTimePointNextCode } from "../../../../Api/Master/getData";
+import { useState } from "react";
 import dayjs from "dayjs";
 import { postTimePoint } from "../../../../Api/Master/postData";
 import { useNavigate } from "react-router-dom";
@@ -13,26 +12,12 @@ const FormTimePoint = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
-  const [TimePointCode, setTimePointCode] = useState("");
-
-  useEffect(() => {
-    const fetchNextCode = async () => {
-      try {
-        const res = await getTimePointNextCode();
-        setTimePointCode(res.timepointcode);
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchNextCode();
-  }, []);
 
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = {
+      const payload = {
         ...values,
         intervaltime: dayjs(values.intervaltime).format("HH:mm"),
         powmintime: dayjs(values.powmintime).format("HH:mm"),
@@ -40,13 +25,6 @@ const FormTimePoint = () => {
         twmintime: dayjs(values.twmintime).format("HH:mm"),
         twmaxtime: dayjs(values.twmaxtime).format("HH:mm"),
       };
-      if (!values.timepointcode) {
-        form.setFieldsValue({ timepointcode: TimePointCode })
-        payload = {
-          ...payload,
-          timepointcode: TimePointCode
-        }
-      }
       console.log(payload);
       const res = await postTimePoint(payload);
       message.success(res.data.message);
