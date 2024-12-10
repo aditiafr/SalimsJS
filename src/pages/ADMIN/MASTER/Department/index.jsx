@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditDepartment from "./edit";
 import DeleteDepartment from "./delete";
 import { getDepartments } from "../../../../Api/Master/getData";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const Department = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getDepartments( {
-        sortParam: 'depcode', 
+      const response = await getDepartments({
+        sortParam: 'depcode',
         sortOrder: 'desc',
       });
-      
+
       setData(response);
     } catch (error) {
       console.log(error);
@@ -32,6 +31,17 @@ const Department = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
 
   const columns = [
     {
@@ -45,28 +55,24 @@ const Department = () => {
       title: "Department Code",
       dataIndex: "DepartmentCode",
       key: "DepartmentCode",
-      width: 80,
     },
     {
       title: "Department Name",
       dataIndex: "DepartmentName",
       key: "DepartmentName",
-      width: 100,
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
-      width: 200,
       render: (text) => (text || "N/A"),
     },
     {
       title: "Suspended",
       dataIndex: "IsSuspend",
       key: "IsSuspend",
-      width: 100,
       render: (suspended) => {
-        return <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        return <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       }
     },
     {
@@ -86,30 +92,24 @@ const Department = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Department"
+          title="DEPARTMENT"
           subtitle="All data department"
         />
         <div>
-          <Link to="/master/department/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

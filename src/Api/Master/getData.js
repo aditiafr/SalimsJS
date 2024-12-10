@@ -431,6 +431,9 @@ export const getPackingTypes = async (params) => {
         params
     });
 
+    console.log("res", response);
+    
+
     return PackingTypeMapFromHttp(response.data.data);
 }
 

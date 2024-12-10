@@ -1,9 +1,9 @@
 export const PackingTypeMapFromHttp = (data) => {
   return data.map((row, index) => ({ 
-    PackingTypeCode: row.unitCode,
-    PackingTypeName: row.unitName,
+    PackingTypeCode: row.unitcode,
+    PackingTypeName: row.unitname,
     Description: row.description,
-    IsSuspend: row.isSuspend,
+    IsSuspend: row.issuspend,
     key: index + 1 
   }));
 }

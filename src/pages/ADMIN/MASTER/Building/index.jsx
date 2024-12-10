@@ -9,8 +9,8 @@ import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInp
 
 const Building = () => {
   const [data, setData] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
