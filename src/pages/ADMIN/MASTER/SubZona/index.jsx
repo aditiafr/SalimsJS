@@ -1,146 +1,133 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import EditZona from "./edit";
 import DeleteZona from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-const { Search } = Input;
+import { useEffect, useState } from "react";
+import { getSubZona } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: "Zona Code",
-    dataIndex: "ZonaCode",
-    key: "ZonaCode",
-    width: 80,
-  },
-  {
-    title: "SubZona Code",
-    dataIndex: "SubZonaCode",
-    key: "SubZonaCode",
-    width: 100,
-  },
-  {
-    title: "SubZona Name",
-    dataIndex: "SubZonaName",
-    key: "SubZonaName",
-    width: 100,
-  },
-  {
-    title: "Address",
-    dataIndex: "Address",
-    key: "Address",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "ZIP Code",
-    dataIndex: "ZIPCode",
-    key: "ZIPCode",
-    width: 100,
-  },
-  {
-    title: "City",
-    dataIndex: "City",
-    key: "City",
-    width: 100,
-  },
-  {
-    title: "LatLong",
-    dataIndex: "LatLong",
-    key: "LatLong",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (suspended) => (
-      <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditZona />
-        <DeleteZona name={record.SubZonaName} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    ZonaCode: "01",
-    SubZonaCode: "001",
-    SubZonaName: "SubZona 1",
-    Address: "Jl. Raya Kuta No. 1",
-    ZIPCode: "80361",
-    City: "Badung",
-    LatLong: "-8.7152, 115.1709",
-    Description: "Lorem ipsum dolor sit amet",
-    Suspended: false,
-  },
-  {
-    key: 2,
-    ZonaCode: "02",
-    SubZonaCode: "002",
-    SubZonaName: "SubZona 2",
-    Address: "Jl. Raya Kuta No. 2",
-    ZIPCode: "80361",
-    City: "Badung",
-    LatLong: "-8.7152, 115.1709",
-    Description: "Lorem ipsum dolor sit amet",
-    Suspended: true,
-  }
-];
 
 const SubZona = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const response = await getSubZona();
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    setLoading(false);
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "Zona Code",
+      dataIndex: "zonacode",
+      key: "zonacode",
+    },
+    {
+      title: "Subzona Code",
+      dataIndex: "subzonacode",
+      key: "subzonacode",
+    },
+    {
+      title: "Subzona Name",
+      dataIndex: "subzonaname",
+      key: "subzonaname",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "ZIP Code",
+      dataIndex: "zipcode",
+      key: "zipcode",
+    },
+    {
+      title: "City",
+      dataIndex: "city",
+      key: "city",
+    },
+    {
+      title: "Latitude, Longitude",
+      dataIndex: "latlong",
+      key: "latlong",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
+      render: (suspended) => (
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditZona />
+          <DeleteZona name={record.SubZonaName} />
+        </Space>
+      ),
+    },
+  ];
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Sub Zona"
-          subtitle="All data sub zona"
+          title="SUBZONA"
+          subtitle="All data subzona"
         />
         <div>
-          <Link to="/master/sub-zona/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 2000,
           }}
         />
       </div>

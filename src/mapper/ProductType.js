@@ -1,7 +1,7 @@
 export const ProductTypeMapFromHttp = (data) => {
   return data.map((row, index) => ({ 
-    ProductTypeCode: row.productTypeCode,
-    ProductTypeName: row.productTypeName,
+    ProductTypeCode: row.producttypecode,
+    ProductTypeName: row.producttypename,
     Description: row.description,
     IsSuspend: row.issuspend,
     key: index + 1 

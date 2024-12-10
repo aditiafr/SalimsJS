@@ -1,79 +1,83 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import EditPriceList from "./edit";
 import DeletePriceList from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
-const { Search } = Input;
+import { useEffect, useState } from "react";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: "Branch Code",
-    dataIndex: "BranchCode",
-    key: "BranchCode",
-    width: 100,
-  },
-  {
-    title: "Price Code",
-    dataIndex: "PriceCode",
-    key: "PriceCode",
-    width: 100,
-  },
-  {
-    title: "Price Name",
-    dataIndex: "PriceName",
-    key: "PriceName",
-    width: 100,
-  },
-  {
-    title: "Description",
-    dataIndex: "Description",
-    key: "Description",
-    width: 200,
-    render: (text) => (text ?? "N/A"),
-  },
-  {
-    title: "Suspended",
-    dataIndex: "Suspended",
-    key: "Suspended",
-    width: 100,
-    render: (isSuspend) => (
-      <Tag color={isSuspend ? 'red' : 'green' }> {isSuspend ? 'Yes' : 'No'} </Tag>
-    ),
-  },
-  {
-    title: "Action",
-    fixed: "right",
-    width: 100,
-    render: (_, record) => (
-      <Space>
-        <EditPriceList />
-        <DeletePriceList name={record.PriceName} />
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: 1,
-    BranchCode: "B01",
-    PriceCode: "P01",
-    PriceName: "Price 1",
-    Description: "Lorem ipsum dolor sit amet",
-    IsSuspend: false,
-  },
-  {
-    key: 2,
-    BranchCode: "B02",
-    PriceCode: "P02",
-    PriceName: "Price 2",
-    Description: "Lorem ipsum dolor sit amet",
-    IsSuspend: true,
-  }
-];
 
 const PriceList = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const response = [];
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    setLoading(false);
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "Branch Code",
+      dataIndex: "BranchCode",
+      key: "BranchCode",
+    },
+    {
+      title: "Price Code",
+      dataIndex: "PriceCode",
+      key: "PriceCode",
+    },
+    {
+      title: "Price Name",
+      dataIndex: "PriceName",
+      key: "PriceName",
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      render: (text) => (text ?? "N/A"),
+    },
+    {
+      title: "Suspended",
+      dataIndex: "Suspended",
+      key: "Suspended",
+      render: (isSuspend) => (
+        <Tag color={isSuspend ? 'red' : 'green'}> {isSuspend ? 'Yes' : 'No'} </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <EditPriceList />
+          <DeletePriceList name={record.PriceName} />
+        </Space>
+      ),
+    },
+  ];
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -89,19 +93,13 @@ const PriceList = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

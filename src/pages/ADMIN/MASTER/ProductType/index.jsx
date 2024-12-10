@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { useEffect, useState } from "react";
 import { getProductTypes } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -12,15 +13,16 @@ const onSearch = (value, _e, info) => console.log(info?.source, value);
 const ProductType = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getProductTypes( {
-        sortParam: 'prodtypecode', 
+      const response = await getProductTypes({
+        sortParam: 'prodtypecode',
         sortOrder: 'desc',
       });
-      
+
       setData(response);
     } catch (error) {
       console.log(error);
@@ -33,33 +35,39 @@ const ProductType = () => {
     fetchData();
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
   const columns = [
     {
       title: "Code",
       dataIndex: "ProductTypeCode",
       key: "ProductTypeCode",
-      width: 80,
     },
     {
       title: "Name",
       dataIndex: "ProductTypeName",
       key: "ProductTypeName",
-      width: 100,
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
-      width: 200,
       render: (text) => (text ?? "N/A"),
     },
     {
       title: "Suspended",
       dataIndex: "IsSuspend",
       key: "IsSuspend",
-      width: 100,
       render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
@@ -79,30 +87,24 @@ const ProductType = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Product Type"
+          title="PRODUCT TYPE"
           subtitle="All data product type"
         />
         <div>
-          <Link to="/master/product-type/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

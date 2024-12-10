@@ -74,3 +74,15 @@ export const getSampleHandling = async (Suspend) => {
     
     return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
 }
+
+export const getSampleRegistration = async (Suspend) => {
+    const token = Cookies.get('access_token');
+    const isSuspend = Suspend ? `&isSuspend=0` : ''
+    const response = await axios.get(`${baseURL}/transaction/sample-registration/list?sortParam=srnumber&sortOrder=asc${isSuspend}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    
+    return response.data.data.map((row, index) => ({ ...row, key: index + 1 }));
+}
