@@ -88,7 +88,7 @@ const Manufacture = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="MANUFACTURE" subtitle="All data Manufacture" />
         <div>
-          <Link to="/master/manufacture/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

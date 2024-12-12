@@ -61,16 +61,9 @@ const FormSampleLocation = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = {
+      const payload = {
         ...values,
         buildingcode: BuildingCode
-      }
-      if (!values.locationcode) {
-        form.setFieldsValue({ locationcode: locationCode });
-        payload = {
-          ...payload,
-          locationcode: locationCode
-        }
       }
       console.log(payload);
       const response = await postSampleLocation(payload);

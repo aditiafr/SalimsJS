@@ -3,7 +3,6 @@ import React from 'react'
 import { toRupiah } from '../../../../../components/Dashboard/Global/General';
 
 const TestingOrderAcCost = ({ dataSource }) => {
-  console.log(dataSource);
 
   return (
     <>

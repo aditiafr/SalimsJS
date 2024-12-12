@@ -9,8 +9,8 @@ import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInp
 
 const Building = () => {
   const [data, setData] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
@@ -124,7 +124,7 @@ const Building = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="BUILDING" subtitle="All data building" />
         <div>
-          <Link to="/master/building/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

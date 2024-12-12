@@ -1,67 +1,69 @@
-import { Button, Input, Space, Table, Tabs, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import EditPriceList from "./edit";
 import DeletePriceList from "./delete";
 import { Link } from "react-router-dom";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { useEffect, useState } from "react";
-import { getPriceList } from "../../../../Api/Master/getData";
-import PriceListDetail from "./PriceListDetail";
-const { Search } = Input;
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const PriceList = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const response = await getPriceList();
+      const response = [];
       setData(response);
     } catch (error) {
       console.log(error);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     {
       title: "Branch Code",
-      dataIndex: "branchcode",
-      key: "branchcode",
-      width: 100,
+      dataIndex: "BranchCode",
+      key: "BranchCode",
     },
     {
       title: "Price Code",
-      dataIndex: "pricecode",
-      key: "pricecode",
-      width: 100,
+      dataIndex: "PriceCode",
+      key: "PriceCode",
     },
     {
       title: "Price Name",
-      dataIndex: "pricename",
-      key: "pricename",
-      width: 100,
+      dataIndex: "PriceName",
+      key: "PriceName",
     },
     {
       title: "Description",
-      dataIndex: "description",
-      key: "description",
-      width: 200,
+      dataIndex: "Description",
+      key: "Description",
       render: (text) => (text ?? "N/A"),
     },
     {
       title: "Suspended",
-      dataIndex: "issuspend",
-      key: "issuspend",
-      width: 100,
+      dataIndex: "Suspended",
+      key: "Suspended",
       render: (isSuspend) => (
-        <Tag color={isSuspend ? 'red' : 'green' }> {isSuspend ? 'Yes' : 'No'} </Tag>
+        <Tag color={isSuspend ? 'red' : 'green'}> {isSuspend ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
@@ -70,15 +72,12 @@ const PriceList = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditPriceList onEdit={fetchData} dataSource={record} />
-          {record.issuspend === false && (
-            <DeletePriceList name={record.pricename} priceListCode={record.pricecode} onDelete={fetchData} />
-          )}  
+          <EditPriceList />
+          <DeletePriceList name={record.PriceName} />
         </Space>
       ),
     },
   ];
-
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
@@ -94,22 +93,13 @@ const PriceList = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
-          expandable={{ 
-            expandedRowRender
-           }}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

@@ -1,47 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Form, Input, message } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { useNavigate } from "react-router-dom";
 import { postVendor } from "../../../../Api/Master/postData";
 import { PrefixGlobal } from "../../../../components/Dashboard/Global/Helper";
-import { getVendorNextCode } from "../../../../Api/Master/getData";
 
 const FormVendor = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const prefix = PrefixGlobal();
-  const [vendorCode, setVendorCode] = useState("");
-
-  useEffect(() => {
-    const fetchNextCode = async () => {
-      try {
-        const res = await getVendorNextCode();
-        setVendorCode(res.vendorcode);
-
-      } catch (error) {
-        console.log();
-      }
-    }
-    fetchNextCode();
-  }, []);
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      let payload = {
+      const payload = {
         ...values,
         branchcode: "0001"
       };
-      if (!values.vendorcode) {
-        form.setFieldsValue({ vendorcode: vendorCode });
-        payload = {
-          ...payload,
-          vendorcode: vendorCode
-        }
-      }
-      
       const response = await postVendor(payload);
       message.success(response.data.message);
       navigate("/master/vendor");
@@ -87,7 +64,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input maxLength={6} />
+              <Input placeholder="Input Vendor Code" maxLength={6} />
             </Form.Item>
 
             <Form.Item
@@ -100,7 +77,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Vendor Name" />
             </Form.Item>
 
             <Form.Item
@@ -113,14 +90,14 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Address" />
             </Form.Item>
 
             <Form.Item
               label="Address 2"
               name="address2"
             >
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Address 2" />
             </Form.Item>
 
             <Form.Item
@@ -133,7 +110,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input City" />
             </Form.Item>
 
             <Form.Item
@@ -146,7 +123,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input maxLength={5} onKeyPress={handleOnKeyPress} />
+              <Input placeholder="Input Postal Code" maxLength={5} onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -159,7 +136,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Country" />
             </Form.Item>
 
             <Form.Item
@@ -175,7 +152,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Email Address" />
             </Form.Item>
 
             <Form.Item
@@ -188,7 +165,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input onKeyPress={handleOnKeyPress} />
+              <Input placeholder="Input Phone Number" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -201,7 +178,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input onKeyPress={handleOnKeyPress} />
+              <Input placeholder="Input Hp Number" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -214,7 +191,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input onKeyPress={handleOnKeyPress} />
+              <Input placeholder="Input Fax Code" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -227,7 +204,7 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input onKeyPress={handleOnKeyPress} />
+              <Input placeholder="Input NPWP" onKeyPress={handleOnKeyPress} />
             </Form.Item>
 
             <Form.Item
@@ -240,11 +217,11 @@ const FormVendor = () => {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Input Contact Person" />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
-              <Input.TextArea />
+              <Input.TextArea placeholder="Input Description" />
             </Form.Item>
 
           </div>

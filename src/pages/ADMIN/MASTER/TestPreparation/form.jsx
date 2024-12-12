@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
-import { getTestPreparationNextCode } from '../../../../Api/Master/getData';
 import { postTestPreparation } from '../../../../Api/Master/postData';
 
 const FormTestPreparation = () => {
@@ -16,16 +15,9 @@ const FormTestPreparation = () => {
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
-            let payload = values;
-            if (!values.testpreparationid) {
-                const nextCode = await getTestPreparationNextCode();
-                const preparationid = nextCode.testpreparationid;
-                form.setFieldsValue({ testpreparationid: preparationid });
-                payload = {
-                    ...payload,
-                    testpreparationid: preparationid
-                }
-            }
+            const payload = {
+                ...values
+            };
             console.log(payload);
             const res = await postTestPreparation(payload);
             message.success(res.data.message);

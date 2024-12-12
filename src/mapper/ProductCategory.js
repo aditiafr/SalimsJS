@@ -1,10 +1,10 @@
 export const ProductCategoryMapFromHttp = (data) => {
   return data.map((row, index) => ({ 
-    ProductCategoryCode: row.productCategoryCode,
-    ProductCategoryName: row.productCategoryName,
-    IsCategorySample: row.isCategorySample,
+    ProductCategoryCode: row.productcategorycode,
+    ProductCategoryName: row.productcategoryname,
+    IsCategorySample: row.iscategorysample,
     Description: row.description,
-    IsSuspend: row.isSuspend,
+    IsSuspend: row.issuspend,
     key: index + 1 
   }));
 }

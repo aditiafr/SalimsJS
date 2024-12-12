@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
-import { getManufactureNextCode } from '../../../../Api/Master/getData';
 import { postManufacture } from '../../../../Api/Master/postData';
 
 const FormManufacture = () => {
@@ -12,30 +11,12 @@ const FormManufacture = () => {
     const navigate = useNavigate();
     const prefix = PrefixGlobal();
     const [loading, setLoading] = useState(false);
-    const [manufactureCode, setManufactureCode] = useState([]);
-
-    useEffect(() => {
-        const fetchNextCode = async () => {
-            try {
-                const res = await getManufactureNextCode();
-                setManufactureCode(res.manufacturecode);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        fetchNextCode();
-    }, []);
 
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
-            let payload = values;
-            if (!values.manufacturecode) {
-                form.setFieldsValue({ manufacturecode: manufactureCode });
-                payload = {
-                    ...payload,
-                    manufacturecode: manufactureCode
-                }
+            const payload = {
+                ...values,
             }
             const response = await postManufacture(payload);
             message.success(response.data.message);

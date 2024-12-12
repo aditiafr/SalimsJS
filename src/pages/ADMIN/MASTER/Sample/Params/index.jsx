@@ -1,11 +1,9 @@
-import { Button, Popconfirm, Table, Tabs } from 'antd'
+import { Table, Tabs } from 'antd'
 import React from 'react'
 import SampleFormula from './Formula'
 import SampleProduct from './Product'
-import { Link } from 'react-router-dom'
-import { DeleteFilled, EditFilled } from '@ant-design/icons'
 
-const SampleParams = ({ dataSource, onDelete }) => {
+const SampleParams = ({ dataSource }) => {
 
   const columns = [
     {
@@ -53,33 +51,6 @@ const SampleParams = ({ dataSource, onDelete }) => {
       title: "Specification",
       dataIndex: "specification",
       key: "specification",
-    },
-    {
-      title: 'Actions',
-      key: 'Actions',
-      fixed: 'right',
-      width: 100,
-      render: (_, record) => {
-        return (
-          <div>
-            <Link to={`parameter/${record.parcode}`}>
-              <Button icon={<EditFilled />} type="text" />
-            </Link>
-            <Popconfirm
-              title="Delete the data"
-              description="Are you sure to delete this data?"
-              onConfirm={() => onDelete(record.parcode)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                icon={<DeleteFilled />}
-                type="text"
-              />
-            </Popconfirm>
-          </div>
-        )
-      }
     },
   ];
 

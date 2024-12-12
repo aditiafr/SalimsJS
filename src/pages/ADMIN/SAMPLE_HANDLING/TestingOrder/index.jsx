@@ -6,8 +6,9 @@ import { getTestingOrder } from "../../../../Api/SampleHandling/GetData";
 import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 import TestingOrderAcCost from "./AcCost";
 import TestingOrderSample from "./Sample";
-import DeleteTestingOrder from "./Delete";
+import DeleteTestingOrder from "./delete";
 import EditTestingOrder from "./edit";
+import { toRupiah } from "../../../../components/Dashboard/Global/General";
 
 const TestingOrder = () => {
   const [data, setData] = useState([]);
@@ -76,26 +77,37 @@ const TestingOrder = () => {
       title: "Gross",
       dataIndex: "gross",
       key: "gross",
+      render: (value) => <p>{toRupiah(value)}</p>
     },
     {
       title: "Discount",
       dataIndex: "discount_m",
       key: "discount",
+      render: (value) => <p>{toRupiah(value)}</p>
     },
     {
       title: "DPP",
       dataIndex: "dpp",
       key: "dpp",
+      render: (value) => <p>{toRupiah(value)}</p>
     },
     {
       title: "VAT",
       dataIndex: "vat",
       key: "vat",
+      render: (value, record) => {
+        const TVat = parseInt(record.dpp) * (parseInt(value) / 100)
+        return (
+          <p>{toRupiah(TVat)}</p>
+        )
+        // DPP * (VATPersen / 100)
+      }
     },
     {
       title: "NET",
       dataIndex: "net",
       key: "net",
+      render: (value) => <p>{toRupiah(value)}</p>
     },
     {
       title: "Description",

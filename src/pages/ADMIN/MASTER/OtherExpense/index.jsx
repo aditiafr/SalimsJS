@@ -1,50 +1,52 @@
-"use client";
-
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import EditOtherExpense from "./edit";
 import DeleteOtherExpense from "./delete";
-import { getOtherExpense } from "../../../../Api/Master/getData";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const OtherExpense = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const response = await getOtherExpense( {
-        sortParam: 'expensecode', 
-        sortOrder: 'asc',
-      });
+      const response = [];
       setData(response);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
 
   const columns = [
     {
       title: "Code",
-      dataIndex: "OtherExpenseCode",
-      key: "OtherExpenseCode",
+      dataIndex: "Code",
+      key: "Code",
       width: 80,
     },
     {
       title: "Name",
-      dataIndex: "OtherExpenseName",
-      key: "OtherExpenseName",
+      dataIndex: "Name",
+      key: "Name",
       width: 100,
     },
     {
@@ -54,7 +56,7 @@ const OtherExpense = () => {
       width: 100,
       render: (text) => {
         const value = text ?? 0;
-  
+
         return new Intl.NumberFormat("id-ID", {
           style: "currency",
           currency: "IDR"
@@ -66,9 +68,7 @@ const OtherExpense = () => {
       dataIndex: "IsDefaultTakingSample",
       key: "IsDefaultTakingSample",
       width: 100,
-      render: (isDefaultTakingSample) => (
-        <Tag color={isDefaultTakingSample ? 'cyan' : 'magenta' }> {isDefaultTakingSample ? 'Yes' : 'No'} </Tag>
-      ),
+      render: (text) => (text ?? "N/A"),
     },
     {
       title: "Description",
@@ -79,12 +79,12 @@ const OtherExpense = () => {
     },
     {
       title: "Suspended",
-      dataIndex: "IsSuspend",
-      key: "IsSuspend",
+      dataIndex: "Suspended",
+      key: "Suspended",
       width: 100,
       render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
-     ),
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
+      ),
     },
     {
       title: "Action",
@@ -92,47 +92,40 @@ const OtherExpense = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditOtherExpense dataSource={record} onEdit={fetchData} />
-          <DeleteOtherExpense OtherExpenseCode={record.OtherExpenseCode} name={record.OtherExpenseName} onDelete={fetchData} />
+          <EditOtherExpense />
+          <DeleteOtherExpense name={record.Name} />
         </Space>
       ),
     },
   ];
-
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Other Expense"
+          title="OTHER EXPENSE"
           subtitle="All data other expense"
         />
         <div>
-          <Link to="/master/other_expense/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 1500,
           }}
         />
       </div>

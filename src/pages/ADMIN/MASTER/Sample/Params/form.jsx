@@ -160,7 +160,7 @@ const FormSampleParameter = ({ onSaveData, onParamCode, onEdit, onApproval }) =>
 
   useEffect(() => {
     if (onEdit) {
-      const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
+      const dataEdit = onEdit.sample_pa.map((row, index) => ({ ...row, key: index + 1 })).reverse()
       setData(dataEdit);
       setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
       onSaveData(dataEdit);
@@ -528,11 +528,11 @@ const expandedRowRender = (record, onSaveFormula, onSaveProduct) => {
   return (
     <>
       <div className="m-4 p-4 border rounded-md">
-        <FormSampleFormula onSaveData={handleFormula} />
+        <FormSampleFormula onSaveData={handleFormula} onEdit={record.sample_fo} />
       </div>
 
       <div className="m-4 p-4 border rounded-md">
-        <FormSampleProduct onSaveData={handleProduct} />
+        <FormSampleProduct onSaveData={handleProduct} onEdit={record.sample_pr} />
       </div>
     </>
   );

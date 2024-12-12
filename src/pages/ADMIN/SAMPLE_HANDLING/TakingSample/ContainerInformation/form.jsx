@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Popconfirm, Table, Button, message } from 'antd';
+import { Form, Input, Popconfirm, Table, Button, message, InputNumber } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
-import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
-import { getQualityReference } from '../../../../../../Api/Master/getData';
+import InputModal from '../../../../../components/Dashboard/Global/InputModal';
+import { getEquipment } from '../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -14,57 +14,57 @@ const EditableCell = ({
     index,
     children,
     onData,
-    onDataQR,
+    onDataEquipment,
     onEdit,
     ...restProps
 }) => {
 
     useEffect(() => {
         if (onEdit) {
-            setOpenQR(true);
+            setOpenEquipment(true);
         }
     }, [onEdit]);
 
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [dataQR, setDataQR] = useState([]);
-    const [selectQR, setSelectQR] = useState("");
-    const [openQR, setOpenQR] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // QUALITY REFERENCE
+    const [dataEquipment, setDataEquipment] = useState([]);
+    const [selectEquipment, setSelectEquipment] = useState("");
+    const [openEquipment, setOpenEquipment] = useState(null);
+
+    // EQUIPMENT
     useEffect(() => {
-        const fetchQR = async () => {
+        const fetchEquipment = async () => {
             try {
-                setIsLoading(true);
-                const QRCode = onData.map(item => item.qrid);
+                const equipmentCode = onData.map(item => item.equipmentcode);
 
-                const res = await getQualityReference();
-                const filter = res.filter(item => !QRCode.includes(item.qrid));
-                setDataQR(filter);
+                const res = await getEquipment();
+                const filter = res.filter(item => !equipmentCode.includes(item.equipmentcode));
+                setDataEquipment(filter);
 
                 if (onEdit) {
-                    const selected = res.filter(item => item.qrid === record.qrid);
-                    setSelectQR(selected[0]);
+                    const selected = res.filter(item => item.equipmentcode === record.equipmentcode);
+                    setSelectEquipment(selected[0]);
                 }
 
             } catch (error) {
                 console.log(error);
             }
+        }
+        if (openEquipment) {
+            fetchEquipment();
+            setOpenEquipment(false);
             setIsLoading(false);
         }
-        if (openQR) {
-            fetchQR();
-            setOpenQR(false);
-        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openQR]);
+    }, [openEquipment]);
 
     useEffect(() => {
-        if (selectQR) {
-            onDataQR(selectQR);
+        if (selectEquipment) {
+            onDataEquipment(selectEquipment);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectQR]);
+    }, [selectEquipment]);
 
     return (
         <td {...restProps}>
@@ -81,16 +81,16 @@ const EditableCell = ({
                             <Input.TextArea placeholder={title} />
                         </Form.Item>
 
-                    ) : dataIndex === 'qrname' ? (
+                    ) : dataIndex === 'equipmentname' ? (
                         <InputModal
-                            title="QUALITY REFERENCE"
-                            label="Quality Reference"
+                            title="EQUIPMENT"
+                            label="Equipment"
                             name={dataIndex}
-                            dataSource={dataQR}
+                            dataSource={dataEquipment}
                             loading={isLoading}
-                            columns={columnsQR}
-                            onData={(values) => setSelectQR(values)}
-                            onOpenModal={(values) => setOpenQR(values)}
+                            columns={columnsEquipment}
+                            onData={(values) => setSelectEquipment(values)}
+                            onOpenModal={(values) => setOpenEquipment(values)}
                             onDetail={true}
                         />
                     ) : (
@@ -107,7 +107,18 @@ const EditableCell = ({
                                 },
                             ]}
                         >
-                            <Input placeholder={title} maxLength={50} />
+                            {
+                                (dataIndex === 'conqty' ||
+                                    dataIndex === 'volqty')
+                                    && editing ? (
+
+                                    <InputNumber placeholder={title} min={0} className="w-full" />
+
+                                ) : (
+
+                                    <Input placeholder={title} maxLength={50} />
+
+                                )}
                         </Form.Item>
                     )}
 
@@ -121,7 +132,7 @@ const EditableCell = ({
 };
 
 
-const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
+const FormTakingSampleCI = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -129,23 +140,23 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
     const [editingKey, setEditingKey] = useState('');
 
-    const [dataQR, setDataQR] = useState(null);
+    const [dataEquipment, setDataEquipment] = useState(null);
 
     useEffect(() => {
-        if (form && dataQR) {
+        if (form && dataEquipment) {
             form.setFieldsValue({
-                qrname: dataQR.qrname
+                equipmentname: dataEquipment.equipmentname
             })
         }
-    }, [dataQR, form]);
+    }, [dataEquipment, form]);
 
 
     useEffect(() => {
         if (onEdit) {
-            const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
+            const dataEdit = onEdit.taking_sample_ci.map((row, index) => ({ ...row, key: index + 1 })).reverse()
             setData(dataEdit);
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
-            onSaveData(dataEdit);            
+            onSaveData(dataEdit);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onEdit]);
@@ -189,7 +200,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
 
     const handleCancel = (record) => {
-        if (!record.qrid) {
+        if (!record.equipmentcode) {
             const newData = data.filter((item) => item.key !== record.key);
             setData(newData);
         } else {
@@ -207,7 +218,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
             const row = await form.validateFields();
             const newData = [...data];
             const index = newData.findIndex((item) => record.key === item.key);
-            const QRId = dataQR.qrid;
+            const equipmentCode = dataEquipment.equipmentcode
 
             if (index > -1) {
                 const item = newData[index];
@@ -215,7 +226,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    qrid: QRId
+                    equipmentcode: equipmentCode
                 });
                 setData(newData);
                 setEditingKey('');
@@ -249,8 +260,13 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            qrid: '',
-            qrname: '',
+            detailno: num,
+            equipmentcode: '',
+            equipmentname: '',
+            conqty: '',
+            conuom: '',
+            volqty: '',
+            voluom: '',
             description: '',
         };
         setData([newData, ...data]);
@@ -265,9 +281,39 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
             sorter: (a, b) => a.key - b.key,
             width: 80,
         },
+        // {
+        //     title: 'detailno',
+        //     dataIndex: 'detailno',
+        //     editable: true,
+        // },
+        // {
+        //     title: 'Equipment Code',
+        //     dataIndex: 'equipmentcode',
+        //     editable: true,
+        // },
         {
-            title: 'Quality Reference',
-            dataIndex: 'qrname',
+            title: 'Equipment  Name',
+            dataIndex: 'equipmentname',
+            editable: true,
+        },
+        {
+            title: 'Con Quantity',
+            dataIndex: 'conqty',
+            editable: true,
+        },
+        {
+            title: 'Con UOM',
+            dataIndex: 'conuom',
+            editable: true,
+        },
+        {
+            title: 'Volume Quantity',
+            dataIndex: 'volqty',
+            editable: true,
+        },
+        {
+            title: 'Volume UOM',
+            dataIndex: 'voluom',
             editable: true,
         },
         {
@@ -332,7 +378,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                 title: col.title,
                 editing: isEditing(record),
                 onData: data,
-                onDataQR: (values) => setDataQR(values),
+                onDataEquipment: (values) => setDataEquipment(values),
                 onEdit: onEdit
             }),
             ...col,
@@ -341,9 +387,9 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
     return (
         <Form form={form} component={false}>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    QUALITY REFERENCE
+                    CONTAINER INFORMATION
                 </p>
                 {!onApproval && (
                     <Button
@@ -361,13 +407,13 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                         cell: EditableCell,
                     },
                 }}
-                bordered
+                // bordered
                 dataSource={data}
                 columns={mergedColumns}
                 rowClassName="editable-row"
                 pagination={false}
                 scroll={{
-                    x: 1000
+                    x: 1500
                 }}
             />
             {/* {!onApproval && (
@@ -393,33 +439,58 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
         </Form>
     );
 };
-export default FormTestingQualityReference;
+export default FormTakingSampleCI;
 
 
-const columnsQR = [
+const columnsEquipment = [
     {
-        title: "Quality Reference Id",
-        dataIndex: "qrid",
-        key: "qrid",
+        title: 'Equipment Name',
+        dataIndex: 'equipmentname',
+        key: 'equipmentname'
     },
     {
-        title: "Quality Reference Name",
-        dataIndex: "qrname",
-        key: "qrname",
+        title: 'Equipment Type Name',
+        dataIndex: 'equipmenttypename',
+        key: 'equipmenttypename'
     },
     {
-        title: "Product Category Code",
-        dataIndex: "prodcatcode",
-        key: "prodcatcode",
+        title: 'Vendor Name',
+        dataIndex: 'vendorname',
+        key: 'vendorname'
     },
     {
-        title: "Reference Value Quantity",
-        dataIndex: "refvalueqty",
-        key: "refvalueqty",
+        title: 'Manufacture Name',
+        dataIndex: 'manufacturename',
+        key: 'manufacturename'
     },
     {
-        title: "Description",
-        dataIndex: "description",
-        key: "description",
+        title: 'Serial Number',
+        dataIndex: 'serialnumber',
+        key: 'serialnumber'
+    },
+    {
+        title: 'Date Calibration',
+        dataIndex: 'datecalibration',
+        key: 'datecalibration'
+    },
+    {
+        title: 'Due Date Calibration',
+        dataIndex: 'duedatecalibration',
+        key: 'duedatecalibration'
+    },
+    {
+        title: 'Quantity',
+        dataIndex: 'qty',
+        key: 'qty'
+    },
+    {
+        title: 'Temp Info',
+        dataIndex: 'tempinfo',
+        key: 'tempinfo'
+    },
+    {
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description'
     },
 ]

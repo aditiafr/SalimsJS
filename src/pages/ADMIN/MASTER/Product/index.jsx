@@ -169,7 +169,7 @@ const Product = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="PRODUCT" subtitle="All data product" />
         <div>
-          <Link to="/master/product/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

@@ -1,17 +1,17 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import React, { useState, useEffect } from "react";
 import EditProductCategory from "./edit";
 import DeleteProductCategory from "./delete";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import { getProductCategories } from "../../../../Api/Master/getData";
-const { Search } = Input;
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const ProductCategory = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
@@ -33,33 +33,39 @@ const ProductCategory = () => {
     fetchData();
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
   const columns = [
     {
       title: "Code",
       dataIndex: "ProductCategoryCode",
       key: "ProductCategoryCode",
-      width: 80,
     },
     {
       title: "Name",
       dataIndex: "ProductCategoryName",
       key: "ProductCategoryName",
-      width: 100,
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
-      width: 200,
       render: (text) => (text ?? "N/A"),
     },
     {
       title: "Suspended",
       dataIndex: "IsSuspend",
       key: "IsSuspend",
-      width: 100,
       render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
@@ -79,7 +85,7 @@ const ProductCategory = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Product Category"
+          title="PRODUCT CATEGORY"
           subtitle="All data product category"
         />
         <div>
@@ -90,19 +96,13 @@ const ProductCategory = () => {
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

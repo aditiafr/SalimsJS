@@ -1,24 +1,22 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import { Link } from "react-router-dom";
 import EditEquipmentType from "./edit";
 import DeleteEquipmentType from "./delete";
 import { useEffect, useState } from "react";
 import { getEquipmentType } from "../../../../Api/Master/getData";
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const EquipmentType = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await getEquipmentType();
-      console.log('adad', response)
       setData(response);
     } catch (error) {
       console.log(error);
@@ -31,8 +29,15 @@ const EquipmentType = () => {
     fetchData();
   }, []);
 
-  console.log("DATA", data);
-  
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     {
@@ -46,19 +51,16 @@ const EquipmentType = () => {
       title: "Equipment Type Code",
       dataIndex: "EquipmentTypeCode",
       key: "EquipmentTypeCode",
-      width: 80,
     },
     {
       title: "Equipment Type Name",
       dataIndex: "EquipmentTypeName",
       key: "EquipmentTypeName",
-      width: 100,
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
-      width: 200,
       render: (text) => (text || "N/A"),
     },
     {
@@ -91,26 +93,20 @@ const EquipmentType = () => {
           subtitle="All data equipment type"
         />
         <div>
-          <Link to="/master/equipment-type/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

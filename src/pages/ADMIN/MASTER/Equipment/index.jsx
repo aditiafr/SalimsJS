@@ -1,6 +1,4 @@
-"use client";
-
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
@@ -8,157 +6,132 @@ import EditEquipment from "./edit";
 import DeleteEquipment from "./delete";
 import { CheckSquareTwoTone, CloseSquareTwoTone } from "@ant-design/icons";
 import { getEquipment } from "../../../../Api/Master/getData";
-const { Search } = Input;
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const Equipment = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
       const response = await getEquipment();
       setData(response);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+
   const columns = [
-    {
-      title: "Branch",
-      dataIndex: "branchcode",
-      key: "branchcode",
-      width: 90,
-    },
     {
       title: "Version",
       dataIndex: "version",
       key: "version",
-      width: 100,
     },
     {
-      title: "Code",
+      title: "Equipment Code",
       dataIndex: "equipmentcode",
       key: "equipmentcode",
-      width: 100,
     },
     {
-      title: "Name",
+      title: "Equipment Name",
       dataIndex: "equipmentname",
       key: "equipmentname",
-      width: 100,
     },
     {
-      title: "Equipment Type",
-      dataIndex: "EquipmentType",
-      key: "EquipmentType",
-      width: 150,
-      render: (_, record) => {
-        return `(${record.equipmenttypecode}) ${record.equipmenttypename}`;
-      }
+      title: "Equipment Type Code",
+      dataIndex: "equipmenttypecode",
+      key: "equipmenttypecode",
     },
     {
-      title: "Vendor",
-      dataIndex: "Vendor",
-      key: "Vendor",
-      width: 150,
-      render: (_, record) => {
-        return `(${record.vendorcode}) ${record.vendorname}`;
-      }
+      title: "Equipment Type Name",
+      dataIndex: "equipmenttypename",
+      key: "equipmenttypename",
     },
     {
-      title: "Manufacture",
-      dataIndex: "Manufacture",
-      key: "Manufacture",
-      width: 150,
-      render: (_, record) => {
-        return `(${record.manufacturecode}) ${record.manufacturename}`;
-      }
+      title: "Vendor Code",
+      dataIndex: "vendorcode",
+      key: "vendorcode",
+    },
+    {
+      title: "Vendor Name",
+      dataIndex: "vendorname",
+      key: "vendorname",
+    },
+    {
+      title: "Manufacture Code",
+      dataIndex: "manufacturecode",
+      key: "manufacturecode",
+    },
+    {
+      title: "Manufacture Name",
+      dataIndex: "manufacturename",
+      key: "manufacturename",
     },
     {
       title: "Serial Number",
       dataIndex: "serialnumber",
       key: "serialnumber",
-      width: 140,
-      render: (text) => (text ?? "N/A"),
     },
     {
-      title: "Calibration Date",
+      title: "Date Calibration",
       dataIndex: "datecalibration",
       key: "datecalibration",
-      width: 150,
-      render: (text) => (text ?? "N/A"),
     },
     {
-      title: "Calibration Due Date",
+      title: "Due Date Calibration",
       dataIndex: "duedatecalibration",
       key: "duedatecalibration",
-      width: 150,
-      render: (text) => (text ?? "N/A"),
     },
     {
-      title: "Date of Use",
-      dataIndex: "dateofuse",
-      key: "dateofuse",
-      width: 150,
-      render: (text) => (text ?? "N/A"),
-    },
-    {
-      title: "Date of Available",
-      dataIndex: "dateofavailable",
-      key: "dateofavailable",
-      width: 150,
-      render: (text) => (text ?? "N/A"),
-    },
-    {
-      title: "Qty",
+      title: "Quantity",
       dataIndex: "qty",
       key: "qty",
-      width: 150,
-      render: (text) => (text ?? "N/A"),
     },
-    {
-      title: "Temp",
-      dataIndex: "tempinfo",
-      key: "tempinfo",
-      width: 70,
-      render: (text) => (text ? `${text}°C` : "N/A"),
-    },
+    // {
+    //   title: "tempinfo",
+    //   dataIndex: "tempinfo",
+    //   key: "tempinfo",
+    // },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      width: 200,
       render: (text) => (text ?? "N/A"),
     },
     {
-      title: "QC Tool",
-      dataIndex: "isqctools",
-      key: "isqctools",
-      width: 100,
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
       render: (isQCTool) => {
-        return (isQCTool ? 
-          <CheckSquareTwoTone twoToneColor="#52c41a" style={{ fontSize: '20px' }}/> :
-          <CloseSquareTwoTone twoToneColor="#f5222d" style={{ fontSize: '20px' }}/>);
+        return (isQCTool ?
+          <CheckSquareTwoTone twoToneColor="#52c41a" style={{ fontSize: '20px' }} /> :
+          <CloseSquareTwoTone twoToneColor="#f5222d" style={{ fontSize: '20px' }} />);
       },
     },
     {
-      title: "Suspended",
-      dataIndex: "issuspend",
-      key: "issuspend",
-      width: 110,
+      title: "QC Tools",
+      dataIndex: "isqctools",
+      key: "isqctools",
       render: (suspended) => (
-         <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
@@ -167,12 +140,8 @@ const Equipment = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          {!record.islock && (
-            <>
-              <EditEquipment dataSource={record} onEdit={fetchData} />
-              <DeleteEquipment name={record.equipmentname} equipmentCode={record.equipmentcode} onDelete={fetchData} />
-            </>
-          )}
+          <EditEquipment />
+          <DeleteEquipment name={record.Name} />
         </Space>
       ),
     },
@@ -182,36 +151,30 @@ const Equipment = () => {
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Equipment"
+          title="EQUIPMENT"
           subtitle="All data equipment"
         />
         <div>
-          <Link to="/master/equipment/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 3000,
           }}
         />
       </div>

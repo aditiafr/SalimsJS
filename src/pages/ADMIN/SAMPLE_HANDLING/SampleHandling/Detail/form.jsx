@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Popconfirm, Table, Button, message } from 'antd';
 
 import { CloseOutlined, DeleteOutlined, EditFilled, SaveFilled } from '@ant-design/icons';
-import InputModal from '../../../../../../components/Dashboard/Global/InputModal';
-import { getQualityReference } from '../../../../../../Api/Master/getData';
+import InputModal from '../../../../../components/Dashboard/Global/InputModal';
+import { getParameter } from '../../../../../Api/Master/getData';
 
 const EditableCell = ({
     editing,
@@ -14,57 +14,58 @@ const EditableCell = ({
     index,
     children,
     onData,
-    onDataQR,
+    onDataParameter,
     onEdit,
     ...restProps
 }) => {
 
     useEffect(() => {
         if (onEdit) {
-            setOpenQR(true);
+            setOpenParameter(true);
         }
     }, [onEdit]);
 
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [dataQR, setDataQR] = useState([]);
-    const [selectQR, setSelectQR] = useState("");
-    const [openQR, setOpenQR] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // QUALITY REFERENCE
+    const [dataParameter, setDataParameter] = useState([]);
+    const [selectParameter, setSelectParameter] = useState("");
+    const [openParameter, setOpenParameter] = useState(null);
+
+    // PARAMETER
     useEffect(() => {
-        const fetchQR = async () => {
+        const fetchParameter = async () => {
             try {
-                setIsLoading(true);
-                const QRCode = onData.map(item => item.qrid);
+                const parameterCode = onData.map(item => item.parcode);
 
-                const res = await getQualityReference();
-                const filter = res.filter(item => !QRCode.includes(item.qrid));
-                setDataQR(filter);
+                const res = await getParameter();
+                const filter = res.filter(item => !parameterCode.includes(item.parcode));
+                setDataParameter(filter);
 
                 if (onEdit) {
-                    const selected = res.filter(item => item.qrid === record.qrid);
-                    setSelectQR(selected[0]);
+                    const selected = res.filter(item => item.parcode === record.parcode);
+                    setSelectParameter(selected[0]);
                 }
 
             } catch (error) {
                 console.log(error);
             }
+        }
+        if (openParameter) {
+            fetchParameter();
+            setOpenParameter(false);
             setIsLoading(false);
         }
-        if (openQR) {
-            fetchQR();
-            setOpenQR(false);
-        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [openQR]);
+    }, [openParameter]);
 
     useEffect(() => {
-        if (selectQR) {
-            onDataQR(selectQR);
+        if (selectParameter) {
+            onDataParameter(selectParameter);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectQR]);
+    }, [selectParameter]);
+
 
     return (
         <td {...restProps}>
@@ -81,16 +82,16 @@ const EditableCell = ({
                             <Input.TextArea placeholder={title} />
                         </Form.Item>
 
-                    ) : dataIndex === 'qrname' ? (
+                    ) : dataIndex === 'parname' ? (
                         <InputModal
-                            title="QUALITY REFERENCE"
-                            label="Quality Reference"
+                            title="PARAMETER"
+                            label={title}
                             name={dataIndex}
-                            dataSource={dataQR}
+                            dataSource={dataParameter}
                             loading={isLoading}
-                            columns={columnsQR}
-                            onData={(values) => setSelectQR(values)}
-                            onOpenModal={(values) => setOpenQR(values)}
+                            columns={columnsParameter}
+                            onData={(values) => setSelectParameter(values)}
+                            onOpenModal={(values) => setOpenParameter(values)}
                             onDetail={true}
                         />
                     ) : (
@@ -121,7 +122,7 @@ const EditableCell = ({
 };
 
 
-const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
+const FormDetailSampleHandling = ({ onSaveData, onEdit, onApproval }) => {
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -129,23 +130,30 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
     const [editingKey, setEditingKey] = useState('');
 
-    const [dataQR, setDataQR] = useState(null);
+    const [dataParameter, setDataParameter] = useState(null);
+
 
     useEffect(() => {
-        if (form && dataQR) {
+        if (form && dataParameter) {
             form.setFieldsValue({
-                qrname: dataQR.qrname
-            })
-        }
-    }, [dataQR, form]);
+                parname: dataParameter.parname
+            });
 
+            setData(data.map((item) => ({
+                ...item,
+                price: dataParameter.price
+            })))
+
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataParameter, form])
 
     useEffect(() => {
         if (onEdit) {
-            const dataEdit = onEdit.map((row, index) => ({ ...row, key: index + 1 })).reverse()
+            const dataEdit = onEdit.taking_sample_parameters.map((row, index) => ({ ...row, key: index + 1 })).reverse()
             setData(dataEdit);
             setCount(dataEdit.length === 0 ? 0 : dataEdit.map((item) => item.key)[0]);
-            onSaveData(dataEdit);            
+            onSaveData(dataEdit);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onEdit]);
@@ -189,7 +197,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
 
     const handleCancel = (record) => {
-        if (!record.qrid) {
+        if (!record.parcode) {
             const newData = data.filter((item) => item.key !== record.key);
             setData(newData);
         } else {
@@ -207,7 +215,9 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
             const row = await form.validateFields();
             const newData = [...data];
             const index = newData.findIndex((item) => record.key === item.key);
-            const QRId = dataQR.qrid;
+            const parCode = dataParameter.parcode;
+            const methodId = dataParameter.methodid;
+            const Price = dataParameter.price;
 
             if (index > -1) {
                 const item = newData[index];
@@ -215,7 +225,9 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
-                    qrid: QRId
+                    parcode: parCode,
+                    methodid: methodId,
+                    price: Price,
                 });
                 setData(newData);
                 setEditingKey('');
@@ -249,8 +261,10 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
         const newData = {
             key: num,
-            qrid: '',
-            qrname: '',
+            branchcode: '',
+            labourcode: '',
+            parcode: '',
+            parname: '',
             description: '',
         };
         setData([newData, ...data]);
@@ -266,8 +280,18 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
             width: 80,
         },
         {
-            title: 'Quality Reference',
-            dataIndex: 'qrname',
+            title: 'Branch Code',
+            dataIndex: 'branchcode',
+            editable: true,
+        },
+        {
+            title: 'Labour Code',
+            dataIndex: 'labourcode',
+            editable: true,
+        },
+        {
+            title: 'Parameter',
+            dataIndex: 'parname',
             editable: true,
         },
         {
@@ -332,7 +356,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                 title: col.title,
                 editing: isEditing(record),
                 onData: data,
-                onDataQR: (values) => setDataQR(values),
+                onDataParameter: (values) => setDataParameter(values),
                 onEdit: onEdit
             }),
             ...col,
@@ -341,9 +365,9 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
 
     return (
         <Form form={form} component={false}>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-4">
                 <p className="text-2xl font-bold">
-                    QUALITY REFERENCE
+                    PARAMETER
                 </p>
                 {!onApproval && (
                     <Button
@@ -361,7 +385,7 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
                         cell: EditableCell,
                     },
                 }}
-                bordered
+                // bordered
                 dataSource={data}
                 columns={mergedColumns}
                 rowClassName="editable-row"
@@ -393,19 +417,35 @@ const FormTestingQualityReference = ({ onSaveData, onEdit, onApproval }) => {
         </Form>
     );
 };
-export default FormTestingQualityReference;
+export default FormDetailSampleHandling;
 
 
-const columnsQR = [
+const columnsParameter = [
     {
-        title: "Quality Reference Id",
-        dataIndex: "qrid",
-        key: "qrid",
+        title: "Parameter Code",
+        dataIndex: "parcode",
+        key: "parcode",
+        fixed: "left",
     },
     {
-        title: "Quality Reference Name",
-        dataIndex: "qrname",
-        key: "qrname",
+        title: "Parameter Name",
+        dataIndex: "parname",
+        key: "parname",
+    },
+    {
+        title: "Method Id",
+        dataIndex: "methodid",
+        key: "methodid",
+    },
+    {
+        title: "Preservation",
+        dataIndex: "preservation",
+        key: "preservation",
+    },
+    {
+        title: "Storage Time Limit",
+        dataIndex: "storagetimelimit",
+        key: "storagetimelimit",
     },
     {
         title: "Product Category Code",
@@ -413,9 +453,44 @@ const columnsQR = [
         key: "prodcatcode",
     },
     {
-        title: "Reference Value Quantity",
-        dataIndex: "refvalueqty",
-        key: "refvalueqty",
+        title: "product Category Name",
+        dataIndex: "prodcatname",
+        key: "prodcatname",
+    },
+    {
+        title: "Unit Code",
+        dataIndex: "unitcode",
+        key: "unitcode",
+    },
+    {
+        title: "Unit Name",
+        dataIndex: "unitname",
+        key: "unitname",
+    },
+    {
+        title: "Alias Name",
+        dataIndex: "aliasname",
+        key: "aliasname",
+    },
+    {
+        title: "Duration",
+        dataIndex: "duration",
+        key: "duration",
+    },
+    {
+        title: "Akreditasi",
+        dataIndex: "akreditasi",
+        key: "akreditasi",
+    },
+    {
+        title: "Result Unit Code",
+        dataIndex: "resultunitcode",
+        key: "resultunitcode",
+    },
+    {
+        title: "Price",
+        dataIndex: "price",
+        key: "price",
     },
     {
         title: "Description",

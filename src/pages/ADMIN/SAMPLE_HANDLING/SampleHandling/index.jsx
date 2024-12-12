@@ -1,103 +1,117 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../../../components/Dashboard/Global/HeaderTitle'
 import { Link } from 'react-router-dom'
 import { Button, Input, Table } from "antd";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const columns = [
-  {
-    title: 'SS Number',
-    dataIndex: 'SSNumber',
-    key: 'SSNumber',
-    width: 100,
-  },
-  {
-    title: 'Periode',
-    dataIndex: 'Periode',
-    key: 'Periode',
-    width: 100,
-  },
-  {
-    title: 'Date',
-    dataIndex: 'SSDate',
-    key: 'SSDate',
-    width: 100,
-  },
-  {
-    title: 'SR Number',
-    dataIndex: 'SRNumber',
-    key: 'SRNumber',
-    width: 100,
-  },
-  {
-    title: 'Description',
-    dataIndex: 'Description',
-    key: 'Description',
-    width: 100,
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    SSNumber: 'SS001',
-    Periode: '2021-01',
-    SSDate: '2021-01-01',
-    SRNumber: 'SR001',
-    Description: 'Sample Handling 001',
-  },
-  {
-    key: '2',
-    SSNumber: 'SS002',
-    Periode: '2021-02',
-    SSDate: '2021-02-01',
-    SRNumber: 'SR002',
-    Description: 'Sample Handling 002',
-  },
-  {
-    key: '3',
-    SSNumber: 'SS003',
-    Periode: '2021-03',
-    SSDate: '2021-03-01',
-    SRNumber: 'SR003',
-    Description: 'Sample Handling 003',
-  },
-]
+import SearchInput from '../../../../components/Dashboard/Global/Table/SearchInput';
+import { getSampleHandling } from '../../../../Api/SampleHandling/GetData';
+import SampleHandlingDetail from './Detail';
 
 const SampleHandling = () => {
+
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getSampleHandling();
+      setData(response)
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "key",
+      key: "key",
+      width: 60,
+      fixed: "left",
+    },
+    {
+      title: "Split Sample Number",
+      dataIndex: "ssnumber",
+      key: "ssnumber",
+      width: 200,
+      fixed: "left",
+    },
+    {
+      title: "Periode",
+      dataIndex: "periode",
+      key: "periode",
+    },
+    {
+      title: "Split Sample Date",
+      dataIndex: "ssdate",
+      key: "ssdate",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Is Auto no",
+      dataIndex: "isautono",
+      key: "isautono",
+    },
+    {
+      title: "Sample Request Number",
+      dataIndex: "srnumber",
+      key: "srnumber",
+    },
+    {
+      title: "Labour Code",
+      dataIndex: "labourcode",
+      key: "labourcode",
+    },
+  ]
+
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="SAMPLE HANDLING" subtitle="All data sample handling" />
         <div>
-          <Link to="/transaction/sample-handling/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
-          // loading={true}
+          loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
+          expandable={{
+            expandedRowRender
+          }}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,
           }}
           scroll={{
-            x: 1000,
+            x: 2000,
           }}
         />
       </div>
@@ -106,3 +120,10 @@ const SampleHandling = () => {
 }
 
 export default SampleHandling
+
+const expandedRowRender = (record) => {
+
+  return (
+    <SampleHandlingDetail dataSource={record.details} />
+  )
+}

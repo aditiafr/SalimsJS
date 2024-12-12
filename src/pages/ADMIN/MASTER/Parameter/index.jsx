@@ -140,9 +140,12 @@ const Parameter = () => {
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
-        <HeaderTitle title="Parameter" subtitle="All data Parameter" />
+        <HeaderTitle
+          title="PARAMETER"
+          subtitle="All data parameter"
+        />
         <div>
-          <Link to="/master/parameter/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

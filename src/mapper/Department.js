@@ -3,7 +3,7 @@ export const DepartmentMapFromHttp = (data) => {
     DepartmentCode: row.departmentcode,
     DepartmentName: row.departmentname,
     Description: row.description,
-    IsSuspend: row.isSuspend,
+    IsSuspend: row.issuspend,
     key: index + 1 
   }));
 }

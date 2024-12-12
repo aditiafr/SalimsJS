@@ -1,65 +1,64 @@
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import EditParameterCategory from "./edit";
 import DeleteParameterCategory from "./delete";
 import { getParameterCategory } from "../../../../Api/Master/getData";
-const { Search } = Input;
-
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+import SearchInput from "../../../../components/Dashboard/Global/Table/SearchInput";
 
 const ParameterCategory = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const response = await getParameterCategory( {
-        sortParam: 'parcatcode', 
-        sortOrder: 'asc',
-      });
-
+      const response = await getParameterCategory();
       setData(response);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
-  }
-  
+  };
+
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) => val && val.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     {
-      title: "Code",
-      dataIndex: "ParameterCategoryCode",
-      key: "ParameterCategoryCode",
-      width: 80,
+      title: "Parameter Category Code",
+      dataIndex: "parcatcode",
+      key: "parcatcode",
     },
     {
-      title: "Name",
-      dataIndex: "ParameterCategoryName",
-      key: "ParameterCategoryName",
-      width: 100,
+      title: "Parameter Category Name",
+      dataIndex: "parcatname",
+      key: "parcatname",
     },
     {
       title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      width: 200,
+      dataIndex: "description",
+      key: "description",
       render: (text) => (text ?? "N/A"),
     },
     {
-      title: "Suspended",
-      dataIndex: "IsSuspend",
-      key: "IsSuspend",
-      width: 100,
+      title: "Suspend",
+      dataIndex: "issuspend",
+      key: "issuspend",
       render: (suspended) => (
-        <Tag color={suspended ? 'red' : 'green' }> {suspended ? 'Yes' : 'No'} </Tag>
+        <Tag color={suspended ? 'red' : 'green'}> {suspended ? 'Yes' : 'No'} </Tag>
       ),
     },
     {
@@ -68,41 +67,34 @@ const ParameterCategory = () => {
       width: 100,
       render: (_, record) => (
         <Space>
-          <EditParameterCategory dataSource={record} onEdit={fetchData} />
-          <DeleteParameterCategory ParameterCategoryCode={record.ParameterCategoryCode} name={record.ParameterCategoryName} onDelete={fetchData} />
+          <EditParameterCategory />
+          <DeleteParameterCategory name={record.Name} />
         </Space>
       ),
     },
   ];
-
   return (
     <>
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle
-          title="Parameter Category"
+          title="PARAMETER CATEGORY"
           subtitle="All data parameter category"
         />
         <div>
-          <Link to="/master/parameter_category/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>
       </div>
       <div className="w-full bg-white p-4 rounded-lg">
         <div className="w-full flex justify-end pb-4">
-          <Search
-            placeholder="Search..."
-            onSearch={onSearch}
-            style={{
-              width: 200,
-            }}
-          />
+          <SearchInput value={searchText} onChange={handleSearch} />
         </div>
         <Table
           loading={loading}
           rowSelection
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           pagination={{
             showSizeChanger: true,
             defaultPageSize: 10,

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
-import { getBuildingNextCode } from '../../../../Api/Master/getData';
 import { postBuilding } from '../../../../Api/Master/postData';
 
 const FormTempCondition = () => {
@@ -11,36 +10,11 @@ const FormTempCondition = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const [buildingCode, setBuildingCode] = useState("");
-
-    useEffect(() => {
-        const fetchNextCode = async () => {
-            try {
-                const res = await getBuildingNextCode();
-                setBuildingCode(res.buildingcode);
-
-            } catch (error) {
-                console.log();
-            }
-        }
-        fetchNextCode();
-    }, []);
-
-    // useEffect(() => {
-    //   form.setFieldsValue({ buildingcode: buildingCode });
-    // }, [buildingCode, form]);
-
     const handleSubmit = async (values) => {
         try {
             setLoading(true);
-            let payload = values;
-            if (!values.buildingcode) {
-                form.setFieldsValue({ buildingcode: buildingCode });
-                payload = {
-                    ...values,
-                    buildingcode: buildingCode
-                }
-            }
+            const payload = values;
+
             const response = await postBuilding(payload);
             message.success(response.data.message);
             navigate("/master/building");

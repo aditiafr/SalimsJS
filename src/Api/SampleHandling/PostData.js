@@ -13,3 +13,13 @@ export const postTestingOrder = async (Data) => {
     });
     return response;
 }
+
+export const postTakingSample = async (Data) => {
+    const token = Cookies.get('access_token');
+    const response = await axios.post(`${baseUrl}/transaction/taking-sample/store`, Data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}

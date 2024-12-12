@@ -89,7 +89,7 @@ const TestPreparation = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="TEST PREPERATION" subtitle="All data Test Preperation" />
         <div>
-          <Link to="/master/test_preparation/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

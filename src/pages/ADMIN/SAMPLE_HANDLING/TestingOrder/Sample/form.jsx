@@ -624,13 +624,13 @@ const expandedRowRender = (record, onSaveContainerInformation, onSaveQualityRefe
 
     return (
         <>
-            <div className="m-4 p-4 border rounded-md">
+            <div className="m-4 p-4 border rounded-md shadow-md">
                 <FormTestingOrderContainerInformation onSaveData={handleSaveContainerInformation} onEdit={record.testing_order_ci} />
             </div>
-            <div className="m-4 p-4 border rounded-md">
+            <div className="m-4 p-4 border rounded-md shadow-md">
                 <FormTestingQualityReference onSaveData={handleSaveQualityReference} onEdit={record.testing_order_qr} />
             </div>
-            <div className="m-4 p-4 border rounded-md">
+            <div className="m-4 p-4 border rounded-md shadow-md">
                 <FormTestingOrderParameter onSaveData={handleSaveParameter} onEdit={record.testing_order_par} />
             </div>
         </>

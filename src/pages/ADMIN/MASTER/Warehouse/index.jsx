@@ -125,7 +125,7 @@ const Warehouse = () => {
       <div className="flex justify-between items-center px-2 pb-4">
         <HeaderTitle title="WAREHOUSE" subtitle="All data warehouse" />
         <div>
-          <Link to="/master/warehouse/form">
+          <Link to="form">
             <Button type="primary">+ Add New</Button>
           </Link>
         </div>

@@ -22,19 +22,15 @@ const FormTestingOrder = () => {
   const [dataOne, setDataOne] = useState(null);
 
   useEffect(() => {
-    setOpenCustomer(true);
-  }, []);
+    if (code) {
+      setOpenCustomer(true);
+    }
+  }, [code]);
 
 
   const navigate = useNavigate();
   const prefix = PrefixGlobal();
   const [loading, setLoading] = useState(false);
-
-  const [valuePrice, setValuePrice] = useState({
-    discount: 0,
-    vat: 11,
-
-  });
 
   const [TPrice, setTPrice] = useState({
     Gross: 0,
@@ -53,7 +49,7 @@ const FormTestingOrder = () => {
   const [openCustomer, setOpenCustomer] = useState(null);
   const CustomerCode = selectCustomer ? selectCustomer.customercode : '';
   const CustomerName = selectCustomer ? selectCustomer.customername : '';
-  const ContactCustomer = selectCustomer ? selectCustomer.contact : '';  
+  const ContactCustomer = selectCustomer ? selectCustomer.contact : '';
 
   const [dataAcCost, setDataAcCost] = useState([]);
   const [dataSample, setDataSample] = useState([]);
@@ -77,9 +73,6 @@ const FormTestingOrder = () => {
             reqdate: dayjs(res.reqdate),
           });
 
-          setValuePrice((prev) => ({ ...prev, discount: res.discount }))
-          setValuePrice((prev) => ({ ...prev, vat: res.vat }))
-
         } catch (error) {
           console.log(error);
         }
@@ -91,28 +84,28 @@ const FormTestingOrder = () => {
   }, [code, form]);
 
 
-  // TOTAL PRICE
-  const Gross = Total_Gross
-  const DiscountPersen = valuePrice.discount
-  const TotalDiscount = Gross * (DiscountPersen / 100);
-  const DPP = Gross - TotalDiscount;
-  const VATPersen = valuePrice.vat
-  const TotalVAT = DPP * (VATPersen / 100);
-  const NET = DPP + TotalVAT;
+  // // TOTAL PRICE
+  // const Gross = Total_Gross
+  // const DiscountPersen = valuePrice.discount
+  // const TotalDiscount = Gross * (DiscountPersen / 100);
+  // const DPP = Gross - TotalDiscount;
+  // const VATPersen = valuePrice.vat
+  // const TotalVAT = DPP * (VATPersen / 100);
+  // const NET = DPP + TotalVAT;
 
-  useEffect(() => {
-    setTPrice(
-      {
-        Gross: Gross,
-        DiscountPersen: DiscountPersen,
-        TotalDiscount: TotalDiscount,
-        DPP: DPP,
-        VATPersen: VATPersen,
-        TotalVAT: TotalVAT,
-        NET: NET,
-      }
-    )
-  }, [DPP, DiscountPersen, Gross, NET, TotalDiscount, TotalVAT, VATPersen]);
+  // useEffect(() => {
+  //   setTPrice(
+  //     {
+  //       Gross: Gross,
+  //       DiscountPersen: DiscountPersen,
+  //       TotalDiscount: TotalDiscount,
+  //       DPP: DPP,
+  //       VATPersen: VATPersen,
+  //       TotalVAT: TotalVAT,
+  //       NET: NET,
+  //     }
+  //   )
+  // }, [DPP, DiscountPersen, Gross, NET, TotalDiscount, TotalVAT, VATPersen]);
 
   // CUSTOMER
   useEffect(() => {
@@ -133,12 +126,10 @@ const FormTestingOrder = () => {
 
     if (openCustomer) {
       fetchCustomer();
-      // setOpenCustomer(false);
       setIsLoading(false);
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openCustomer]);
+  }, [code, dataOne, openCustomer]);
 
 
   useEffect(() => {
@@ -146,7 +137,7 @@ const FormTestingOrder = () => {
       customername: CustomerName,
       requestby: ContactCustomer,
     })
-  }, [ContactCustomer, CustomerName, code, form]);
+  }, [ContactCustomer, CustomerName, form]);
 
   useEffect(() => {
     if (!code) {
@@ -178,12 +169,12 @@ const FormTestingOrder = () => {
         branchcode: '0001',
         customercode: CustomerCode,
         reqdate: values.reqdate.format('YYYY-MM-DD'),
-        gross: Gross,
-        discount_p: DiscountPersen,
-        discount_m: TotalDiscount,
-        dpp: DPP,
-        vat: VATPersen,
-        net: NET,
+        gross: TPrice.Gross,
+        discount_p: TPrice.DiscountPersen,
+        discount_m: TPrice.TotalDiscount,
+        dpp: TPrice.DPP,
+        vat: TPrice.VATPersen,
+        net: TPrice.NET,
         testing_order_ac: dataAcCost,
         testing_order_sample: dataSample,
       }
@@ -192,10 +183,10 @@ const FormTestingOrder = () => {
         const res = await updateTestingOrder(payload);
         message.success(res.data.message);
       } else {
-        // const res = await postTestingOrder(payload);
-        // message.success(res.data.message);
+        const res = await postTestingOrder(payload);
+        message.success(res.data.message);
         console.log(payload);
-        
+
       }
 
       navigate('/sample_handling/testing_order');
@@ -290,34 +281,6 @@ const FormTestingOrder = () => {
               <Input placeholder="Input Request By" />
             </Form.Item>
 
-            {/* <Form.Item
-              label="Discount (%)"
-              name="discount"
-            >
-              <InputNumber
-                min={0}
-                max={100}
-                placeholder="Input Discount"
-                suffix="%"
-                className="w-full"
-                onChange={(value) => setValuePrice((prev) => ({ ...prev, discount: value }))}
-              />
-            </Form.Item> */}
-
-            {/* <Form.Item
-              label="VAT"
-              name="vat"
-            >
-              <InputNumber
-                min={0}
-                max={100}
-                placeholder="Input VAT"
-                suffix="%"
-                className="w-full"
-                onChange={(value) => setValuePrice((prev) => ({ ...prev, vat: value }))}
-              />
-            </Form.Item> */}
-
             <Form.Item
               label="Description"
               name="description"
@@ -336,7 +299,7 @@ const FormTestingOrder = () => {
           </div>
 
           <div className="m-4 my-8 px-4 border rounded-md">
-            <DetailPriceSample onData={TPrice} />
+            <DetailPriceSample valueGross={Total_Gross} onData={(values) => setTPrice(values)} onEdit={dataOne} />
           </div>
 
           <ButtonSubmit onReset={onReset} onLoading={loading} />
