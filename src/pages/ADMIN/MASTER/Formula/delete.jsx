@@ -1,19 +1,32 @@
 import ButtonDelete from "../../../../components/Dashboard/Global/Button/ButtonDelete";
-import { DeleteFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { ExclamationCircleFilled, StopOutlined } from "@ant-design/icons";
 import { Button, Modal, Tooltip } from "antd";
 import React from "react";
+import { useMessageContext } from "../../../../components/Dashboard/Global/MessageContext";
+import { setSuspendFormula } from "../../../../Api/Master/updateData";
 
 const { confirm } = Modal;
 
-const DeleteFormula = ({ name }) => {
-  const handleDelete = () => {
-    Modal.destroyAll();
-    console.log("Delete Data!");
+const DeleteFormula = ({ formulaCode, name, onDelete }) => {
+  const { messageApi } = useMessageContext();
+
+  const handleDelete = async () => {
+    try {
+      const response = await setSuspendFormula(formulaCode);
+      messageApi.open({
+        type: "success",
+        content: response.data.message,
+      });
+      onDelete(true);
+      Modal.destroyAll();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showConfirm = () => {
     confirm({
-      title: "Do you want to delete these items?",
+      title: "Do you want to suspend this item?",
       icon: <ExclamationCircleFilled />,
       content: `Formula ${name}`,
       centered: true,
@@ -24,7 +37,7 @@ const DeleteFormula = ({ name }) => {
   return (
     <>
       <Tooltip title="Delete">
-        <Button icon={<DeleteFilled />} onClick={showConfirm} type="text" />
+        <Button icon={<StopOutlined />} onClick={showConfirm} type="text" />
       </Tooltip>
     </>
   );

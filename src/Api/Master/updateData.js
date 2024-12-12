@@ -351,3 +351,16 @@ export const setSuspendLabour = async (LabourCode) => {
     });
     return response;
 }
+
+export const setSuspendFormula = async (FormulaCode) => {
+    const token = Cookies.get('access_token');
+    const branchCode = "0001";
+    const response = await axios.patch(`${baseUrl}/formula/set-suspend/${branchCode}/${FormulaCode}`, {
+        issuspend: true
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response;
+}
