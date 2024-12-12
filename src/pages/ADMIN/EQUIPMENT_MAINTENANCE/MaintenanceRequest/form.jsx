@@ -3,8 +3,8 @@ import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonS
 import { Col, DatePicker, Form, Input, Row, Select, message } from "antd";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { getEquipment } from '../../../../Api/General/GetData';
-import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
+import { getQcToolsEquipment } from '../../../../Api/General/GetData';
+import { getEquipmentOne } from '../../../../Api/Master/getData';
 import { postMaintenanceRequest } from '../../../../Api/Maintenance/postData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import Cookies from "js-cookie";
@@ -19,7 +19,7 @@ const FormMaintenanceRequest = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getEquipment();
+      const response = await getQcToolsEquipment();
       const branch = Cookies.get('branchcode');
 
       // Mengubah key

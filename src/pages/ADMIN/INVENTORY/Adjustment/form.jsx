@@ -1,9 +1,13 @@
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonSubmit from "../../../../components/Dashboard/Global/Button/ButtonSubmit";
 import { Col, Form, Input, Row } from "antd";
+import FormLabourPar from "./LabourPar/form";
+import { useEffect, useState } from "react";
 
 const FormAdjustment = () => {
   const [form] = Form.useForm();
+  const [labourCode, setLabourCode] = useState("");
+  const [labourPar, setLabourPar] = useState([]);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -96,7 +100,9 @@ const FormAdjustment = () => {
                 <Input />
               </Form.Item>
             </Col>
-            
+            <div className="m-4 p-4 border rounded-md">
+              <FormLabourPar onSaveData={(values) => setLabourPar(values)} />
+            </div>
           </Row>
           <ButtonSubmit onReset={onReset} />
         </Form>

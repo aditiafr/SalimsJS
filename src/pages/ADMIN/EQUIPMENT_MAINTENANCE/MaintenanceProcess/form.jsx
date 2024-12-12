@@ -67,7 +67,7 @@ const FormMaintenanceProcess = () => {
 
       console.log("values", values);
 
-      let { MRNumber, status, ...payload } = values;
+      let { status, ...payload } = values;
 
       console.log("before", status);
 
@@ -75,30 +75,12 @@ const FormMaintenanceProcess = () => {
 
       console.log("after", status);
 
-      let detail = [
-        {
-          mrnumber: MRNumber
-        }
-      ];
-
       payload = {
         ...payload,
-        branchcode: branchcode,
-        issuspend: false,
-        detail: detail,
         status: status
       }
       console.log("payload", payload);
 
-      if (!values.mpnumber) {
-        const nextCode = await getMaintenanceProcessNextCode(branchcode);
-        const mpnumber = nextCode.mrnumber;
-        form.setFieldsValue({ mpnumber: mpnumber });
-        payload = {
-          ...payload,
-          mpnumber: mpnumber
-        }
-      }
       console.log(payload);
       const response = await postMaintenanceProcess(payload);
       message.success(response.data.message);
@@ -200,7 +182,7 @@ const FormMaintenanceProcess = () => {
             <Col xs={24} sm={12}>
               <Form.Item
                 label="MR Number"
-                name="MRNumber"
+                name="mrnumber"
                 rules={[
                   {
                     required: true,

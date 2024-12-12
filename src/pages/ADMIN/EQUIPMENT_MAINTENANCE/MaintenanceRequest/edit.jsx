@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import HeaderTitle from "../../../../components/Dashboard/Global/HeaderTitle";
 import ButtonEdit from "../../../../components/Dashboard/Global/Button/ButtonEdit";
 import { updateMaintenanceRequest } from "../../../../Api/Maintenance/updateData";
-// import { getEquipment } from '../../../../Api/General/GetData';
-import { getEquipment, getEquipmentOne } from '../../../../Api/Master/getData';
+import { getQcToolsEquipment } from '../../../../Api/General/GetData';
+import { getEquipmentOne } from '../../../../Api/Master/getData';
 import { PrefixGlobal } from '../../../../components/Dashboard/Global/Helper';
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
@@ -15,21 +15,13 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isSuspend, setIsSuspend] = useState(false);
   const [equipment, setEquipment] = useState([]);
-  const [branchcode, setBranchCode] = useState("");
-  const prefix = PrefixGlobal();
   const [payLoadData, setPayLoadData] = useState(null);
-
-  const handleSwitchChange = (checked) => {
-    setIsSuspend(checked);
-    form.setFieldsValue(payLoadData);
-  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getEquipment();
+      const response = await getQcToolsEquipment();
       const branch = Cookies.get('branchcode');
       console.log(response);
 
@@ -41,7 +33,6 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
       }));
 
       setEquipment(modifiedData)
-      setBranchCode(branch)
       // setData(response);
     } catch (error) {
       console.log(error);
@@ -50,7 +41,6 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   };
 
   useEffect(() => {
-    // mrdatetest
     if (form) {
       const payload = {
         ...dataSource,
@@ -66,18 +56,21 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
   const showModal = () => {
     setIsModalOpen(true);
     console.log("dataSource", dataSource);
-
-    setIsSuspend(dataSource.issuspend);
   };
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const payload = {
-        ...values,
-        issuspend: isSuspend
+      let { equipmentcode, ...payload } = values;
+
+      let equipmentOne = await getEquipmentOne(equipmentcode);
+
+      payload = {
+        ...payload,
+        equipmentcode: equipmentcode,
+        equipmentversion: `${equipmentOne.version}`,
       }
-      const response = await updateMaintenanceRequest(dataSource.MaintenanceRequestcode, payload);
+      const response = await updateMaintenanceRequest(payload);
       message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
@@ -89,7 +82,6 @@ const EditMaintenanceRequest = ({ dataSource, onEdit }) => {
 
   const onReset = () => {
     form.setFieldsValue(payLoadData);
-    setIsSuspend(dataSource.Issuspend);
     setIsModalOpen(false);
   };
 

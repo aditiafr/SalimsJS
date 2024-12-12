@@ -13,11 +13,10 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isSuspend, setIsSuspend] = useState(false);
-  const [payLoadData, setPayLoadData] = useState(null);
   const [status, setStatus] = useState("");
   const [customStatus, setCustomStatus] = useState("");
   const [maintenanceRequest, setMaintenanceRequest] = useState([]);
+  const [payLoadData, setPayLoadData] = useState(null);
 
   const handleStatusChange = (value) => {
     setStatus(value);
@@ -25,11 +24,6 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
     if (value !== "Others") {
       setCustomStatus("");
     }
-  };
-
-  const handleSwitchChange = (checked) => {
-    setIsSuspend(checked);
-    form.setFieldsValue(payLoadData);
   };
 
   const handleCustomInputChange = (e) => {
@@ -57,7 +51,6 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
   };
 
   useEffect(() => {
-    fetchData();
     if (form) {
       const payload = {
         ...dataSource,
@@ -67,6 +60,7 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
       form.setFieldsValue(payload);
       setPayLoadData(payload);
     }
+    fetchData();
   }, [dataSource, form])
 
   const showModal = () => {
@@ -78,9 +72,8 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
       setLoading(true);
       const payload = {
         ...values,
-        issuspend: isSuspend
       }
-      const response = await updateMaintenanceProcess(dataSource.MaintenanceProcesscode, payload);
+      const response = await updateMaintenanceProcess(payload);
       message.success(response.data.message);
       onEdit(true);
       setIsModalOpen(false);
@@ -91,8 +84,7 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
   };
 
   const onReset = () => {
-    form.setFieldsValue(dataSource);
-    setIsSuspend(dataSource.Issuspend);
+    form.setFieldsValue(payLoadData);
     setIsModalOpen(false);
   };
 
@@ -200,14 +192,15 @@ const EditMaintenanceProcess = ({ dataSource, onEdit }) => {
                 },
               ]}
             >
-              {/* <Input /> */}
-              <Select
+              <Input disabled />
+              {/* <Select
                 showSearch
                 placeholder="Select Maintenance Request"
                 optionFilterProp="children"
                 filterOption={filterOption}
                 options={maintenanceRequest}
-              />
+
+              /> */}
             </Form.Item>
 
             <Form.Item

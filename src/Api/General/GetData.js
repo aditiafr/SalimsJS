@@ -50,10 +50,10 @@ export const getEquipment = async () => {
     return response.data.data;
 }
 
-export const getEquipmentOne = async () => {
+export const getQcToolsEquipment = async () => {
     const token = Cookies.get('access_token');
     const branchCode = Cookies.get('branchcode');
-    const response = await axios.get(`${baseURL}/general/get-equipment/${branchCode}`, {
+    const response = await axios.get(`${baseURL}/general/get-qc-tools-equipment/${branchCode}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
